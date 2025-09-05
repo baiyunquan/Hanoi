@@ -50,7 +50,7 @@ void GameLevel::init(std::vector<std::vector<GLuint>> tileData, GLuint lvlWidth,
 					ResourceManager::GetTexture("block_solid"),
 					glm::vec3(0.8f, 0.8f, 0.7f)
 				);
-				obj.IsSolid = GL_TRUE;
+//				obj.IsSolid = GL_TRUE;
 				this->Bricks.push_back(obj);
 			}
 			else {

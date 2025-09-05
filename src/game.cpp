@@ -17,6 +17,7 @@
 #include "particle_generator.h"
 #include "post_processor.h"
 #include "text_renderer.h"
+#include "hanoi.h"
 
 // Game-related State data
 SpriteRenderer    *Renderer;
@@ -24,6 +25,7 @@ ParticleGenerator* Particles;
 PostProcessor* Effects;
 ISoundEngine* SoundEngine;
 TextRenderer* Text;
+Hanoi* towers[3];
 
 float ShakeTime = 0.0f;
 
@@ -39,6 +41,11 @@ Game::~Game()
 void Game::Init()
 {
     SoundEngine = createIrrKlangDevice();
+
+	towers[0] = new Hanoi(5, glm::vec2(100.0f, 100.0f), glm::vec2(150.0f, 400.0f), false);
+	auto plate = towers[0]->PopTop();
+    towers[0]->PopTop();
+	towers[0]->PushTop(plate.second, plate.first);
 
     // Load shaders
     ResourceManager::LoadShader("shaders/sprite/vertShader.glsl", "shaders/sprite/fragShader.glsl", nullptr, "sprite");
@@ -92,5 +99,5 @@ void Game::ProcessInput(float dt)
 
 void Game::Render()
 {
-    
+	towers[0]->Draw(*Renderer);
 }
