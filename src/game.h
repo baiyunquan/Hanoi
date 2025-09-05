@@ -37,12 +37,15 @@ public:
     GameState  State;
     bool  Keys[1024];
     bool  KeysProcessed[1024];
+    bool mousePressed = false;
+    bool mouseWasPressed = false;
     unsigned int     Width, Height;
 
     std::vector<GameLevel> Levels;
     unsigned int            Level;
     unsigned int            Lives;
-    unsigned int            Points;
+    int towerNum = 3;
+	int towerLevel = 5;
 
     // 构造函数/析构函数
     Game(unsigned int width, unsigned int height);
@@ -51,6 +54,7 @@ public:
     void Init();
     // 游戏循环
     void ProcessInput(float dt);
+    void ProcessMouse(float dt, GLFWwindow* window);
     void Update(float dt);
     void Render();
 

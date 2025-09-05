@@ -6,7 +6,7 @@ Hanoi::Hanoi(int numDisks, glm::vec2 pos, glm::vec2 size, bool empty)
 	:numDisks(numDisks) , size(size) , pos(pos)
 {
 	unitHeight = size.y / (float)(numDisks + 1);
-	unitWidth = size.x / (float)(numDisks + 1);
+	unitWidth = size.x / (float)(numDisks + 3);
 
 	pole = GameObject(glm::vec2(pos.x + (size.x / 2) - (unitWidth / 8), pos.y), unitWidth / 4,
 		unitHeight / 2, glm::vec3(1.0, 1.0f, 1.0f));
@@ -18,8 +18,11 @@ Hanoi::Hanoi(int numDisks, glm::vec2 pos, glm::vec2 size, bool empty)
 		float middle = pos.x + (size.x / 2);
 		float bottom = pos.y + (unitHeight / 2);
 		for(int i = 1; i <= numDisks; i++) {
-			disks[i] = GameObject(glm::vec2(middle - (length / 2), bottom),
-				length, unitHeight,
+			std::cout << "Creating disk level " << i << " at position (" 
+				<< (middle - (length / 2)) << ", " << bottom << ") with size (" << length << ", " << unitHeight << ")\n";
+
+			disks[i] = Plate(glm::vec2(middle - (length / 2), bottom),
+				length, unitHeight, i ,
 				glm::vec3(0.5f + 0.1f * (i / (float)numDisks), 0.5f, 1.0f - 0.5f * (i / (float)numDisks)));
 			length += unitWidth;
 			bottom += unitHeight;
@@ -39,23 +42,25 @@ void Hanoi::Draw(SpriteRenderer& renderer) {
 
 	float bottom = pole.Position.y + pole.SizeY;
 	for(auto& [level , disk] : disks) {
+		/*std::cout << "Drawing disk level " << level << " at position (" 
+			<< disk.Position.x << ", " << bottom << ") with size (" << disk.SizeX << ", " << disk.SizeY << ")\n";*/
 		disk.Position.y = bottom;
 		disk.Draw(renderer);
 		bottom += unitHeight;
 	}
 }
 
-bool Hanoi::PushTop(GameObject top , int plateLevel) {
+bool Hanoi::PushTop(Plate top , int plateLevel) {
 	if (isFull() || plateLevel > disks.begin()->first) return false;
 
 	disks[plateLevel] = top;
 	return true;
 }
 
-std::pair<int , GameObject> Hanoi::PopTop() {
-	if (isEmpty()) return { -1 , GameObject() };
+std::pair<int , Plate> Hanoi::PopTop() {
+	if (isEmpty()) return { -1 , Plate()};
 	auto it = disks.begin();
-	std::pair<int , GameObject> res = *it;
+	std::pair<int , Plate> res = *it;
 	disks.erase(it->first);
 	return res;
 }

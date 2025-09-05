@@ -1,7 +1,11 @@
+#ifndef HANOI_H
+#define HANOI_H
+
 #include <map>
 #include <glm/glm.hpp>
 
 #include "game_object.h"
+#include "plate.h"
 
 class
 	Hanoi {
@@ -11,15 +15,15 @@ public:
 	// äÖÈ¾ººÅµËþ
 	void Draw(SpriteRenderer& renderer);
 	// Ñ¹Èë¶¥²ãÅÌ×Ó
-	bool PushTop(GameObject top, int plateLevel);
+	bool PushTop(Plate top, int plateLevel);
 	// µ¯³ö¶¥²ãÅÌ×Ó
-	std::pair<int , GameObject> PopTop();
+	std::pair<int , Plate> PopTop();
 
 	bool isEmpty();
 	bool isFull();
 
 	int numDisks;
-	std::map<int ,GameObject> disks;
+	std::map<int , Plate> disks;
 	GameObject pole;
 	GameObject base;
 
@@ -28,3 +32,5 @@ public:
 	float unitHeight;
 	float unitWidth;
 };
+
+#endif

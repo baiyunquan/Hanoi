@@ -16,12 +16,13 @@
 
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, int button, int action, int mods);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // The Width of the screen
-const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_WIDTH = 1600;
 // The height of the screen
-const unsigned int SCREEN_HEIGHT = 600;
+const unsigned int SCREEN_HEIGHT = 1200;
 
 Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -49,7 +50,10 @@ int main(int argc, char *argv[])
     }
 
     glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    glfwSwapInterval(1); // 1表示开启垂直同步，
 
     // OpenGL configuration
     // --------------------
@@ -80,6 +84,7 @@ int main(int argc, char *argv[])
         // manage user input
         // -----------------
         Breakout.ProcessInput(deltaTime);
+        Breakout.ProcessMouse(deltaTime, window);
 
         // update game state
         // -----------------
@@ -100,6 +105,17 @@ int main(int argc, char *argv[])
 
     glfwTerminate();
     return 0;
+}
+
+void mouse_callback(GLFWwindow* window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        if (action == GLFW_PRESS) {
+            Breakout.mousePressed = true;
+        }
+        else if (action == GLFW_RELEASE) {
+            Breakout.mousePressed = false;
+        }
+    }
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
