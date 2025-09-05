@@ -29,17 +29,6 @@ enum GameState {
 };
 
 
-// Initial size of the player paddle
-const glm::vec2 PLAYER_SIZE{ 100, 20 };
-// Initial velocity of the player paddle
-const float PLAYER_VELOCITY{ 500.0f };
-
-// 初始化球的速度
-const glm::vec2 INITIAL_BALL_VELOCITY(100.0f, -350.0f);
-// 球的半径
-const float BALL_RADIUS = 12.5f;
-// 最大碰撞角度
-const float MAX_BOUNCE_ANGLE = 70.0f;
 
 class Game
 {

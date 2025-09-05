@@ -21,7 +21,7 @@ class SpriteRenderer
 {
 public:
     // Constructor (inits shaders/shapes)
-    SpriteRenderer(Shader shader);
+    SpriteRenderer(Shader shader, Shader rectShader);
     // Destructor
     ~SpriteRenderer();
     // Renders a defined quad textured with given sprite
@@ -30,7 +30,8 @@ public:
     void DrawRectangle(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color);
 private:
     // Render state
-    Shader       shader; 
+    Shader       shader;
+    Shader  rectShader;
     unsigned int quadVAO;
     // Initializes and configures the quad's buffer and vertex attributes
     void initRenderData();

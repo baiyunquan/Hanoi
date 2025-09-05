@@ -7,10 +7,12 @@
 ** option) any later version.
 ******************************************************************/
 #include "sprite_renderer.h"
+//#include <iostream>
 
 
-SpriteRenderer::SpriteRenderer(Shader shader)
+SpriteRenderer::SpriteRenderer(Shader shader , Shader rectShader)
 {
+    this->rectShader = rectShader;
     this->shader = shader;
     this->initRenderData();
 }
@@ -24,6 +26,8 @@ void SpriteRenderer::DrawSprite(Texture2D texture, glm::vec2 position, glm::vec2
 {
     // prepare transformations
     this->shader.Use();
+//    std::cout << this->shader.ID << std::endl;
+
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(position, 0.0f));  // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)
 
@@ -49,7 +53,9 @@ void SpriteRenderer::DrawSprite(Texture2D texture, glm::vec2 position, glm::vec2
 void SpriteRenderer::DrawRectangle(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
     // prepare transformations
-    this->shader.Use();
+    this->rectShader.Use();
+//    std::cout << this->rectShader.ID << std::endl;
+
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(position, 0.0f));  // first translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order)
 
@@ -59,10 +65,10 @@ void SpriteRenderer::DrawRectangle(glm::vec2 position, glm::vec2 size, float rot
 
     model = glm::scale(model, glm::vec3(size, 1.0f)); // last scale
 
-    this->shader.SetMatrix4("model", model);
+    this->rectShader.SetMatrix4("model", model);
 
     // render textured quad
-    this->shader.SetVector3f("rectColor", color);
+    this->rectShader.SetVector3f("rectColor", color);
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);

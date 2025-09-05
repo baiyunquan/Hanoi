@@ -44,12 +44,15 @@ void Game::Init()
     ResourceManager::LoadShader("shaders/sprite/vertShader.glsl", "shaders/sprite/fragShader.glsl", nullptr, "sprite");
     ResourceManager::LoadShader("shaders/particles/vertShader.glsl", "shaders/particles/fragShader.glsl", nullptr, "particle");
     ResourceManager::LoadShader("shaders/post_processor/vertShader.glsl", "shaders/post_processor/fragShader.glsl", nullptr, "post_processor");
+    ResourceManager::LoadShader("shaders/rectangle/vertShader.glsl", "shaders/rectangle/fragShader.glsl", nullptr, "rectangle");
     // Configure shaders
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(this->Width), static_cast<GLfloat>(this->Height), 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Use().SetInteger("sprite", 0);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
     ResourceManager::GetShader("particle").Use().SetInteger("sprite", 0);
     ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
+
+    ResourceManager::GetShader("rectangle").Use().SetMatrix4("projection", projection);
     // 加载纹理
     ResourceManager::LoadTexture("resources/textures/background.jpg", GL_FALSE, "background");
     // 加载关卡
@@ -65,14 +68,9 @@ void Game::Init()
 
     // Set render-specific controls
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), 500);
-    Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+    Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite") , ResourceManager::GetShader("rectangle"));
     Effects = new PostProcessor(ResourceManager::GetShader("post_processor"), this->Width, this->Height);
 
-    // configure game objects
-    glm::vec2 playerPos = glm::vec2(
-        this->Width / 2 - PLAYER_SIZE.x / 2,
-        this->Height - PLAYER_SIZE.y
-    );
 
     SoundEngine->play2D("resources/audio/funky_stars.mp3", GL_TRUE);
 
@@ -90,6 +88,7 @@ void Game::ProcessInput(float dt)
 {
    
 }
+
 
 void Game::Render()
 {
