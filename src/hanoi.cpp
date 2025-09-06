@@ -33,7 +33,7 @@ Hanoi::Hanoi(int numDisks, glm::vec2 pos, glm::vec2 size, bool empty)
 	}
 }
 
-void Hanoi::Draw(SpriteRenderer& renderer) {
+void Hanoi::Draw(SpriteRenderer& renderer , TextRenderer& textRenderer) {
 	pole.SizeY = (unitHeight / 2) + ((float)(numDisks - disks.size()) * unitHeight);
 //	std::cout << pole.SizeY << std::endl;
 
@@ -46,6 +46,7 @@ void Hanoi::Draw(SpriteRenderer& renderer) {
 			<< disk.Position.x << ", " << bottom << ") with size (" << disk.SizeX << ", " << disk.SizeY << ")\n";*/
 		disk.Position.y = bottom;
 		disk.Draw(renderer);
+		disk.DrawText(textRenderer);
 		bottom += unitHeight;
 	}
 }

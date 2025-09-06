@@ -30,7 +30,34 @@ void GameObject::Draw(SpriteRenderer& renderer)
     renderer.DrawSprite(this->Sprite, this->Position, glm::vec2(this->SizeX, this->SizeY), this->Rotation, this->Color);
 }
 
-bool GameObject::isChosen(int mouseX, int mouseY) {
+void GameObject::DrawText(TextRenderer& textRenderer)
+{
+    if (text.empty()) return;
+
+    float textWidth = this->SizeX * 0.8;
+    float textHeight = this->SizeY * 0.8;
+    float xOffset = this->SizeX * 0.1;
+    float yOffset = this->SizeY * 0.1;
+    if (text.size() < 10) {
+        textScale = 1.0f;
+        if (textScale == 0) textScale = textRenderer.CalculateOptimalScale(text, textWidth, textHeight);
+    }
+    
+    textRenderer.RenderTextInBox(text, this->Position.x + xOffset, this->Position.y + yOffset, textWidth, textHeight, textScale, glm::vec3(1.0, 1.0, 1.0));
+}
+
+bool GameObject::isChosen(float mouseX, float mouseY) {
     return mouseX >= Position.x && mouseX <= Position.x + SizeX &&
         mouseY >= Position.y && mouseY <= Position.y + SizeY;
+}
+
+std::string GameObject::getText()
+{
+    return std::string();
+}
+
+void GameObject::setText(std::string str)
+{
+    text = str;
+    textScale = 0;
 }

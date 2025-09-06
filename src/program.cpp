@@ -22,7 +22,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 // The Width of the screen
 const unsigned int SCREEN_WIDTH = 1600;
 // The height of the screen
-const unsigned int SCREEN_HEIGHT = 1200;
+const unsigned int SCREEN_HEIGHT = 1000;
 
 Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     glfwWindowHint(GLFW_RESIZABLE, false);
 
 
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fox Game", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hanoi Tower", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     // glad: load all OpenGL function pointers

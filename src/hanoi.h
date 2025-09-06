@@ -13,7 +13,7 @@ public:
 	// 构造函数
 	Hanoi(int numDisks, glm::vec2 pos, glm::vec2 size, bool empty);
 	// 渲染汉诺塔
-	void Draw(SpriteRenderer& renderer);
+	void Draw(SpriteRenderer& renderer, TextRenderer& textRenderer);
 	// 压入顶层盘子
 	bool PushTop(Plate top, int plateLevel);
 	// 弹出顶层盘子

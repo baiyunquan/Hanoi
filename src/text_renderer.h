@@ -13,6 +13,9 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <vector>
+#include <sstream>
+#include <algorithm>
 
 #include "texture.h"
 #include "shader.h"
@@ -43,6 +46,14 @@ public:
     void Load(std::string font, unsigned int fontSize);
     // renders a string of text using the precompiled list of characters
     void RenderText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1.0f));
+    // calculate scale
+    float calculateWidth(std::string text, float scale);
+    float calculateHeight(std::string text, float scale);
+    float CalculateOptimalScale(const std::string& text, float availableWidth, float availableHeight);
+    void RenderTextAutoScale(const std::string& text, float x, float y, float width, float height, glm::vec3 color);
+    float CalculateTextBlockHeight(const std::vector<std::string>& lines, float scale);
+    std::vector<std::string> SplitTextIntoLines(const std::string& text, float maxWidth, float scale);
+    void RenderTextInBox(const std::string& text, float x, float y, float width, float height, float scale, glm::vec3 color);
 private:
     // render state
     unsigned int VAO, VBO;

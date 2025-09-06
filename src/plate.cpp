@@ -1,5 +1,6 @@
 #include "plate.h"
 #include <iostream>
+#include <string>
 
 Plate::Plate()
     : GameObject(), level(0){
@@ -10,6 +11,7 @@ Plate::Plate(glm::vec2 pos, float sizeX, float sizeY, int level , glm::vec3 colo
     : GameObject(pos, sizeX, sizeY, color, velocity) {
 	this->level = level;
     std::cout << level << std::endl;
+    this->setText(std::string("").append(std::to_string(level)));
 }
 
 void Plate::Draw(SpriteRenderer& renderer)

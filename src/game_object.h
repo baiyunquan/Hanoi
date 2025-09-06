@@ -11,10 +11,11 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <string>
 
 #include "texture.h"
 #include "sprite_renderer.h"
-
+#include "text_renderer.h"
 
 // Container object for holding all state relevant for a single
 // game object entity. Each object in the game likely needs the
@@ -26,8 +27,9 @@ public:
     glm::vec2   Position, Velocity;
     glm::vec3   Color;
     float     Rotation;
-    bool      isRect,IsSolid , Destroyed;
+    bool      isRect;
     float SizeX, SizeY;
+
 
     // Render state
     Texture2D   Sprite;
@@ -37,8 +39,17 @@ public:
     GameObject(glm::vec2 pos, float sizeX ,float  sizeY, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f));
     // Draw sprite
     void Draw(SpriteRenderer& renderer);
+    // Draw text
+    void DrawText(TextRenderer& textRenderer);
     // 判断鼠标是否在Plate上
-    bool isChosen(int mouseX, int mouseY);
+    bool isChosen(float mouseX, float mouseY);
+
+    std::string getText();
+
+    void setText(std::string str);
+private :
+    std::string text = "";
+    float textScale = 0.0f;
 };
 
 #endif

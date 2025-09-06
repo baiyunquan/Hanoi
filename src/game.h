@@ -17,7 +17,7 @@
 
 #include <irrKlang.h>
 
-#include "game_level.h"
+#include "hanoi.h"
 
 using namespace irrklang;
 
@@ -39,11 +39,13 @@ public:
     bool  KeysProcessed[1024];
     bool mousePressed = false;
     bool mouseWasPressed = false;
-    unsigned int     Width, Height;
 
-    std::vector<GameLevel> Levels;
-    unsigned int            Level;
-    unsigned int            Lives;
+    unsigned int     Width, Height;
+    int topBarHeight;
+    int sideBarWidth;
+    int sideBarX;
+
+    unsigned int     Step;
     int towerNum = 3;
 	int towerLevel = 5;
 
@@ -55,7 +57,11 @@ public:
     // ”Œœ∑—≠ª∑
     void ProcessInput(float dt);
     void ProcessMouse(float dt, GLFWwindow* window);
+    void clearOtherPlateSelections(int currentTowerId);
+    void handleTowerClick(double cursorX, double cursorY);
+    bool isMoveValid(Hanoi& targetTower, Plate& plate);
     void Update(float dt);
+    void movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int targetId);
     void Render();
 
     void ResetLevel();
