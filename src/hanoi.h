@@ -21,6 +21,7 @@ public:
 
 	bool isEmpty();
 	bool isFull();
+	int getTop();
 
 	int numDisks;
 	std::map<int , Plate> disks;

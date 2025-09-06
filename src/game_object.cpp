@@ -29,3 +29,8 @@ void GameObject::Draw(SpriteRenderer& renderer)
     }
     renderer.DrawSprite(this->Sprite, this->Position, glm::vec2(this->SizeX, this->SizeY), this->Rotation, this->Color);
 }
+
+bool GameObject::isChosen(int mouseX, int mouseY) {
+    return mouseX >= Position.x && mouseX <= Position.x + SizeX &&
+        mouseY >= Position.y && mouseY <= Position.y + SizeY;
+}

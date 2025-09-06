@@ -37,6 +37,8 @@ public:
     GameObject(glm::vec2 pos, float sizeX ,float  sizeY, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f));
     // Draw sprite
     void Draw(SpriteRenderer& renderer);
+    // 判断鼠标是否在Plate上
+    bool isChosen(int mouseX, int mouseY);
 };
 
 #endif

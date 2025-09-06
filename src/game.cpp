@@ -101,30 +101,70 @@ void Game::ProcessInput(float dt)
    
 }
 
-void Game::ProcessMouse(float dt , GLFWwindow* window) {
+void Game::ProcessMouse(float dt, GLFWwindow* window) {
     // 检测鼠标点击（按下并释放）
     bool mouseClicked = (!mousePressed && mouseWasPressed);
     mouseWasPressed = mousePressed;
 
-    if (mouseClicked) {
-        // 获取鼠标位置
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
+    if (!mouseClicked) return;
 
+    // 获取鼠标位置
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+
+    // 首先检查是否点击了某个盘子
+    Plate* selectedPlate = nullptr;
+    Hanoi* sourceTower = nullptr;
+
+    for (auto& tower : towers) {
+        if (!tower->isEmpty()) {
+            Plate& plate = tower->disks.begin()->second;
+            if (plate.isChosen(xpos, ypos)) {
+                // 取消其他盘子的选中状态
+                for (auto& otherTower : towers) {
+                    if (!otherTower->isEmpty()) {
+                        Plate& otherPlate = otherTower->disks.begin()->second;
+                        if (otherPlate.isSelect() && &otherPlate != &plate) {
+                            otherPlate.select(); // 取消选中
+                        }
+                    }
+                }
+
+                plate.select(); // 切换选中状态
+                selectedPlate = &plate;
+                sourceTower = tower;
+                break;
+            }
+        }
+    }
+
+    // 如果没有选中盘子，检查是否点击了柱子（用于移动已选中的盘子）
+    if (!selectedPlate) {
+        // 查找当前选中的盘子
         for (auto& tower : towers) {
             if (!tower->isEmpty()) {
-                Plate& plate = (tower->disks.begin())->second;
-                if (plate.isChosen(xpos, ypos)) {
-                    // 处理选中的Plate
-                    std::cout << "Plate " << plate.level << " selected at position: ("
-                        << plate.Position.x << ", " << plate.Position.y << ") size:" << plate.SizeX
-                        << " " << plate.SizeY << std::endl;
+                Plate& plate = tower->disks.begin()->second;
+                if (plate.isSelect()) {
+                    selectedPlate = &plate;
+                    sourceTower = tower;
+                    break;
+                }
+            }
+        }
 
-                    // 这里可以添加选中后的处理逻辑，例如改变颜色、移动等
-                    // plate.Color = glm::vec3(1.0f, 0.0f, 0.0f); // 变为红色
-                    plate.select(); // 切换选中状态
-
-                    break; // 如果只需要选中一个，可以跳出循环
+        // 如果有选中的盘子，检查是否点击了目标柱子
+        if (selectedPlate) {
+            for (auto& targetTower : towers) {
+                if (targetTower->pole.isChosen(xpos, ypos)) {
+                    // 检查移动是否合法
+                    if (targetTower->isEmpty() || targetTower->getTop() > selectedPlate->level) {
+                        // 执行移动
+                        std::pair<int, Plate> temp = sourceTower->PopTop();
+                        temp.second.Position.x += targetTower->pos.x - sourceTower->pos.x;
+                        temp.second.select(); // 取消选中
+                        targetTower->PushTop(temp.second, temp.first);
+                    }
+                    break;
                 }
             }
         }

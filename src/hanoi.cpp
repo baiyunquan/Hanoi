@@ -51,10 +51,17 @@ void Hanoi::Draw(SpriteRenderer& renderer) {
 }
 
 bool Hanoi::PushTop(Plate top , int plateLevel) {
-	if (isFull() || plateLevel > disks.begin()->first) return false;
+	if (isFull() || plateLevel > getTop()) return false;
 
 	disks[plateLevel] = top;
 	return true;
+}
+
+int Hanoi::getTop() {
+	if (!isEmpty()) {
+		return disks.begin()->first;
+	}
+	return numDisks + 1;
 }
 
 std::pair<int , Plate> Hanoi::PopTop() {

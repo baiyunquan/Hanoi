@@ -2,7 +2,7 @@
 #include <iostream>
 
 Plate::Plate()
-    : GameObject() {
+    : GameObject(), level(0){
 }
 
 // 构造函数的定义，初始化列表中调用基类构造函数
@@ -10,11 +10,6 @@ Plate::Plate(glm::vec2 pos, float sizeX, float sizeY, int level , glm::vec3 colo
     : GameObject(pos, sizeX, sizeY, color, velocity) {
 	this->level = level;
     std::cout << level << std::endl;
-}
-
-bool Plate::isChosen(int mouseX, int mouseY) {
-    return mouseX >= Position.x && mouseX <= Position.x + SizeX &&
-        mouseY >= Position.y && mouseY <= Position.y + SizeY;
 }
 
 void Plate::Draw(SpriteRenderer& renderer)
