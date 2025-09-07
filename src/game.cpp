@@ -282,13 +282,13 @@ void Game::Render()
 		tower->Draw(*Renderer , *Text);
     }
 
-    // Render sidebar , topbar
-    std::string sbText{"Step: "};
-    sbText.append(std::to_string(Step));
+    // Render topbar
+    std::string tbText{"Step: "};
+    tbText.append(std::to_string(Step));
     if (displayTime > 0.0f) {
-        sbText += "      Switch Tower " + std::to_string(currentStep.from) + " To Tower " + std::to_string(currentStep.to);
+        tbText += "      Switch Tower " + std::to_string(currentStep.from) + " To Tower " + std::to_string(currentStep.to);
     }
-    Text->RenderTextInBox(sbText, 0, 0, this->Width, topBarHeight, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+    Text->RenderTextInBox(tbText, 0, 0, this->Width, topBarHeight, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
     RecordButton->Draw(*Renderer);
     StopButton->Draw(*Renderer);

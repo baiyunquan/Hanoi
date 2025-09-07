@@ -27,10 +27,8 @@ using namespace irrklang;
 enum GameState {
     GAME_ACTIVE,
     GAME_MENU,
-    GAME_WIN
+    GAME_LOAD
 };
-
-
 
 class Game
 {
