@@ -18,6 +18,8 @@
 #include <irrKlang.h>
 
 #include "hanoi.h"
+#include "text_input.h"
+#include "messagebox.h"
 
 using namespace irrklang;
 
@@ -39,11 +41,17 @@ public:
     bool  KeysProcessed[1024];
     bool mousePressed = false;
     bool mouseWasPressed = false;
+    bool isTextInputMode = false;
+
 
     unsigned int     Width, Height;
     int topBarHeight;
-    int sideBarWidth;
+    int sideBarWidth , sideBarHeight;
     int sideBarX;
+
+    TextInput* textInput;
+    // 创建消息框
+    MessageBox* messageBox;
 
     unsigned int     Step;
     int towerNum = 3;
@@ -54,6 +62,7 @@ public:
     ~Game();
     // 初始化游戏状态（加载所有的着色器/纹理/关卡）
     void Init();
+    bool beginRecord(std::string name);
     // 游戏循环
     void ProcessInput(float dt);
     void ProcessMouse(float dt, GLFWwindow* window);

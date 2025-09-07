@@ -1,11 +1,3 @@
-/*******************************************************************
-** This code is part of Breakout.
-**
-** Breakout is free software: you can redistribute it and/or modify
-** it under the terms of the CC BY 4.0 license as published by
-** Creative Commons, either version 4 of the License, or (at your
-** option) any later version.
-******************************************************************/
 #include <algorithm>
 #include <sstream>
 #include <iostream>
@@ -20,6 +12,7 @@
 #include "step_manager.h"
 
 
+
 // Game-related State data
 SpriteRenderer    *Renderer;
 ParticleGenerator* Particles;
@@ -27,12 +20,16 @@ PostProcessor* Effects;
 ISoundEngine* SoundEngine;
 TextRenderer* Text;
 std::map<int , Hanoi*> towers;
-StepManager stepManager;
+StepManager* stepManager;
+
+GameObject* RecordButton;
+GameObject* StopButton;
+GameObject* LoadButton;
+
 
 float ShakeTime = 0.0f;
 Move currentStep;
 float displayTime = 0.0f;
-
 
 Game::Game(unsigned int width, unsigned int height) 
     : State(GAME_MENU), Keys(),KeysProcessed(), Width(width), Height(height) , Step(0)
@@ -46,6 +43,7 @@ Game::~Game()
 void Game::Init()
 {
     SoundEngine = createIrrKlangDevice();
+    messageBox = new MessageBox(this->Width, this->Height);
 
     float tenH = this->Height * 0.1f;
     float eightH = this->Height * 0.08f;
@@ -68,6 +66,7 @@ void Game::Init()
     topBarHeight = eightH;
     sideBarWidth = twelfthW;
     sideBarX = this->Width - sideBarWidth;
+    sideBarHeight = this->Height - topBarHeight;
 
     // Load shaders
     ResourceManager::LoadShader("shaders/sprite/vertShader.glsl", "shaders/sprite/fragShader.glsl", nullptr, "sprite");
@@ -84,17 +83,68 @@ void Game::Init()
     ResourceManager::GetShader("rectangle").Use().SetMatrix4("projection", projection);
     // 加载纹理
     ResourceManager::LoadTexture("resources/textures/background.jpg", GL_FALSE, "background");
+    ResourceManager::LoadTexture("resources/textures/block.png", GL_FALSE, "block");
 
     // Set render-specific controls
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), 500);
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite") , ResourceManager::GetShader("rectangle"));
     Effects = new PostProcessor(ResourceManager::GetShader("post_processor"), this->Width, this->Height);
 
+    // Add buttons
+    // 计算按钮的尺寸和位置
+    float buttonWidth = this->Width - sideBarX;  // 按钮宽度为侧边栏宽度
+    float totalAreaHeight = this->Height - topBarHeight; // 可用总高度
+    float spacing = totalAreaHeight * 0.05f; // 间距为总高度的5%
+    float buttonHeight = (totalAreaHeight - 2 * spacing) / 3; // 每个按钮的高度
 
+    // 计算每个按钮的Y坐标
+    float recordButtonY = topBarHeight;
+    float stopButtonY = topBarHeight + buttonHeight + spacing;
+    float loadButtonY = topBarHeight + 2 * (buttonHeight + spacing);
+
+    // 创建按钮对象
+    RecordButton = new GameObject(
+        glm::vec2(sideBarX, recordButtonY),
+        glm::vec2(buttonWidth, buttonHeight),
+        ResourceManager::GetTexture("block")
+    );
+    RecordButton->setText("Record");
+
+    StopButton = new GameObject(
+        glm::vec2(sideBarX, stopButtonY),
+        glm::vec2(buttonWidth, buttonHeight),
+        ResourceManager::GetTexture("block")
+    );
+    StopButton->setText("Stop");
+
+    LoadButton = new GameObject(
+        glm::vec2(sideBarX, loadButtonY),
+        glm::vec2(buttonWidth, buttonHeight),
+        ResourceManager::GetTexture("block")
+    );
+    LoadButton->setText("Load");
+    // Load Sound
     SoundEngine->play2D("resources/audio/funky_stars.mp3", GL_TRUE);
-
+    // Load freetype
     Text = new TextRenderer(this->Width, this->Height);
     Text->Load("resources/fonts/arial.ttf", 24);
+    // Load Step Manager
+    stepManager = new StepManager();
+
+    // Input Record Name
+    textInput = new TextInput(this->Width, this->Height);
+    textInput->setOnSubmitCallback([this](const std::string& result) {
+        // 处理输入完成后的逻辑
+        std::cout << "Input result: " << result << std::endl;
+        if (!this->beginRecord(result)) {
+            messageBox->setMessage("ERROR : Please Choose Another Name");
+            messageBox->setActive(true);
+        }
+        });
+}
+
+bool Game::beginRecord(std::string name) {
+    return stepManager->record(name);
 }
 
 void Game::Update(float dt)
@@ -144,6 +194,16 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     if (!clickedPlate) {
         handleTowerClick(cursorX, cursorY);
     }
+
+    if (RecordButton->isChosen(cursorX, cursorY)) {
+        textInput->setActive(true);
+    }
+
+    if (StopButton->isChosen(cursorX, cursorY)) {
+        stepManager->endRecord();
+    }
+
+    messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));
 }
 
 // 清除其他塔的盘子选中状态
@@ -226,7 +286,18 @@ void Game::Render()
     std::string sbText{"Step: "};
     sbText.append(std::to_string(Step));
     if (displayTime > 0.0f) {
-        sbText += "      Switch Tower " + std::to_string(currentStep.from) + " To " + std::to_string(currentStep.to);
+        sbText += "      Switch Tower " + std::to_string(currentStep.from) + " To Tower " + std::to_string(currentStep.to);
     }
     Text->RenderTextInBox(sbText, 0, 0, this->Width, topBarHeight, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    RecordButton->Draw(*Renderer);
+    StopButton->Draw(*Renderer);
+    LoadButton->Draw(*Renderer);
+
+    RecordButton->DrawText(*Text);
+    StopButton->DrawText(*Text);
+    LoadButton->DrawText(*Text);
+
+    textInput->Draw(*Renderer, *Text);
+    messageBox->Draw(*Renderer, *Text);
 }

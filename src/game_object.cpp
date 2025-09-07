@@ -39,8 +39,10 @@ void GameObject::DrawText(TextRenderer& textRenderer)
     float xOffset = this->SizeX * 0.1;
     float yOffset = this->SizeY * 0.1;
     if (text.size() < 10) {
-        textScale = 1.0f;
-        if (textScale == 0) textScale = textRenderer.CalculateOptimalScale(text, textWidth, textHeight);
+        textScale = 1.5f;
+    }
+    else {
+        textScale = textRenderer.CalculateOptimalScale(text, textWidth, textHeight);
     }
     
     textRenderer.RenderTextInBox(text, this->Position.x + xOffset, this->Position.y + yOffset, textWidth, textHeight, textScale, glm::vec3(1.0, 1.0, 1.0));

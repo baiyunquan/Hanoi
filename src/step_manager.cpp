@@ -1,10 +1,12 @@
 #include "step_manager.h"
 
 bool StepManager::record(const std::string& name) {
+    
     // 检查名称是否有效且不存在
     if (name.empty() || data.count(name) > 0) {
         return false;
     }
+    int i = data.count(name);
 
     currentRecordingName = name;
     isRecording = true;

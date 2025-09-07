@@ -120,19 +120,33 @@ void mouse_callback(GLFWwindow* window, int button, int action, int mods) {
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
-    // when a user presses the escape key, we set the WindowShouldClose property to true, closing the application
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (key >= 0 && key < 1024)
-    {
-        if (action == GLFW_PRESS)
-            Breakout.Keys[key] = true;
-        else if (action == GLFW_RELEASE)
-        {
-            Breakout.Keys[key] = false;
-            Breakout.KeysProcessed[key] = false;
+    // 当用户按下ESC键时，关闭窗口
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        if (Breakout.textInput->isActive()) {
+            // 如果在文本输入模式，ESC键退出文本输入模式
+            Breakout.textInput->setActive(false);
+        }
+        else {
+            // 否则关闭应用程序
+            glfwSetWindowShouldClose(window, true);
         }
     }
+
+    // 将按键事件传递给TextInput处理
+    Breakout.textInput->ProcessKey(key, action);
+
+    // 如果不是文本输入模式，处理游戏按键
+    if (!Breakout.textInput->isActive()) {
+        if (key >= 0 && key < 1024) {
+            if (action == GLFW_PRESS)
+                Breakout.Keys[key] = true;
+            else if (action == GLFW_RELEASE) {
+                Breakout.Keys[key] = false;
+                Breakout.KeysProcessed[key] = false;
+            }
+        }
+    }
+
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
