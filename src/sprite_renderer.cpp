@@ -15,11 +15,13 @@ SpriteRenderer::SpriteRenderer(Shader shader , Shader rectShader)
     this->rectShader = rectShader;
     this->shader = shader;
     this->initRenderData();
+    this->initLineData();
 }
 
 SpriteRenderer::~SpriteRenderer()
 {
     glDeleteVertexArrays(1, &this->quadVAO);
+    glDeleteVertexArrays(1, &this->lineVAO);
 }
 
 void SpriteRenderer::DrawSprite(Texture2D texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
@@ -99,5 +101,46 @@ void SpriteRenderer::initRenderData()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void SpriteRenderer::initLineData() {
+    float lineVertices[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f
+    };
+
+    glGenVertexArrays(1, &lineVAO);
+    glGenBuffers(1, &lineVBO);
+
+    glBindVertexArray(lineVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(lineVertices), lineVertices, GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void SpriteRenderer::DrawLine(glm::vec2 start, glm::vec2 end, float lineWidth, glm::vec3 color) {
+    this->rectShader.Use();
+    glLineWidth(lineWidth);
+
+    // ¼ÆËãÄ£ÐÍ¾ØÕó
+    glm::vec2 direction = end - start;
+    float length = glm::length(direction);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(start, 0.0f));
+    model = glm::rotate(model, atan2(direction.y, direction.x), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::scale(model, glm::vec3(length, 1.0f, 1.0f));
+
+    this->rectShader.SetMatrix4("model", model);
+    this->rectShader.SetVector3f("rectColor", color);
+
+    glBindVertexArray(lineVAO);
+    glDrawArrays(GL_LINES, 0, 2);
     glBindVertexArray(0);
 }

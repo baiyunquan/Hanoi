@@ -10,7 +10,7 @@
 #include "post_processor.h"
 #include "text_renderer.h"
 #include "step_manager.h"
-
+#include "evenbus.h"
 
 
 // Game-related State data
@@ -21,15 +21,11 @@ ISoundEngine* SoundEngine;
 TextRenderer* Text;
 std::map<int , Hanoi*> towers;
 StepManager* stepManager;
+EventBus eventBus{};
 
 GameObject* RecordButton;
 GameObject* StopButton;
 GameObject* LoadButton;
-
-
-float ShakeTime = 0.0f;
-Move currentStep;
-float displayTime = 0.0f;
 
 Game::Game(unsigned int width, unsigned int height) 
     : State(GAME_MENU), Keys(),KeysProcessed(), Width(width), Height(height) , Step(0)
@@ -149,9 +145,7 @@ bool Game::beginRecord(std::string name) {
 
 void Game::Update(float dt)
 {
-    if (displayTime > 0.0f) {
-        displayTime -= dt;
-    }
+    eventBus.Update(dt);
 }
 
 
@@ -266,9 +260,12 @@ void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int
     const float xOffset = targetTower.pos.x - sourceTower.pos.x;
     plateObj.Position.x += xOffset;
 
-    currentStep.from = sourceId ;
-    currentStep.to = targetId;
-    displayTime = 10.0f;
+    // 创建并添加事件
+    std::string eventMsg = "Switch Tower " + std::to_string(sourceId) +
+        " To Tower " + std::to_string(targetId);
+    eventBus.AddMediumPriorityEvent(eventMsg , 2.0f);
+
+    stepManager->insert(sourceId, targetId);
     Step++;
 
     plateObj.select(); // 取消选中状态
@@ -285,10 +282,14 @@ void Game::Render()
     // Render topbar
     std::string tbText{"Step: "};
     tbText.append(std::to_string(Step));
-    if (displayTime > 0.0f) {
-        tbText += "      Switch Tower " + std::to_string(currentStep.from) + " To Tower " + std::to_string(currentStep.to);
+
+    Text->RenderTextInBox(tbText, sideBarX, 0, sideBarWidth, topBarHeight, 1.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    if (eventBus.IsDisplayingEvent()) {
+        std::string str = eventBus.GetCurrentMessage();
+        std::cout << str << std::endl;
+        Text->RenderTextInBox(str, 0, 0, this->Width - sideBarWidth, topBarHeight, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
     }
-    Text->RenderTextInBox(tbText, 0, 0, this->Width, topBarHeight, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
     RecordButton->Draw(*Renderer);
     StopButton->Draw(*Renderer);
