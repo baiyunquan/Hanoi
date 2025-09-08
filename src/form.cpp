@@ -1,4 +1,3 @@
-// form.cpp 修改后
 #include "form.h"
 #include <glm/glm.hpp>
 
@@ -12,7 +11,7 @@ void Header::Render(SpriteRenderer& renderer, TextRenderer& textRenderer,float h
     }
 
     // 在底部画一条线
-    renderer.DrawLine(glm::vec2(pos.x, pos.y + height - 2.0f), glm::vec2(pos.x + keyWidth + (valueWidth * i), pos.y + height - 2.0f), 2.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+    renderer.DrawLine(glm::vec2(pos.x, pos.y + height - 2.0f), glm::vec2(pos.x + keyWidth + (valueWidth * (value.size() - 1)), pos.y + height - 2.0f), 2.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 void Line::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float height, float keyWidth, float valueWidth, glm::vec2 pos) {
@@ -27,5 +26,58 @@ void Line::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float he
         values[i].SizeY = height;
         values[i].Draw(renderer);
         values[i].DrawText(textRenderer);
+    }
+}
+
+// Form类实现
+Form::Form(std::string keyName, std::vector<std::string> valueName) :
+    header(Header(keyName, valueName)) {}
+
+void Form::updateData(std::vector<std::string> data) {
+    // 只添加不存在的key值
+    for (const auto& key : data) {
+        // 检查key是否已存在
+        bool exists = false;
+        for (const auto& line : lines) {
+            if (line.key == key) {
+                exists = true;
+                break;
+            }
+        }
+
+        // 如果key不存在，则添加新行
+        if (!exists) {
+            std::vector<GameObject> values;
+            for (size_t j = 0; j < header.value.size(); j++) {
+                GameObject cell(glm::vec2(0, 0), 0, 0, glm::vec3(0.8f, 0.8f, 0.8f));
+                cell.setText(header.value[j]); // 初始值为空
+                values.push_back(cell);
+            }
+
+            lines.push_back(Line(key, values));
+        }
+    }
+}
+
+void Form::regCallBack(std::function<void(std::string&, std::string&)>& callback) {
+    callBack = callback;
+}
+
+void Form::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float screenWidth, float screenHeight) {
+    // 计算表单尺寸和位置
+    float margin = 20.0f;
+    float headerHeight = 60.0f;
+    float rowHeight = 50.0f;
+    float keyWidth = screenWidth / 5 - margin;
+    float valueWidth = screenWidth * 4 / 5 - margin;
+    glm::vec2 startPos(margin, margin);
+
+    // 渲染表头
+    header.Render(renderer, textRenderer, headerHeight, keyWidth, valueWidth, startPos);
+
+    // 渲染数据行
+    for (size_t i = 0; i < lines.size(); i++) {
+        glm::vec2 rowPos(startPos.x, startPos.y + headerHeight + i * rowHeight);
+        lines[i].Render(renderer, textRenderer, rowHeight, keyWidth, valueWidth, rowPos);
     }
 }
