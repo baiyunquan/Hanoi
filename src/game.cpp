@@ -22,6 +22,7 @@ TextRenderer* Text;
 std::map<int , Hanoi*> towers;
 StepManager* stepManager;
 EventBus eventBus{};
+Form* testForm;
 
 GameObject* RecordButton;
 GameObject* StopButton;
@@ -137,6 +138,14 @@ void Game::Init()
             messageBox->setActive(true);
         }
         });
+
+    // 初始化Form测试用例
+    std::vector<std::string> valueNames = { "Value1", "Value2", "Value3" };
+    testForm = new Form("TestKey", valueNames);
+
+    // 添加一些测试数据
+    std::vector<std::string> testData = { "Item1", "Item2", "Item3" };
+    testForm->updateData(testData);
 }
 
 bool Game::beginRecord(std::string name) {
@@ -155,7 +164,7 @@ void Game::ProcessInput(float dt)
 }
 
 void Game::ProcessMouse(float dt, GLFWwindow* window) {
-    // 检测是否为完整的鼠标点击（按下并释放）
+/*    // 检测是否为完整的鼠标点击（按下并释放）
     const bool isCompleteClick = (!mousePressed && mouseWasPressed);
     mouseWasPressed = mousePressed;
 
@@ -197,7 +206,7 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
         stepManager->endRecord();
     }
 
-    messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));
+    messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));*/
 }
 
 // 清除其他塔的盘子选中状态
@@ -274,7 +283,7 @@ void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int
 
 void Game::Render()
 {
-    // Render towers
+/*    // Render towers
     for (auto& [num, tower] : towers) {
 		tower->Draw(*Renderer , *Text);
     }
@@ -300,5 +309,9 @@ void Game::Render()
     LoadButton->DrawText(*Text);
 
     textInput->Draw(*Renderer, *Text);
-    messageBox->Draw(*Renderer, *Text);
+    messageBox->Draw(*Renderer, *Text);*/
+
+
+    // 添加Form渲染
+    testForm->Render(*Renderer, *Text, Width, Height);
 }

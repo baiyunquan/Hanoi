@@ -65,5 +65,5 @@ bool StepManager::switchNum(const std::string& source, int raw, int target) {
 void StepManager::Render(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer,
     glm::vec2 position, glm::vec2 size) {
     
-    }
+    
 }

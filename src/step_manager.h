@@ -31,8 +31,6 @@ private:
     std::vector<Move> temp{};
     std::string currentRecordingName{};
 
-    // 表头对象
-    Header tableHeader{ "Name", {"View", "Switch", "Load"} };
 };
 
 #endif // !STEP_MANAGER_H
