@@ -31,14 +31,16 @@ public:
     void Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float screenWidth, float screenHeight);
 
     void onMouseReleased(float x, float y);
-    void regCallBack(std::function<void(std::string&, std::string&)>& callback);
+    std::string movesToString(const std::vector<Move>& moves);
+
+    void regViewCall(std::function<void(std::string &)> callback);
 private:
     std::map<std::string, std::vector<Move>> data{};
     std::vector<Move> temp{};
     std::string currentRecordingName{};
 
     // void callback( keyStr , valueStr)
-    std::function<void(std::string&, std::string&)> callBack;
+    std::function<void(std::string&)> viewCallBack;
 };
 
 #endif // !STEP_MANAGER_H

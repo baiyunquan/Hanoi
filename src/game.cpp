@@ -138,6 +138,13 @@ void Game::Init()
         }
         });
 
+    stepManager->regViewCall([this](const std::string& result) {
+        // 处理输入完成后的逻辑
+            std::cout << "Display result: " << result << std::endl;
+            messageBox->setMessage(result);
+            messageBox->setActive(true);
+        });
+
 }
 
 bool Game::beginRecord(std::string name) {
@@ -211,7 +218,7 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     }
 
     if (State == GAME_LOAD) {
-
+        stepManager->onMouseReleased(cursorX, cursorY);
     }
     
 }
@@ -290,6 +297,7 @@ void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int
 
 void Game::Render()
 {
+    messageBox->Draw(*Renderer, *Text);
     if (State == GAME_ACTIVE) {
         // Render towers
         for (auto& [num, tower] : towers) {
@@ -317,7 +325,6 @@ void Game::Render()
         LoadButton->DrawText(*Text);
 
         textInput->Draw(*Renderer, *Text);
-        messageBox->Draw(*Renderer, *Text);
     }
 
     if (State == GAME_LOAD) {

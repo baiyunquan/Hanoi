@@ -36,7 +36,6 @@ public:
 	void updateData(const std::vector<std::string>& data);
 	void Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float screenWidth, float screenHeight);
 
-private:
 	Header header;
 	std::vector<Line> lines;
 };

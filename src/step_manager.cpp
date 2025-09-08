@@ -73,10 +73,6 @@ bool StepManager::switchNum(const std::string& source, int raw, int target) {
     return true;
 }
 
-void StepManager::regCallBack(std::function<void(std::string&, std::string&)>& callback) {
-    callBack = callback;
-}
-
 // 新增的渲染函数实现
 void StepManager::Render(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer,
     float width , float height) {
@@ -84,5 +80,34 @@ void StepManager::Render(SpriteRenderer& spriteRenderer, TextRenderer& textRende
 }
 
 void StepManager::onMouseReleased(float x, float y) {
+    for (Line line : form->lines) {
+        auto& view = line.values[0];
+        if (view.isChosen(x, y)) {
+            if(viewCallBack)
+                this->viewCallBack(movesToString(data[line.key]));
+        }
 
+        auto& sw = line.values[1];
+        auto& load = line.values[2];
+
+    }
+}
+
+std::string StepManager::movesToString(const std::vector<Move>& moves) {
+    std::ostringstream oss;
+
+    for (size_t i = 0; i < moves.size(); ++i) {
+        if (i > 0) {
+            oss << " , ";
+        }
+        oss << moves[i].from << "->" << moves[i].to;
+    }
+
+    return oss.str();
+}
+
+
+void StepManager::regViewCall(std::function<void(std::string&)> callback)
+{
+    viewCallBack = callback;
 }
