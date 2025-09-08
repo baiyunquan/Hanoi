@@ -70,8 +70,6 @@ int main(int argc, char *argv[])
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
 
-	Breakout.State = GAME_MENU;
-
     while (!glfwWindowShouldClose(window))
     {
         // calculate delta time

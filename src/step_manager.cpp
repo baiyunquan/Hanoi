@@ -22,6 +22,18 @@ void StepManager::endRecord() {
     isRecording = false;
     currentRecordingName.clear();
     temp.clear();
+
+    std::vector<std::string> keys;
+    // 使用std::transform算法
+    std::transform(data.begin(), data.end(), std::back_inserter(keys),
+        [](const auto& pair) { return pair.first; });
+    form->updateData(keys);
+}
+
+StepManager::StepManager()
+{
+    std::vector<std::string> valueNames = { "View", "Switch", "Load" };
+    form = new Form("Memory Name", valueNames);
 }
 
 void StepManager::insert(int from, int to) {
@@ -61,9 +73,16 @@ bool StepManager::switchNum(const std::string& source, int raw, int target) {
     return true;
 }
 
+void StepManager::regCallBack(std::function<void(std::string&, std::string&)>& callback) {
+    callBack = callback;
+}
+
 // 新增的渲染函数实现
 void StepManager::Render(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer,
-    glm::vec2 position, glm::vec2 size) {
-    
-    
+    float width , float height) {
+    form->Render(spriteRenderer, textRenderer, width, height);
+}
+
+void StepManager::onMouseReleased(float x, float y) {
+
 }

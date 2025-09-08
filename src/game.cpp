@@ -22,14 +22,13 @@ TextRenderer* Text;
 std::map<int , Hanoi*> towers;
 StepManager* stepManager;
 EventBus eventBus{};
-Form* testForm;
 
 GameObject* RecordButton;
 GameObject* StopButton;
 GameObject* LoadButton;
 
 Game::Game(unsigned int width, unsigned int height) 
-    : State(GAME_MENU), Keys(),KeysProcessed(), Width(width), Height(height) , Step(0)
+    : State(GAME_ACTIVE), Keys(),KeysProcessed(), Width(width), Height(height) , Step(0)
 {}
 
 Game::~Game()
@@ -139,13 +138,6 @@ void Game::Init()
         }
         });
 
-    // 初始化Form测试用例
-    std::vector<std::string> valueNames = { "Value1", "Value2", "Value3" };
-    testForm = new Form("TestKey", valueNames);
-
-    // 添加一些测试数据
-    std::vector<std::string> testData = { "Item1", "Item2", "Item3" };
-    testForm->updateData(testData);
 }
 
 bool Game::beginRecord(std::string name) {
@@ -164,7 +156,7 @@ void Game::ProcessInput(float dt)
 }
 
 void Game::ProcessMouse(float dt, GLFWwindow* window) {
-/*    // 检测是否为完整的鼠标点击（按下并释放）
+    // 检测是否为完整的鼠标点击（按下并释放）
     const bool isCompleteClick = (!mousePressed && mouseWasPressed);
     mouseWasPressed = mousePressed;
 
@@ -174,39 +166,54 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     double cursorX, cursorY;
     glfwGetCursorPos(window, &cursorX, &cursorY);
 
-    // 尝试选择点击的盘子
-    Plate* clickedPlate = nullptr;
-    Hanoi* sourceTower = nullptr;
+    if (messageBox->isActive()) {
+        messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));
+        return;
+    }
 
-    for (auto& [towerId, tower] : towers) {
-        if (tower->isEmpty()) continue;
+    if (State == GAME_ACTIVE) {
 
-        Plate& topPlate = tower->disks.begin()->second;
-        if (topPlate.isChosen(cursorX, cursorY)) {
-            // 取消其他塔顶盘子的选中状态
-            clearOtherPlateSelections(towerId);
+        // 尝试选择点击的盘子
+        Plate* clickedPlate = nullptr;
+        Hanoi* sourceTower = nullptr;
 
-            topPlate.select();
-            clickedPlate = &topPlate;
-            sourceTower = tower;
-            break;
+        for (auto& [towerId, tower] : towers) {
+            if (tower->isEmpty()) continue;
+
+            Plate& topPlate = tower->disks.begin()->second;
+            if (topPlate.isChosen(cursorX, cursorY)) {
+                // 取消其他塔顶盘子的选中状态
+                clearOtherPlateSelections(towerId);
+
+                topPlate.select();
+                clickedPlate = &topPlate;
+                sourceTower = tower;
+                break;
+            }
+        }
+
+        // 如果没有点击到盘子，检查柱子点击
+        if (!clickedPlate) {
+            handleTowerClick(cursorX, cursorY);
+        }
+
+        if (RecordButton->isChosen(cursorX, cursorY)) {
+            textInput->setActive(true);
+        }
+
+        if (StopButton->isChosen(cursorX, cursorY)) {
+            stepManager->endRecord();
+        }
+
+        if (LoadButton->isChosen(cursorX, cursorY)) {
+            State = GAME_LOAD;
         }
     }
 
-    // 如果没有点击到盘子，检查柱子点击
-    if (!clickedPlate) {
-        handleTowerClick(cursorX, cursorY);
-    }
+    if (State == GAME_LOAD) {
 
-    if (RecordButton->isChosen(cursorX, cursorY)) {
-        textInput->setActive(true);
     }
-
-    if (StopButton->isChosen(cursorX, cursorY)) {
-        stepManager->endRecord();
-    }
-
-    messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));*/
+    
 }
 
 // 清除其他塔的盘子选中状态
@@ -283,35 +290,37 @@ void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int
 
 void Game::Render()
 {
-/*    // Render towers
-    for (auto& [num, tower] : towers) {
-		tower->Draw(*Renderer , *Text);
+    if (State == GAME_ACTIVE) {
+        // Render towers
+        for (auto& [num, tower] : towers) {
+            tower->Draw(*Renderer, *Text);
+        }
+
+        // Render topbar
+        std::string tbText{ "Step: " };
+        tbText.append(std::to_string(Step));
+
+        Text->RenderTextInBox(tbText, sideBarX, 0, sideBarWidth, topBarHeight, 1.5f, glm::vec3(1.0f, 1.0f, 1.0f));
+
+        if (eventBus.IsDisplayingEvent()) {
+            std::string str = eventBus.GetCurrentMessage();
+            std::cout << str << std::endl;
+            Text->RenderTextInBox(str, 0, 0, this->Width - sideBarWidth, topBarHeight, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+        }
+
+        RecordButton->Draw(*Renderer);
+        StopButton->Draw(*Renderer);
+        LoadButton->Draw(*Renderer);
+
+        RecordButton->DrawText(*Text);
+        StopButton->DrawText(*Text);
+        LoadButton->DrawText(*Text);
+
+        textInput->Draw(*Renderer, *Text);
+        messageBox->Draw(*Renderer, *Text);
     }
 
-    // Render topbar
-    std::string tbText{"Step: "};
-    tbText.append(std::to_string(Step));
-
-    Text->RenderTextInBox(tbText, sideBarX, 0, sideBarWidth, topBarHeight, 1.5f, glm::vec3(1.0f, 1.0f, 1.0f));
-
-    if (eventBus.IsDisplayingEvent()) {
-        std::string str = eventBus.GetCurrentMessage();
-        std::cout << str << std::endl;
-        Text->RenderTextInBox(str, 0, 0, this->Width - sideBarWidth, topBarHeight, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+    if (State == GAME_LOAD) {
+        stepManager->Render(*Renderer, *Text, this->Width, this->Height);
     }
-
-    RecordButton->Draw(*Renderer);
-    StopButton->Draw(*Renderer);
-    LoadButton->Draw(*Renderer);
-
-    RecordButton->DrawText(*Text);
-    StopButton->DrawText(*Text);
-    LoadButton->DrawText(*Text);
-
-    textInput->Draw(*Renderer, *Text);
-    messageBox->Draw(*Renderer, *Text);*/
-
-
-    // 添加Form渲染
-    testForm->Render(*Renderer, *Text, Width, Height);
 }

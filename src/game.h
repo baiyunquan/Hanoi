@@ -41,7 +41,6 @@ public:
     bool mouseWasPressed = false;
     bool isTextInputMode = false;
 
-
     unsigned int     Width, Height;
     int topBarHeight;
     int sideBarWidth , sideBarHeight;

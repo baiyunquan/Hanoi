@@ -46,7 +46,7 @@ void Line::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float he
 Form::Form(std::string keyName, std::vector<std::string> valueName) :
     header(Header(keyName, valueName)) {}
 
-void Form::updateData(std::vector<std::string> data) {
+void Form::updateData(const std::vector<std::string>& data) {
     // 只添加不存在的key值
     for (const auto& key : data) {
         // 检查key是否已存在
@@ -72,9 +72,6 @@ void Form::updateData(std::vector<std::string> data) {
     }
 }
 
-void Form::regCallBack(std::function<void(std::string&, std::string&)>& callback) {
-    callBack = callback;
-}
 
 void Form::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float screenWidth, float screenHeight) {
     // 计算表单尺寸和位置

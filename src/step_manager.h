@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <algorithm> // 需要包含algorithm头文件
+#include <iterator>  // 需要包含iterator头文件
 #include "form.h"
 
 struct Move {
@@ -13,7 +15,10 @@ struct Move {
 
 class StepManager {
 public:
+    StepManager();
+
     bool isRecording = false;
+    Form* form;
 
     void insert(int from, int to);
     bool record(const std::string& name);
@@ -23,14 +28,17 @@ public:
     bool switchNum(const std::string& source, int raw, int target);
 
     // 新增的渲染函数
-    void Render(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer,
-        glm::vec2 position, glm::vec2 size);
+    void Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float screenWidth, float screenHeight);
 
+    void onMouseReleased(float x, float y);
+    void regCallBack(std::function<void(std::string&, std::string&)>& callback);
 private:
     std::map<std::string, std::vector<Move>> data{};
     std::vector<Move> temp{};
     std::string currentRecordingName{};
 
+    // void callback( keyStr , valueStr)
+    std::function<void(std::string&, std::string&)> callBack;
 };
 
 #endif // !STEP_MANAGER_H

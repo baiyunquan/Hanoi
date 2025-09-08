@@ -33,14 +33,10 @@ class Form {
 public:
 	Form(std::string keyName, std::vector<std::string> valueName);
 
-	void updateData(std::vector<std::string> data);
-	void regCallBack(std::function<void(std::string&, std::string&)>& callback);
+	void updateData(const std::vector<std::string>& data);
 	void Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float screenWidth, float screenHeight);
 
 private:
 	Header header;
 	std::vector<Line> lines;
-
-	// void callback( keyStr , valueStr)
-	std::function<void(std::string&, std::string&)> callBack;
 };
