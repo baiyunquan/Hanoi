@@ -104,7 +104,9 @@ void StepManager::onMouseReleased(float x, float y) {
                 this->switchCallBack(line.key);
         }
         auto& load = line.values[2];
+        if (load.isChosen(x, y)) {
 
+        }
     }
 }
 
@@ -130,4 +132,9 @@ void StepManager::regViewCall(std::function<void(std::string&)> callback)
 void StepManager::regSwCall(std::function<void(std::string&)> callback)
 {
     switchCallBack = callback;
+}
+
+void StepManager::regLoadCall(std::function<void(std::vector<Move>*)> callback)
+{
+    loadCallBack = callback;
 }

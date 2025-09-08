@@ -35,6 +35,7 @@ public:
 
     void regViewCall(std::function<void(std::string &)> callback);
     void regSwCall(std::function<void(std::string&)> callback);
+    void regLoadCall(std::function<void(std::vector<Move>*)> callback);
 private:
     std::map<std::string, std::vector<Move>> data{};
     std::vector<Move> temp{};
@@ -43,6 +44,7 @@ private:
     // void callback( keyStr , valueStr)
     std::function<void(std::string&)> viewCallBack;
     std::function<void(std::string&)> switchCallBack;
+    std::function<void(std::vector<Move>*)> loadCallBack;
 };
 
 #endif // !STEP_MANAGER_H

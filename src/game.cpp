@@ -156,6 +156,23 @@ void Game::Init()
         State = GAME_SWITCH;
     });
 
+    stepManager->regLoadCall([this](std::vector<Move>* load) {
+        timer.init(load);
+        State = GAME_ACTIVE;
+    });
+
+    timer.setCallBack([this](Move move) {
+        Hanoi* source = towers[move.from];
+        Hanoi* target = towers[move.to];
+        if (isMoveValid(source, target)) {
+            movePlate(*source, move.from, *target, move.to);
+        }
+        else {
+            eventBus.AddHighPriorityEvent("ERROR : Fail to Load Memory", 5.0f);
+            timer.reset();
+        }
+    });
+
 }
 
 bool Game::beginRecord(std::string name) {
@@ -165,6 +182,7 @@ bool Game::beginRecord(std::string name) {
 void Game::Update(float dt)
 {
     eventBus.Update(dt);
+    timer.update(dt);
 }
 
 
@@ -304,6 +322,10 @@ void Game::handleTowerClick(double cursorX, double cursorY) {
 // 检查移动是否合法
 bool Game::isMoveValid(Hanoi& targetTower, Plate& plate){
     return targetTower.isEmpty() || targetTower.getTop() > plate.level;
+}
+
+bool Game::isMoveValid(Hanoi* sourceTower, Hanoi* targetTower) {
+    return targetTower->isEmpty() || targetTower->getTop() > sourceTower->getTop();
 }
 
 // 辅助函数：执行盘子移动

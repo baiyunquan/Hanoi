@@ -20,6 +20,7 @@
 #include "hanoi.h"
 #include "text_input.h"
 #include "messagebox.h"
+#include "timer.h"
 
 using namespace irrklang;
 
@@ -52,6 +53,7 @@ public:
     TextInput* textInput;
     // 创建消息框
     MessageBox* messageBox;
+    Timer timer;
 
     unsigned int     Step;
     int towerNum = 3;
@@ -69,6 +71,7 @@ public:
     void clearOtherPlateSelections(int currentTowerId);
     void handleTowerClick(double cursorX, double cursorY);
     bool isMoveValid(Hanoi& targetTower, Plate& plate);
+    bool isMoveValid(Hanoi* sourceTower, Hanoi* targetTower);
     void Update(float dt);
     void movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int targetId);
     void Render();
