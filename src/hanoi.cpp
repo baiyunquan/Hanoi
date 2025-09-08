@@ -38,6 +38,7 @@ void Hanoi::Draw(SpriteRenderer& renderer , TextRenderer& textRenderer) {
 //	std::cout << pole.SizeY << std::endl;
 
 	base.Draw(renderer);
+	base.DrawText(textRenderer);
 	pole.Draw(renderer);
 
 	float bottom = pole.Position.y + pole.SizeY;

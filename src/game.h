@@ -27,7 +27,8 @@ using namespace irrklang;
 enum GameState {
     GAME_ACTIVE,
     GAME_MENU,
-    GAME_LOAD
+    GAME_LOAD,
+    GAME_SWITCH,
 };
 
 class Game
@@ -45,6 +46,8 @@ public:
     int topBarHeight;
     int sideBarWidth , sideBarHeight;
     int sideBarX;
+
+    std::string switchTemp;
 
     TextInput* textInput;
     // 创建消息框

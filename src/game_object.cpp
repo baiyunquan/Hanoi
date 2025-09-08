@@ -45,7 +45,11 @@ void GameObject::DrawText(TextRenderer& textRenderer)
         textScale = textRenderer.CalculateOptimalScale(text, textWidth, textHeight);
     }
     
-    textRenderer.RenderTextInBox(text, this->Position.x + xOffset, this->Position.y + yOffset, textWidth, textHeight, textScale, glm::vec3(1.0, 1.0, 1.0));
+    if (this->Color.x == 1.0f && this->Color.y == 1.0f && this->Color.z == 1.0f) {
+        textRenderer.RenderTextInBox(text, this->Position.x + xOffset, this->Position.y + yOffset, textWidth, textHeight, textScale, glm::vec3(0.0f));
+    } else {
+        textRenderer.RenderTextInBox(text, this->Position.x + xOffset, this->Position.y + yOffset, textWidth, textHeight, textScale, glm::vec3(1.0f));
+    }
 }
 
 bool GameObject::isChosen(float mouseX, float mouseY) {
@@ -61,5 +65,4 @@ std::string GameObject::getText()
 void GameObject::setText(std::string str)
 {
     text = str;
-    textScale = 0;
 }

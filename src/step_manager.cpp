@@ -65,8 +65,19 @@ bool StepManager::switchNum(const std::string& source, int raw, int target) {
         if (move.from == raw) {
             move.from = target;
         }
+        else {
+            if (move.from == target) {
+                move.from = raw;
+            }
+        }
+
         if (move.to == raw) {
             move.to = target;
+        }
+        else {
+            if (move.to == target) {
+                move.to = raw;
+            }
         }
     }
 
@@ -88,6 +99,10 @@ void StepManager::onMouseReleased(float x, float y) {
         }
 
         auto& sw = line.values[1];
+        if (sw.isChosen(x, y)) {
+            if (switchCallBack)
+                this->switchCallBack(line.key);
+        }
         auto& load = line.values[2];
 
     }
@@ -110,4 +125,9 @@ std::string StepManager::movesToString(const std::vector<Move>& moves) {
 void StepManager::regViewCall(std::function<void(std::string&)> callback)
 {
     viewCallBack = callback;
+}
+
+void StepManager::regSwCall(std::function<void(std::string&)> callback)
+{
+    switchCallBack = callback;
 }

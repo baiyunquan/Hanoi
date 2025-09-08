@@ -59,6 +59,10 @@ void Game::Init()
         towers.emplace(i ,new Hanoi(towerLevel, glm::vec2(posX, posY), glm::vec2(towerWidth, towerhHeight), true));
 	}
 
+    for (auto& [i, tower] : towers) {
+        tower->base.setText(std::to_string(i));
+    }
+
     topBarHeight = eightH;
     sideBarWidth = twelfthW;
     sideBarX = this->Width - sideBarWidth;
@@ -140,10 +144,17 @@ void Game::Init()
 
     stepManager->regViewCall([this](const std::string& result) {
         // 处理输入完成后的逻辑
-            std::cout << "Display result: " << result << std::endl;
-            messageBox->setMessage(result);
-            messageBox->setActive(true);
-        });
+        std::cout << "Display result: " << result << std::endl;
+        messageBox->setMessage(result);
+        messageBox->setActive(true);
+    });
+    stepManager->regSwCall([this](const std::string& result) {
+        // 处理输入完成后的逻辑
+        std::cout << "Display result: " << result << std::endl;
+        eventBus.AddHighPriorityEvent("Please Choose Source Tower" , 3.0f);
+        switchTemp = result;
+        State = GAME_SWITCH;
+    });
 
 }
 
@@ -161,6 +172,8 @@ void Game::ProcessInput(float dt)
 {
    
 }
+
+int from = -1, to = -1;
 
 void Game::ProcessMouse(float dt, GLFWwindow* window) {
     // 检测是否为完整的鼠标点击（按下并释放）
@@ -221,6 +234,24 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
         stepManager->onMouseReleased(cursorX, cursorY);
     }
     
+    if (State == GAME_SWITCH) {
+        for (auto& [i, tower] : towers) {
+            if (tower->base.isChosen(cursorX, cursorY)) {
+                if (from < 0) {
+                    from = i;
+                    tower->base.setText("From");
+                    eventBus.AddHighPriorityEvent("Please Choose Target Tower" , 3.0f);
+                }
+                else {
+                    if (to < 0) {
+                        to = i;
+                        stepManager->switchNum(switchTemp, from, to);
+                        State = GAME_ACTIVE;
+                    }
+                }
+            }
+        }
+    }
 }
 
 // 清除其他塔的盘子选中状态
@@ -298,7 +329,7 @@ void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int
 void Game::Render()
 {
     messageBox->Draw(*Renderer, *Text);
-    if (State == GAME_ACTIVE) {
+    if (State == GAME_ACTIVE || State == GAME_SWITCH) {
         // Render towers
         for (auto& [num, tower] : towers) {
             tower->Draw(*Renderer, *Text);
@@ -330,4 +361,6 @@ void Game::Render()
     if (State == GAME_LOAD) {
         stepManager->Render(*Renderer, *Text, this->Width, this->Height);
     }
+
+    
 }
