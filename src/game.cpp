@@ -158,6 +158,14 @@ void Game::Init()
 
     stepManager->regLoadCall([this](std::vector<Move>* load) {
         timer.init(load);
+        for (auto& [i, tower] : towers) {
+            for (auto& plate : tower->disks) {
+                if (plate.second.isSelect()) {
+                    plate.second.select();
+                }
+            }
+
+        }
         State = GAME_ACTIVE;
     });
 

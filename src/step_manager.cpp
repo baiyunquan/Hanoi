@@ -105,7 +105,7 @@ void StepManager::onMouseReleased(float x, float y) {
         }
         auto& load = line.values[2];
         if (load.isChosen(x, y)) {
-
+            this->loadCallBack(&(data[line.key]));
         }
     }
 }
