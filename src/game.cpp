@@ -11,7 +11,7 @@
 #include "text_renderer.h"
 #include "step_manager.h"
 #include "evenbus.h"
-
+#include "button.h"
 
 // Game-related State data
 SpriteRenderer    *Renderer;
@@ -23,8 +23,8 @@ std::map<int , Hanoi*> towers;
 StepManager* stepManager;
 EventBus eventBus{};
 
-GameObject* RecordButton;
-GameObject* StopButton;
+Button* RecordButton;
+Button* StopButton;
 GameObject* LoadButton;
 
 Game::Game(unsigned int width, unsigned int height) 
@@ -103,14 +103,14 @@ void Game::Init()
     float loadButtonY = topBarHeight + 2 * (buttonHeight + spacing);
 
     // 创建按钮对象
-    RecordButton = new GameObject(
+    RecordButton = new Button(
         glm::vec2(sideBarX, recordButtonY),
         glm::vec2(buttonWidth, buttonHeight),
         ResourceManager::GetTexture("block")
     );
     RecordButton->setText("Record");
 
-    StopButton = new GameObject(
+    StopButton = new Button(
         glm::vec2(sideBarX, stopButtonY),
         glm::vec2(buttonWidth, buttonHeight),
         ResourceManager::GetTexture("block")
@@ -136,6 +136,11 @@ void Game::Init()
     textInput->setOnSubmitCallback([this](const std::string& result) {
         // 处理输入完成后的逻辑
         std::cout << "Input result: " << result << std::endl;
+        if (result.size() == 0) {
+            messageBox->setMessage("ERROR : Please Choose Another Name");
+            messageBox->setActive(true);
+            return;
+        }
         if (!this->beginRecord(result)) {
             messageBox->setMessage("ERROR : Please Choose Another Name");
             messageBox->setActive(true);
@@ -191,6 +196,11 @@ void Game::Update(float dt)
 {
     eventBus.Update(dt);
     timer.update(dt);
+
+    if (State == GAME_ACTIVE) {
+        RecordButton->UpdateBounceAnimation(dt);
+        StopButton->UpdateBounceAnimation(dt);
+    }
 }
 
 
@@ -212,13 +222,14 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     double cursorX, cursorY;
     glfwGetCursorPos(window, &cursorX, &cursorY);
 
+    if (textInput->isActive()) return;
+
     if (messageBox->isActive()) {
         messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));
         return;
     }
 
     if (State == GAME_ACTIVE) {
-
         // 尝试选择点击的盘子
         Plate* clickedPlate = nullptr;
         Hanoi* sourceTower = nullptr;
@@ -245,10 +256,12 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
 
         if (RecordButton->isChosen(cursorX, cursorY)) {
             textInput->setActive(true);
+            RecordButton->StartBounceAnimation();
         }
 
         if (StopButton->isChosen(cursorX, cursorY)) {
             stepManager->endRecord();
+            StopButton->StartBounceAnimation();
         }
 
         if (LoadButton->isChosen(cursorX, cursorY)) {
