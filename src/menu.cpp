@@ -16,10 +16,10 @@ Menu::Menu(float width, float height)
     float startY = height * 0.35f;
 
     // 塔数量控制按钮
-    towerAdd = new Button(glm::vec2(leftColumnX, startY), buttonWidth, buttonHeight, glm::vec3(1.0f));
+    towerAdd = new Button(glm::vec2(leftColumnX, startY), buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
     towerAdd->setText("+");
 
-    towerSub = new Button(glm::vec2(rightColumnX, startY), buttonWidth, buttonHeight, glm::vec3(1.0f));
+    towerSub = new Button(glm::vec2(rightColumnX, startY), buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
     towerSub->setText("-");
 
     // 盘子数量控制按钮
@@ -53,34 +53,12 @@ Menu::Menu(float width, float height)
     okButton->setText("OK");
 }
 
-void Menu::Draw(SpriteRenderer sr, TextRenderer tr, float width, float height)
+void Menu::Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height)
 {
-    // 绘制所有按钮
-    towerAdd->Draw(sr);
-
-    towerSub->Draw(sr);
-
-
-    diskAdd->Draw(sr);
-
-
-    diskSub->Draw(sr);
-
-
-    soundOn->Draw(sr);
-
-
-    volumeAdd->Draw(sr);
-
-
-    volumeSub->Draw(sr);
-
-    okButton->Draw(sr);
-
 
     // 绘制标题 - 占用上方30%空间
     float titleHeight = height * 0.3f;
-    tr.RenderTextInBox("Hanoi Tower", 0, 0, width, titleHeight, 2.0f, glm::vec3(0.8f, 1.0f, 0.7f));
+    tr.RenderTextInBox("Hanoi Tower", 0, 0, width, titleHeight, 2.0f, glm::vec3(0.2f, 0.2f, 0.4f));
 
     // 绘制设置区域 - 占用下方70%空间
     float settingsY = titleHeight;
@@ -93,23 +71,48 @@ void Menu::Draw(SpriteRenderer sr, TextRenderer tr, float width, float height)
     float rowHeight = settingsHeight * 0.15f;
 
     // 塔数量
-    tr.RenderTextInBox("Towers:", labelX, startY, width * 0.3f, rowHeight, 1.2f, glm::vec3(1.0f));
-    tr.RenderTextInBox(std::to_string(towerCount), valueX, startY, width * 0.2f, rowHeight, 1.2f, glm::vec3(1.0f));
+    tr.RenderTextInBox("Towers:", labelX, startY, width * 0.3f, rowHeight, 1.2f, glm::vec3(0.2f, 0.2f, 0.2f));
+    tr.RenderTextInBox(std::to_string(towerCount), valueX, startY, width * 0.2f, rowHeight, 1.2f, glm::vec3(0.4f, 0.4f, 0.4f));
 
     // 盘子数量
-    tr.RenderTextInBox("Disks:", labelX, startY + rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(1.0f));
-    tr.RenderTextInBox(std::to_string(diskCount), valueX, startY + rowHeight, width * 0.2f, rowHeight, 1.2f, glm::vec3(1.0f));
+    tr.RenderTextInBox("Disks:", labelX, startY + rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(0.2f, 0.2f, 0.2f));
+    tr.RenderTextInBox(std::to_string(diskCount), valueX, startY + rowHeight, width * 0.2f, rowHeight, 1.2f, glm::vec3(0.4f, 0.4f, 0.4f));
 
     // 声音开关
-    tr.RenderTextInBox("Sound:", labelX, startY + 2 * rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(1.0f));
-//    tr.RenderTextInBox(soundEnabled ? "ON" : "OFF", valueX, startY + 2 * rowHeight, width * 0.2f, rowHeight, 1.2f,
-        //soundEnabled ? glm::vec3(0.2f, 0.6f, 0.2f) : glm::vec3(0.8f, 0.2f, 0.2f));
+    tr.RenderTextInBox("Sound:", labelX, startY + 2 * rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(0.2f, 0.2f, 0.2f));
+    tr.RenderTextInBox(soundEnabled ? "ON" : "OFF", valueX, startY + 2 * rowHeight, width * 0.2f, rowHeight, 1.2f,
+        soundEnabled ? glm::vec3(0.2f, 0.6f, 0.2f) : glm::vec3(0.8f, 0.2f, 0.2f));
 
     // 音量
-    tr.RenderTextInBox("Volume:", labelX, startY + 3 * rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(1.0f));
+    tr.RenderTextInBox("Volume:", labelX, startY + 3 * rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(0.2f, 0.2f, 0.2f));
     std::stringstream volumeStr;
     volumeStr << std::fixed << std::setprecision(1) << volume;
-    tr.RenderTextInBox(volumeStr.str(), valueX, startY + 3 * rowHeight, width * 0.2f, rowHeight, 1.2f, glm::vec3(1.0f));
+    tr.RenderTextInBox(volumeStr.str(), valueX, startY + 3 * rowHeight, width * 0.2f, rowHeight, 1.2f, glm::vec3(0.4f, 0.4f, 0.4f));
+
+    // 绘制所有按钮
+    towerAdd->Draw(sr);
+    towerAdd->DrawText(tr);
+
+    towerSub->Draw(sr);
+    towerSub->DrawText(tr);
+
+    diskAdd->Draw(sr);
+    diskAdd->DrawText(tr);
+
+    diskSub->Draw(sr);
+    diskSub->DrawText(tr);
+
+    soundOn->Draw(sr);
+    soundOn->DrawText(tr);
+
+    volumeAdd->Draw(sr);
+    volumeAdd->DrawText(tr);
+
+    volumeSub->Draw(sr);
+    volumeSub->DrawText(tr);
+
+    okButton->Draw(sr);
+    okButton->DrawText(tr);
 }
 
 void Menu::mouseClick(float x, float y)

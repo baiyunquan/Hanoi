@@ -15,9 +15,9 @@ public:
     Button* okButton; // 添加OK按钮
 
     Menu(float width, float height);
+    void Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height);
     ~Menu(); // 添加析构函数
 
-    void Draw(SpriteRenderer sr, TextRenderer tr, float width, float height);
     void Update(float dt); // 添加更新函数
     void mouseClick(float x, float y);
     void SetCallback(std::function<void(int, int, bool, float)> callback); // 设置回调函数

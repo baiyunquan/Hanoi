@@ -15,12 +15,12 @@
 #include "menu.h"
 
 // Game-related State data
-SpriteRenderer    *Renderer;
+SpriteRenderer* Renderer;
 ParticleGenerator* Particles;
 PostProcessor* Effects;
 ISoundEngine* SoundEngine;
 TextRenderer* Text;
-std::map<int , Hanoi*> towers;
+std::map<int, Hanoi*> towers;
 StepManager* stepManager;
 EventBus eventBus{};
 
@@ -30,9 +30,10 @@ GameObject* LoadButton;
 
 Menu* menu;
 
-Game::Game(unsigned int width, unsigned int height) 
-    : State(GAME_MENU), Keys(),KeysProcessed(), Width(width), Height(height) , Step(0)
-{}
+Game::Game(unsigned int width, unsigned int height)
+    : State(GAME_MENU), Keys(), KeysProcessed(), Width(width), Height(height), Step(0)
+{
+}
 
 Game::~Game()
 {
@@ -80,7 +81,7 @@ void Game::Init()
             << ", volume: " << volume << std::endl;
         this->enter();
         State = GAME_ACTIVE;
-    });
+        });
 }
 
 void Game::enter() {
@@ -170,14 +171,14 @@ void Game::enter() {
         std::cout << "Display result: " << result << std::endl;
         messageBox->setMessage(result);
         messageBox->setActive(true);
-    });
+        });
     stepManager->regSwCall([this](const std::string& result) {
         // 处理输入完成后的逻辑
         std::cout << "Display result: " << result << std::endl;
-        eventBus.AddHighPriorityEvent("Please Choose Source Tower" , 3.0f);
+        eventBus.AddHighPriorityEvent("Please Choose Source Tower", 3.0f);
         switchTemp = result;
         State = GAME_SWITCH;
-    });
+        });
 
     stepManager->regLoadCall([this](std::vector<Move>* load) {
         timer.init(load);
@@ -190,7 +191,7 @@ void Game::enter() {
 
         }
         State = GAME_ACTIVE;
-    });
+        });
 
     timer.setCallBack([this](Move move) {
         Hanoi* source = towers[move.from];
@@ -202,7 +203,7 @@ void Game::enter() {
             eventBus.AddHighPriorityEvent("ERROR : Fail to Load Memory", 5.0f);
             timer.reset();
         }
-    });
+        });
 
 }
 
@@ -224,14 +225,12 @@ void Game::Update(float dt)
 
 void Game::ProcessInput(float dt)
 {
-   
+
 }
 
 int from = -1, to = -1;
 
 void Game::ProcessMouse(float dt, GLFWwindow* window) {
-
-
     // 检测是否为完整的鼠标点击（按下并释放）
     const bool isCompleteClick = (!mousePressed && mouseWasPressed);
     mouseWasPressed = mousePressed;
@@ -242,17 +241,17 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     double cursorX, cursorY;
     glfwGetCursorPos(window, &cursorX, &cursorY);
 
-    if (messageBox->isActive()) {
-        messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));
-        return;
-    }
-
     if (State == GAME_MENU) {
         menu->mouseClick(cursorX, cursorY);
         return;
     }
 
     if (textInput->isActive()) return;
+
+    if (messageBox->isActive()) {
+        messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));
+        return;
+    }
 
     if (State == GAME_ACTIVE) {
         // 尝试选择点击的盘子
@@ -297,14 +296,14 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     if (State == GAME_LOAD) {
         stepManager->onMouseReleased(cursorX, cursorY);
     }
-    
+
     if (State == GAME_SWITCH) {
         for (auto& [i, tower] : towers) {
             if (tower->base.isChosen(cursorX, cursorY)) {
                 if (from < 0) {
                     from = i;
                     tower->base.setText("From");
-                    eventBus.AddHighPriorityEvent("Please Choose Target Tower" , 3.0f);
+                    eventBus.AddHighPriorityEvent("Please Choose Target Tower", 3.0f);
                 }
                 else {
                     if (to < 0) {
@@ -357,7 +356,7 @@ void Game::handleTowerClick(double cursorX, double cursorY) {
         if (targetTower->pole.isChosen(cursorX, cursorY)) {
             // 验证移动是否合法
             if (isMoveValid(*targetTower, *selectedPlate)) {
-                movePlate(*sourceTower,sourceId ,*targetTower , towerId);
+                movePlate(*sourceTower, sourceId, *targetTower, towerId);
             }
             break;
         }
@@ -366,7 +365,7 @@ void Game::handleTowerClick(double cursorX, double cursorY) {
 }
 
 // 检查移动是否合法
-bool Game::isMoveValid(Hanoi& targetTower, Plate& plate){
+bool Game::isMoveValid(Hanoi& targetTower, Plate& plate) {
     return targetTower.isEmpty() || targetTower.getTop() > plate.level;
 }
 
@@ -375,7 +374,7 @@ bool Game::isMoveValid(Hanoi* sourceTower, Hanoi* targetTower) {
 }
 
 // 辅助函数：执行盘子移动
-void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int targetId) {
+void Game::movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int targetId) {
     auto [plateLevel, plateObj] = sourceTower.PopTop();
 
     // 更新盘子位置
@@ -385,7 +384,7 @@ void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int
     // 创建并添加事件
     std::string eventMsg = "Switch Tower " + std::to_string(sourceId) +
         " To Tower " + std::to_string(targetId);
-    eventBus.AddMediumPriorityEvent(eventMsg , 2.0f);
+    eventBus.AddMediumPriorityEvent(eventMsg, 2.0f);
 
     stepManager->insert(sourceId, targetId);
     Step++;
@@ -396,12 +395,14 @@ void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int
 
 void Game::Render()
 {
-    messageBox->Draw(*Renderer, *Text);
     if (State == GAME_MENU) {
         menu->Draw(*Renderer, *Text, this->Width, this->Height);
         return;
     }
+
+    messageBox->Draw(*Renderer, *Text);
     if (State == GAME_ACTIVE || State == GAME_SWITCH) {
+
         // Render towers
         for (auto& [num, tower] : towers) {
             tower->Draw(*Renderer, *Text);
@@ -434,5 +435,5 @@ void Game::Render()
         stepManager->Render(*Renderer, *Text, this->Width, this->Height);
     }
 
-    
+
 }
