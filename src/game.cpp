@@ -37,7 +37,85 @@ Game::Game(unsigned int width, unsigned int height)
 
 Game::~Game()
 {
-
+    // 释放成员变量
+    if (textInput) {
+        delete textInput;
+        textInput = nullptr;
+    }
+    
+    if (messageBox) {
+        delete messageBox;
+        messageBox = nullptr;
+    }
+    
+    // 释放按钮资源
+    if (RecordButton) {
+        delete RecordButton;
+        RecordButton = nullptr;
+    }
+    
+    if (StopButton) {
+        delete StopButton;
+        StopButton = nullptr;
+    }
+    
+    if (LoadButton) {
+        delete LoadButton;
+        LoadButton = nullptr;
+    }
+    
+    // 释放塔资源
+    for (auto& [id, tower] : towers) {
+        if (tower) {
+            delete tower;
+        }
+    }
+    towers.clear();
+    
+    // 释放StepManager
+    if (stepManager) {
+        delete stepManager;
+        stepManager = nullptr;
+    }
+    
+    // 释放Menu
+    if (menu) {
+        delete menu;
+        menu = nullptr;
+    }
+    
+    // 释放渲染相关资源
+    if (Particles) {
+        delete Particles;
+        Particles = nullptr;
+    }
+    
+    if (Renderer) {
+        delete Renderer;
+        Renderer = nullptr;
+    }
+    
+    if (Effects) {
+        delete Effects;
+        Effects = nullptr;
+    }
+    
+    // 释放TextRenderer
+    if (Text) {
+        delete Text;
+        Text = nullptr;
+    }
+    
+    // 释放SoundEngine（使用drop而不是delete）
+    if (SoundEngine) {
+        SoundEngine->drop();
+        SoundEngine = nullptr;
+    }
+    
+    // 清除所有资源管理器中的资源
+    ResourceManager::Clear();
+}
+{
 }
 
 void Game::Init()
@@ -79,9 +157,11 @@ void Game::Init()
         std::cout << "Starting game with: " << towers << " towers, "
             << disks << " disks, sound " << (sound ? "ON" : "OFF")
             << ", volume: " << volume << std::endl;
+        this->towerNum = towers;
+        this->towerLevel = disks;
         this->enter();
         State = GAME_ACTIVE;
-        });
+    });
 }
 
 void Game::enter() {
@@ -97,7 +177,7 @@ void Game::enter() {
     float towerWidth = (this->Width - twentyW) / (float)this->towerNum;
     float towerhHeight = this->Height - tenH;
 
-    towers.emplace(0, new Hanoi(5, glm::vec2(twoW, eightH), glm::vec2(towerWidth, towerhHeight), false));
+    towers.emplace(0, new Hanoi(towerLevel, glm::vec2(twoW, eightH), glm::vec2(towerWidth, towerhHeight), false));
     for (int i = 1; i < this->towerNum; i++) {
         float posX = twoW + (i * towerWidth) + (sixW / (towerNum - 1)) * i;
         float posY = eightH;

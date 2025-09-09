@@ -5,89 +5,92 @@
 
 Menu::Menu(float width, float height)
 {
-    // 初始化按钮
-    float buttonWidth = width * 0.15f;
-    float buttonHeight = height * 0.05f;
-    float buttonSpacing = height * 0.02f;
+    // 设置区域 - 占屏幕底部70%区域
+    float centerX = width * 0.5f;
+    float settingsY = height * 0.3f;
+    float settingsHeight = height * 0.7f;
 
-    // 计算按钮位置
-    float leftColumnX = width * 0.2f;
-    float rightColumnX = width * 0.6f;
-    float startY = height * 0.35f;
+    float buttonColumnX = width * 0.65f;
+    float buttonWidth = width * 0.12f;
+    float buttonHeight = height * 0.07f;
+    float buttonSpacing = height * 0.03f;
 
-    // 塔数量控制按钮
-    towerAdd = new Button(glm::vec2(leftColumnX, startY), buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
+    // 计算列位置和行高 - 确保对齐
+    float startY = settingsY + settingsHeight * 0.1f + 10.0f;
+    float rowHeight = settingsHeight * 0.15f;
+
+    // 塔数量加减按钮 - 确保大小和位置完全一致
+    towerAdd = new Button(glm::vec2(buttonColumnX, startY), 
+                         buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
     towerAdd->setText("+");
 
-    towerSub = new Button(glm::vec2(rightColumnX, startY), buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
+    towerSub = new Button(glm::vec2(buttonColumnX + buttonWidth + buttonSpacing * 0.5f, startY), 
+                         buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
     towerSub->setText("-");
 
-    // 盘子数量控制按钮
-    diskAdd = new Button(glm::vec2(leftColumnX, startY + buttonHeight + buttonSpacing),
-        buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
+    // 盘数量加减按钮 - 确保大小和位置完全一致
+    diskAdd = new Button(glm::vec2(buttonColumnX, startY + rowHeight),
+                        buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
     diskAdd->setText("+");
 
-    diskSub = new Button(glm::vec2(rightColumnX, startY + buttonHeight + buttonSpacing),
-        buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
+    diskSub = new Button(glm::vec2(buttonColumnX + buttonWidth + buttonSpacing * 0.5f, startY + rowHeight),
+                        buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
     diskSub->setText("-");
 
     // 声音开关按钮
-    soundOn = new Button(glm::vec2(leftColumnX, startY + 2 * (buttonHeight + buttonSpacing)),
-        buttonWidth * 2 + (rightColumnX - leftColumnX - buttonWidth), buttonHeight,
-        glm::vec3(0.3f, 0.4f, 0.8f));
-    soundOn->setText("ON");
+    soundOn = new Button(glm::vec2(buttonColumnX, startY + 2 * rowHeight),
+                        buttonWidth * 2 + buttonSpacing * 0.5f, buttonHeight, glm::vec3(0.3f, 0.4f, 0.8f));
 
-    // 音量控制按钮
-    volumeAdd = new Button(glm::vec2(leftColumnX, startY + 3 * (buttonHeight + buttonSpacing)),
-        buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
+    // 音量加减按钮 - 确保大小和位置完全一致
+    volumeAdd = new Button(glm::vec2(buttonColumnX, startY + 3 * rowHeight),
+                          buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
     volumeAdd->setText("+");
 
-    volumeSub = new Button(glm::vec2(rightColumnX, startY + 3 * (buttonHeight + buttonSpacing)),
-        buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
+    volumeSub = new Button(glm::vec2(buttonColumnX + buttonWidth + buttonSpacing * 0.5f, startY + 3 * rowHeight),
+                          buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
     volumeSub->setText("-");
 
     // OK按钮
-    float okButtonY = startY + 4 * (buttonHeight + buttonSpacing);
-    okButton = new Button(glm::vec2(width * 0.4f, okButtonY),
-        width * 0.2f, buttonHeight * 1.5f, glm::vec3(0.1f, 0.7f, 0.1f));
+    okButton = new Button(glm::vec2(centerX - width * 0.125f, startY + 4.5f * rowHeight),
+                         width * 0.25f, buttonHeight * 1.3f, glm::vec3(0.1f, 0.7f, 0.1f));
     okButton->setText("OK");
 }
 
 void Menu::Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height)
 {
-
-    // 绘制标题 - 占用上方30%空间
+    // 绘制标题 - 占屏幕顶部30%区域
     float titleHeight = height * 0.3f;
-    tr.RenderTextInBox("Hanoi Tower", 0, 0, width, titleHeight, 2.0f, glm::vec3(0.2f, 0.2f, 0.4f));
+    tr.RenderTextInBox("Hanoi Tower", 0, 0, width, titleHeight, 2.0f, glm::vec3(0.4f, 0.4f, 0.8f));
 
-    // 绘制设置区域 - 占用下方70%空间
+    // 设置区域 - 占屏幕底部70%区域
     float settingsY = titleHeight;
     float settingsHeight = height - titleHeight;
 
-    // 绘制设置项标签
-    float labelX = width * 0.05f;
-    float valueX = width * 0.35f;
+    // 计算列位置和行高 - 确保对齐
+    float labelColumnX = width * 0.25f;
+    float valueColumnX = width * 0.45f;
+    float columnWidth = width * 0.15f;
     float startY = settingsY + settingsHeight * 0.1f;
     float rowHeight = settingsHeight * 0.15f;
 
-    // 塔数量
-    tr.RenderTextInBox("Towers:", labelX, startY, width * 0.3f, rowHeight, 1.2f, glm::vec3(0.2f, 0.2f, 0.2f));
-    tr.RenderTextInBox(std::to_string(towerCount), valueX, startY, width * 0.2f, rowHeight, 1.2f, glm::vec3(0.4f, 0.4f, 0.4f));
+    // 塔数量 - 确保标签、数值和按钮对齐
+    tr.RenderTextInBox("Towers:", labelColumnX, startY, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
+    tr.RenderTextInBox(std::to_string(towerCount), valueColumnX, startY, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
 
-    // 盘子数量
-    tr.RenderTextInBox("Disks:", labelX, startY + rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(0.2f, 0.2f, 0.2f));
-    tr.RenderTextInBox(std::to_string(diskCount), valueX, startY + rowHeight, width * 0.2f, rowHeight, 1.2f, glm::vec3(0.4f, 0.4f, 0.4f));
+    // 盘数量 - 确保标签、数值和按钮对齐
+    tr.RenderTextInBox("Disks:", labelColumnX, startY + rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
+    tr.RenderTextInBox(std::to_string(diskCount), valueColumnX, startY + rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
 
-    // 声音开关
-    tr.RenderTextInBox("Sound:", labelX, startY + 2 * rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(0.2f, 0.2f, 0.2f));
-    tr.RenderTextInBox(soundEnabled ? "ON" : "OFF", valueX, startY + 2 * rowHeight, width * 0.2f, rowHeight, 1.2f,
-        soundEnabled ? glm::vec3(0.2f, 0.6f, 0.2f) : glm::vec3(0.8f, 0.2f, 0.2f));
+    // 声音设置 - 确保标签、数值和按钮对齐
+    tr.RenderTextInBox("Sound:", labelColumnX, startY + 2 * rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
+    tr.RenderTextInBox(soundEnabled ? "ON" : "OFF", valueColumnX, startY + 2 * rowHeight, columnWidth, rowHeight, 1.2f,
+                      soundEnabled ? glm::vec3(0.2f, 0.6f, 0.2f) : glm::vec3(0.8f, 0.2f, 0.2f));
 
-    // 音量
-    tr.RenderTextInBox("Volume:", labelX, startY + 3 * rowHeight, width * 0.3f, rowHeight, 1.2f, glm::vec3(0.2f, 0.2f, 0.2f));
+    // 音量设置 - 确保标签、数值和按钮对齐
+    tr.RenderTextInBox("Volume:", labelColumnX, startY + 3 * rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
     std::stringstream volumeStr;
     volumeStr << std::fixed << std::setprecision(1) << volume;
-    tr.RenderTextInBox(volumeStr.str(), valueX, startY + 3 * rowHeight, width * 0.2f, rowHeight, 1.2f, glm::vec3(0.4f, 0.4f, 0.4f));
+    tr.RenderTextInBox(volumeStr.str(), valueColumnX, startY + 3 * rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
 
     // 绘制所有按钮
     towerAdd->Draw(sr);
@@ -103,6 +106,7 @@ void Menu::Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height)
     diskSub->DrawText(tr);
 
     soundOn->Draw(sr);
+    soundOn->setText(soundEnabled ? "ON" : "OFF");
     soundOn->DrawText(tr);
 
     volumeAdd->Draw(sr);
@@ -137,7 +141,6 @@ void Menu::mouseClick(float x, float y)
     else if (soundOn->isChosen(x, y)) {
         soundOn->StartBounceAnimation();
         soundEnabled = !soundEnabled;
-        soundOn->setText(soundEnabled ? "ON" : "OFF");
     }
     else if (volumeAdd->isChosen(x, y)) {
         volumeAdd->StartBounceAnimation();
@@ -155,7 +158,7 @@ void Menu::mouseClick(float x, float y)
     }
 }
 
-// 添加更新函数来处理动画
+// 更新按钮动画状态
 void Menu::Update(float dt)
 {
     towerAdd->UpdateBounceAnimation(dt);
