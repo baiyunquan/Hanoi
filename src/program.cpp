@@ -118,6 +118,8 @@ void mouse_callback(GLFWwindow* window, int button, int action, int mods) {
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
+    if (Breakout.State == GAME_MENU) return;
+
     // 当用户按下ESC键时，关闭窗口
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         if (Breakout.textInput->isActive()) {

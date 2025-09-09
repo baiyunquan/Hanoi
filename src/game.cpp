@@ -12,6 +12,7 @@
 #include "step_manager.h"
 #include "evenbus.h"
 #include "button.h"
+#include "menu.h"
 
 // Game-related State data
 SpriteRenderer    *Renderer;
@@ -27,8 +28,10 @@ Button* RecordButton;
 Button* StopButton;
 GameObject* LoadButton;
 
+Menu* menu;
+
 Game::Game(unsigned int width, unsigned int height) 
-    : State(GAME_ACTIVE), Keys(),KeysProcessed(), Width(width), Height(height) , Step(0)
+    : State(GAME_MENU), Keys(),KeysProcessed(), Width(width), Height(height) , Step(0)
 {}
 
 Game::~Game()
@@ -39,34 +42,11 @@ Game::~Game()
 void Game::Init()
 {
     SoundEngine = createIrrKlangDevice();
-    messageBox = new MessageBox(this->Width, this->Height);
-
-    float tenH = this->Height * 0.1f;
-    float eightH = this->Height * 0.08f;
-
-    float twentyW = this->Width * 0.2f;
-    float twelfthW = this->Width * 0.12f;
-    float twoW = this->Width * 0.02f;
-    float sixW = this->Width * 0.06f;
-
-	float towerWidth = (this->Width - twentyW) / (float)this->towerNum;
-    float towerhHeight = this->Height - tenH;
-
-    towers.emplace(0 ,new Hanoi(5, glm::vec2(twoW, eightH), glm::vec2(towerWidth, towerhHeight), false));
-    for(int i = 1; i < this->towerNum; i++) {
-        float posX = twoW + (i * towerWidth) + (sixW / (towerNum - 1)) * i;
-        float posY = eightH;
-        towers.emplace(i ,new Hanoi(towerLevel, glm::vec2(posX, posY), glm::vec2(towerWidth, towerhHeight), true));
-	}
-
-    for (auto& [i, tower] : towers) {
-        tower->base.setText(std::to_string(i));
-    }
-
-    topBarHeight = eightH;
-    sideBarWidth = twelfthW;
-    sideBarX = this->Width - sideBarWidth;
-    sideBarHeight = this->Height - topBarHeight;
+    // Load Sound
+    SoundEngine->play2D("resources/audio/funky_stars.mp3", GL_TRUE);
+    // Load freetype
+    Text = new TextRenderer(this->Width, this->Height);
+    Text->Load("resources/fonts/arial.ttf", 24);
 
     // Load shaders
     ResourceManager::LoadShader("shaders/sprite/vertShader.glsl", "shaders/sprite/fragShader.glsl", nullptr, "sprite");
@@ -87,8 +67,50 @@ void Game::Init()
 
     // Set render-specific controls
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), 500);
-    Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite") , ResourceManager::GetShader("rectangle"));
+    Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"), ResourceManager::GetShader("rectangle"));
     Effects = new PostProcessor(ResourceManager::GetShader("post_processor"), this->Width, this->Height);
+
+    messageBox = new MessageBox(this->Width, this->Height);
+    menu = new Menu(this->Width, this->Height);
+
+    // 设置回调函数
+    menu->SetCallback([this](int towers, int disks, bool sound, float volume) {
+        std::cout << "Starting game with: " << towers << " towers, "
+            << disks << " disks, sound " << (sound ? "ON" : "OFF")
+            << ", volume: " << volume << std::endl;
+        this->enter();
+        State = GAME_ACTIVE;
+    });
+}
+
+void Game::enter() {
+
+    float tenH = this->Height * 0.1f;
+    float eightH = this->Height * 0.08f;
+
+    float twentyW = this->Width * 0.2f;
+    float twelfthW = this->Width * 0.12f;
+    float twoW = this->Width * 0.02f;
+    float sixW = this->Width * 0.06f;
+
+    float towerWidth = (this->Width - twentyW) / (float)this->towerNum;
+    float towerhHeight = this->Height - tenH;
+
+    towers.emplace(0, new Hanoi(5, glm::vec2(twoW, eightH), glm::vec2(towerWidth, towerhHeight), false));
+    for (int i = 1; i < this->towerNum; i++) {
+        float posX = twoW + (i * towerWidth) + (sixW / (towerNum - 1)) * i;
+        float posY = eightH;
+        towers.emplace(i, new Hanoi(towerLevel, glm::vec2(posX, posY), glm::vec2(towerWidth, towerhHeight), true));
+    }
+
+    for (auto& [i, tower] : towers) {
+        tower->base.setText(std::to_string(i));
+    }
+
+    topBarHeight = eightH;
+    sideBarWidth = twelfthW;
+    sideBarX = this->Width - sideBarWidth;
+    sideBarHeight = this->Height - topBarHeight;
 
     // Add buttons
     // 计算按钮的尺寸和位置
@@ -123,11 +145,7 @@ void Game::Init()
         ResourceManager::GetTexture("block")
     );
     LoadButton->setText("Load");
-    // Load Sound
-    SoundEngine->play2D("resources/audio/funky_stars.mp3", GL_TRUE);
-    // Load freetype
-    Text = new TextRenderer(this->Width, this->Height);
-    Text->Load("resources/fonts/arial.ttf", 24);
+
     // Load Step Manager
     stepManager = new StepManager();
 
@@ -212,6 +230,8 @@ void Game::ProcessInput(float dt)
 int from = -1, to = -1;
 
 void Game::ProcessMouse(float dt, GLFWwindow* window) {
+
+
     // 检测是否为完整的鼠标点击（按下并释放）
     const bool isCompleteClick = (!mousePressed && mouseWasPressed);
     mouseWasPressed = mousePressed;
@@ -222,12 +242,17 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     double cursorX, cursorY;
     glfwGetCursorPos(window, &cursorX, &cursorY);
 
-    if (textInput->isActive()) return;
-
     if (messageBox->isActive()) {
         messageBox->ProcessMouseClick(static_cast<float>(cursorX), static_cast<float>(cursorY));
         return;
     }
+
+    if (State == GAME_MENU) {
+        menu->mouseClick(cursorX, cursorY);
+        return;
+    }
+
+    if (textInput->isActive()) return;
 
     if (State == GAME_ACTIVE) {
         // 尝试选择点击的盘子
@@ -372,6 +397,10 @@ void Game::movePlate(Hanoi& sourceTower,int sourceId ,  Hanoi& targetTower , int
 void Game::Render()
 {
     messageBox->Draw(*Renderer, *Text);
+    if (State == GAME_MENU) {
+        menu->Draw(*Renderer, *Text, this->Width, this->Height);
+        return;
+    }
     if (State == GAME_ACTIVE || State == GAME_SWITCH) {
         // Render towers
         for (auto& [num, tower] : towers) {
