@@ -35,8 +35,7 @@ Menu* menu;
 
 Game::Game(unsigned int width, unsigned int height)
     : State(GAME_MENU), Keys(), KeysProcessed(), Width(width), Height(height), Step(0)
-{
-}
+{}
 
 Game::~Game()
 {
@@ -128,7 +127,14 @@ void Game::Init()
     ResourceManager::LoadShader("shaders/post_processor/vertShader.glsl", "shaders/post_processor/fragShader.glsl", nullptr, "post_processor");
     ResourceManager::LoadShader("shaders/rectangle/vertShader.glsl", "shaders/rectangle/fragShader.glsl", nullptr, "rectangle");
     // Configure shaders
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(this->Width), static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(
+        0.0f,
+        static_cast<float>(this->Width),
+        static_cast<float>(this->Height),
+        0.0f,
+        -1.0f,
+        1.0f
+    );
     ResourceManager::GetShader("sprite").Use().SetInteger("sprite", 0);
     ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
     ResourceManager::GetShader("particle").Use().SetInteger("sprite", 0);
@@ -184,12 +190,12 @@ void Game::enter() {
     float twoW = this->Width * 0.02f;
     float sixW = this->Width * 0.06f;
 
-    float towerWidth = (this->Width - twentyW) / (float)this->towerNum;
+    float towerWidth = (this->Width - twentyW) / static_cast<float>(this->towerNum);
     float towerhHeight = this->Height - tenH;
 
     towers.emplace(0, new Hanoi(towerLevel, glm::vec2(twoW, eightH), glm::vec2(towerWidth, towerhHeight), false));
     for (int i = 1; i < this->towerNum; i++) {
-        float posX = twoW + (i * towerWidth) + (sixW / (towerNum - 1)) * i;
+        float posX = twoW + (static_cast<float>(i) * towerWidth) + (sixW / static_cast<float>(towerNum - 1)) * static_cast<float>(i);
         float posY = eightH;
         towers.emplace(i, new Hanoi(towerLevel, glm::vec2(posX, posY), glm::vec2(towerWidth, towerhHeight), true));
     }
@@ -336,8 +342,11 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     if (!isCompleteClick) return;
 
     // 获取鼠标位置
-    double cursorX, cursorY;
-    glfwGetCursorPos(window, &cursorX, &cursorY);
+    double dmouseX, dmouseY;
+    glfwGetCursorPos(window, &dmouseX, &dmouseY);
+
+    float cursorX = static_cast<float>(dmouseX);
+    float cursorY = static_cast<float>(dmouseY);
 
     if (State == GAME_MENU) {
         menu->mouseClick(cursorX, cursorY);
@@ -439,7 +448,7 @@ void Game::clearOtherPlateSelections(int currentTowerId) {
 }
 
 // 处理塔点击事件
-void Game::handleTowerClick(double cursorX, double cursorY) {
+void Game::handleTowerClick(float cursorX, float cursorY) {
     // 查找当前选中的盘子
     Plate* selectedPlate = nullptr;
 

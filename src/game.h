@@ -73,7 +73,7 @@ public:
     void ProcessInput(float dt);
     void ProcessMouse(float dt, GLFWwindow* window);
     void clearOtherPlateSelections(int currentTowerId);
-    void handleTowerClick(double cursorX, double cursorY);
+    void handleTowerClick(float cursorX, float cursorY);
     bool isMoveValid(Hanoi& targetTower, Plate& plate);
     bool isMoveValid(Hanoi* sourceTower, Hanoi* targetTower);
     void Update(float dt);

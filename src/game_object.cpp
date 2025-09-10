@@ -34,10 +34,10 @@ void GameObject::DrawText(TextRenderer& textRenderer)
 {
     if (text.empty()) return;
 
-    float textWidth = this->SizeX * 0.8;
-    float textHeight = this->SizeY * 0.8;
-    float xOffset = this->SizeX * 0.1;
-    float yOffset = this->SizeY * 0.1;
+    float textWidth = this->SizeX * 0.8f;
+    float textHeight = this->SizeY * 0.8f;
+    float xOffset = this->SizeX * 0.1f;
+    float yOffset = this->SizeY * 0.1f;
     if (text.size() < 10) {
         textScale = 1.5f;
     }
