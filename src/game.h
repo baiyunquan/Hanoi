@@ -42,11 +42,13 @@ public:
     bool mousePressed = false;
     bool mouseWasPressed = false;
     bool isTextInputMode = false;
+    bool sound = false;
 
     unsigned int     Width, Height;
     int topBarHeight;
     int sideBarWidth , sideBarHeight;
     int sideBarX;
+    float volume = 1.0f;
 
     std::string switchTemp;
 
@@ -66,6 +68,7 @@ public:
     void Init();
     void enter();
     bool beginRecord(std::string name);
+    void clearPlateSelections();
     // ”Œœ∑—≠ª∑
     void ProcessInput(float dt);
     void ProcessMouse(float dt, GLFWwindow* window);
@@ -76,6 +79,7 @@ public:
     void Update(float dt);
     void movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int targetId);
     void Render();
+    void soundTrigger();
 
     void ResetLevel();
 };

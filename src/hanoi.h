@@ -20,6 +20,7 @@ public:
 	std::pair<int , Plate> PopTop();
 
 	bool isEmpty();
+	Plate* getTopPlate();
 	bool isFull();
 	int getTop();
 

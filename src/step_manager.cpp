@@ -32,8 +32,10 @@ void StepManager::endRecord() {
 
 StepManager::StepManager()
 {
-    std::vector<std::string> valueNames = { "View", "Switch", "Load" };
+    std::vector<std::string> valueNames = { "View", "Switch", "Load"  ,"Copy"};
     form = new Form("Memory Name", valueNames);
+    exit = new GameObject(glm::vec2(0.0f, 0.0f), 80.0f, 50.0f);
+	exit->setText("Exit");
 }
 
 void StepManager::insert(int from, int to) {
@@ -88,6 +90,8 @@ bool StepManager::switchNum(const std::string& source, int raw, int target) {
 void StepManager::Render(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer,
     float width , float height) {
     form->Render(spriteRenderer, textRenderer, width, height);
+    exit->Draw(spriteRenderer);
+    exit->DrawText(textRenderer);
 }
 
 void StepManager::onMouseReleased(float x, float y) {
@@ -96,17 +100,23 @@ void StepManager::onMouseReleased(float x, float y) {
         if (view.isChosen(x, y)) {
             if(viewCallBack)
                 this->viewCallBack(movesToString(data[line.key]));
+            return;
         }
 
         auto& sw = line.values[1];
         if (sw.isChosen(x, y)) {
             if (switchCallBack)
                 this->switchCallBack(line.key);
+            return;
         }
         auto& load = line.values[2];
         if (load.isChosen(x, y)) {
             this->loadCallBack(&(data[line.key]));
+            return;
         }
+    }
+    if (exit->isChosen(x, y)) {
+
     }
 }
 

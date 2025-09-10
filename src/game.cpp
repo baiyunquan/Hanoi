@@ -18,7 +18,10 @@
 SpriteRenderer* Renderer;
 ParticleGenerator* Particles;
 PostProcessor* Effects;
+
 ISoundEngine* SoundEngine;
+ISoundSource* trigger;
+
 TextRenderer* Text;
 std::map<int, Hanoi*> towers;
 StepManager* stepManager;
@@ -111,18 +114,10 @@ Game::~Game()
         SoundEngine->drop();
         SoundEngine = nullptr;
     }
-    
-    // 清除所有资源管理器中的资源
-    ResourceManager::Clear();
-}
-{
 }
 
 void Game::Init()
 {
-    SoundEngine = createIrrKlangDevice();
-    // Load Sound
-    SoundEngine->play2D("resources/audio/funky_stars.mp3", GL_TRUE);
     // Load freetype
     Text = new TextRenderer(this->Width, this->Height);
     Text->Load("resources/fonts/arial.ttf", 24);
@@ -159,12 +154,27 @@ void Game::Init()
             << ", volume: " << volume << std::endl;
         this->towerNum = towers;
         this->towerLevel = disks;
+        this->volume = volume;
+        this->sound = sound;
         this->enter();
         State = GAME_ACTIVE;
     });
 }
 
 void Game::enter() {
+    SoundEngine = createIrrKlangDevice();
+    if (!SoundEngine)
+    {
+        std::cout << "Fail to load SoundEngine" << std::endl;
+    }
+    // Load Sound
+    if (sound) {
+        ISoundSource* background = SoundEngine->addSoundSourceFromFile("resources/audio/funky_stars.mp3");
+        background->setDefaultVolume(volume / 3);
+        SoundEngine->play2D(background, true);
+		trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
+    }
+
 
     float tenH = this->Height * 0.1f;
     float eightH = this->Height * 0.08f;
@@ -236,7 +246,7 @@ void Game::enter() {
         // 处理输入完成后的逻辑
         std::cout << "Input result: " << result << std::endl;
         if (result.size() == 0) {
-            messageBox->setMessage("ERROR : Please Choose Another Name");
+            messageBox->setMessage("ERROR : Please Enter Something");
             messageBox->setActive(true);
             return;
         }
@@ -244,7 +254,7 @@ void Game::enter() {
             messageBox->setMessage("ERROR : Please Choose Another Name");
             messageBox->setActive(true);
         }
-        });
+    });
 
     stepManager->regViewCall([this](const std::string& result) {
         // 处理输入完成后的逻辑
@@ -262,33 +272,37 @@ void Game::enter() {
 
     stepManager->regLoadCall([this](std::vector<Move>* load) {
         timer.init(load);
-        for (auto& [i, tower] : towers) {
-            for (auto& plate : tower->disks) {
-                if (plate.second.isSelect()) {
-                    plate.second.select();
-                }
-            }
-
-        }
+		clearPlateSelections();
         State = GAME_ACTIVE;
-        });
+    });
 
     timer.setCallBack([this](Move move) {
         Hanoi* source = towers[move.from];
         Hanoi* target = towers[move.to];
         if (isMoveValid(source, target)) {
+            source->getTopPlate()->select();
             movePlate(*source, move.from, *target, move.to);
         }
         else {
             eventBus.AddHighPriorityEvent("ERROR : Fail to Load Memory", 5.0f);
             timer.reset();
         }
-        });
+    });
 
 }
 
 bool Game::beginRecord(std::string name) {
     return stepManager->record(name);
+}
+
+void Game::clearPlateSelections() {
+    for (auto& [i, tower] : towers) {
+        for (auto& plate : tower->disks) {
+            if (plate.second.isSelect()) {
+                plate.second.select();
+            }
+        }
+    }
 }
 
 void Game::Update(float dt)
@@ -341,13 +355,14 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
         for (auto& [towerId, tower] : towers) {
             if (tower->isEmpty()) continue;
 
-            Plate& topPlate = tower->disks.begin()->second;
-            if (topPlate.isChosen(cursorX, cursorY)) {
+            Plate* topPlate = tower->getTopPlate();
+            if (topPlate->isChosen(cursorX, cursorY)) {
+				soundTrigger();
                 // 取消其他塔顶盘子的选中状态
                 clearOtherPlateSelections(towerId);
 
-                topPlate.select();
-                clickedPlate = &topPlate;
+                topPlate->select();
+                clickedPlate = topPlate;
                 sourceTower = tower;
                 break;
             }
@@ -361,15 +376,18 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
         if (RecordButton->isChosen(cursorX, cursorY)) {
             textInput->setActive(true);
             RecordButton->StartBounceAnimation();
+            soundTrigger();
         }
 
         if (StopButton->isChosen(cursorX, cursorY)) {
             stepManager->endRecord();
             StopButton->StartBounceAnimation();
+            soundTrigger();
         }
 
         if (LoadButton->isChosen(cursorX, cursorY)) {
             State = GAME_LOAD;
+            soundTrigger();
         }
     }
 
@@ -388,7 +406,14 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
                 else {
                     if (to < 0) {
                         to = i;
+						towers[from]->base.setText(std::to_string(from));
+
                         stepManager->switchNum(switchTemp, from, to);
+
+                        eventBus.ClearAll();
+						eventBus.AddHighPriorityEvent("Switch Complete", 2.0f);
+
+						from = -1 , to = -1;
                         State = GAME_ACTIVE;
                     }
                 }
@@ -516,4 +541,10 @@ void Game::Render()
     }
 
 
+}
+
+void Game::soundTrigger()
+{
+    if (sound)
+        SoundEngine->play2D(trigger, false);
 }

@@ -37,6 +37,8 @@ public:
     void regSwCall(std::function<void(std::string&)> callback);
     void regLoadCall(std::function<void(std::vector<Move>*)> callback);
 private:
+    GameObject* exit;
+
     std::map<std::string, std::vector<Move>> data{};
     std::vector<Move> temp{};
     std::string currentRecordingName{};

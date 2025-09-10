@@ -78,6 +78,13 @@ bool Hanoi::isEmpty() {
 	return disks.empty();
 }
 
+Plate* Hanoi::getTopPlate() {
+	if (!isEmpty()) {
+		return &disks.begin()->second;
+	}
+	return nullptr;
+}
+
 bool Hanoi::isFull() {
 	return disks.size() >= (unsigned int)numDisks;
 }

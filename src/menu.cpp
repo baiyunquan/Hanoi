@@ -119,6 +119,18 @@ void Menu::Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height)
     okButton->DrawText(tr);
 }
 
+Menu::~Menu()
+{
+    delete towerAdd;
+    delete towerSub;
+    delete diskAdd;
+    delete diskSub;
+    delete soundOn;
+    delete volumeAdd;
+    delete volumeSub;
+    delete okButton;
+}
+
 void Menu::mouseClick(float x, float y)
 {
     // 检查每个按钮是否被点击
