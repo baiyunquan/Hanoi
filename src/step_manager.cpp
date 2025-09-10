@@ -22,7 +22,10 @@ void StepManager::endRecord() {
     isRecording = false;
     currentRecordingName.clear();
     temp.clear();
+    update();
+}
 
+void StepManager::update() {
     std::vector<std::string> keys;
     // 使用std::transform算法
     std::transform(data.begin(), data.end(), std::back_inserter(keys),
@@ -34,7 +37,7 @@ StepManager::StepManager()
 {
     std::vector<std::string> valueNames = { "View", "Switch", "Load"  ,"Copy"};
     form = new Form("Memory Name", valueNames);
-    exit = new GameObject(glm::vec2(0.0f, 0.0f), 80.0f, 50.0f);
+    exit = new GameObject(glm::vec2(0.0f, 0.0f), 80.0f, 50.0f , glm::vec3(1.0 , 0.0f , 0.0f));
 	exit->setText("Exit");
 }
 
@@ -44,15 +47,20 @@ void StepManager::insert(int from, int to) {
     }
 }
 
-bool StepManager::copy(const std::string& source, const std::string& newName) {
-    // 检查源是否存在且新名称有效
-    if (source == newName || data.count(source) == 0 ||
-        data.count(newName) > 0 || newName.empty()) {
+bool StepManager::copy(const std::string& source) {
+    std::string newName{ source };
+    while (data.count(newName) != 0) {
+        newName += '_';
+    }
+
+    // 检查源是否存在
+    if ( data.count(source) == 0) {
         return false;
     }
 
     // 复制数据
     data[newName] = data[source];
+    update();
     return true;
 }
 
@@ -100,23 +108,25 @@ void StepManager::onMouseReleased(float x, float y) {
         if (view.isChosen(x, y)) {
             if(viewCallBack)
                 this->viewCallBack(movesToString(data[line.key]));
-            return;
         }
 
         auto& sw = line.values[1];
         if (sw.isChosen(x, y)) {
             if (switchCallBack)
                 this->switchCallBack(line.key);
-            return;
         }
         auto& load = line.values[2];
         if (load.isChosen(x, y)) {
             this->loadCallBack(&(data[line.key]));
-            return;
+        }
+
+        auto& copyButton = line.values[3];
+        if (copyButton.isChosen(x, y)) {
+            copy(line.key);
         }
     }
-    if (exit->isChosen(x, y)) {
-
+    if (exit->isChosen(x, y) && exitCallBack) {
+        exitCallBack();
     }
 }
 
@@ -147,4 +157,9 @@ void StepManager::regSwCall(std::function<void(std::string&)> callback)
 void StepManager::regLoadCall(std::function<void(std::vector<Move>*)> callback)
 {
     loadCallBack = callback;
+}
+
+void StepManager::regExitCall(std::function<void()> callback)
+{
+    exitCallBack = callback;
 }

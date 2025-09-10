@@ -276,6 +276,10 @@ void Game::enter() {
         State = GAME_ACTIVE;
     });
 
+    stepManager->regExitCall([this]() {
+        State = GAME_ACTIVE;
+    });
+
     timer.setCallBack([this](Move move) {
         Hanoi* source = towers[move.from];
         Hanoi* target = towers[move.to];

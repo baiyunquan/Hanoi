@@ -23,8 +23,9 @@ public:
     void insert(int from, int to);
     bool record(const std::string& name);
     void endRecord();
+    void update();
 
-    bool copy(const std::string& source, const std::string& newName);
+    bool copy(const std::string& source);
     bool switchNum(const std::string& source, int raw, int target);
 
     // 新增的渲染函数
@@ -36,6 +37,7 @@ public:
     void regViewCall(std::function<void(std::string &)> callback);
     void regSwCall(std::function<void(std::string&)> callback);
     void regLoadCall(std::function<void(std::vector<Move>*)> callback);
+    void regExitCall(std::function<void()> callback);
 private:
     GameObject* exit;
 
@@ -47,6 +49,8 @@ private:
     std::function<void(std::string&)> viewCallBack;
     std::function<void(std::string&)> switchCallBack;
     std::function<void(std::vector<Move>*)> loadCallBack;
+
+    std::function<void()> exitCallBack;
 };
 
 #endif // !STEP_MANAGER_H
