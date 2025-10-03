@@ -15,7 +15,7 @@ struct Move {
 
 class StepManager {
 public:
-    StepManager();
+    StepManager(int N);
 
     bool isRecording = false;
     Form* form;
@@ -51,6 +51,8 @@ private:
     std::function<void(std::vector<Move>*)> loadCallBack;
 
     std::function<void()> exitCallBack;
+
+    void reverse(int& num, int a, int b);
 };
 
 #endif // !STEP_MANAGER_H

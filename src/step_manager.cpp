@@ -1,44 +1,60 @@
-#include "step_manager.h"
+ï»¿#include "step_manager.h"
 #include "form.h"
 
 bool StepManager::record(const std::string& name) {
-    // ¼ì²éÃû³ÆÊÇ·ñÎª¿Õ»òÒÑ´æÔÚ
+    // æ£€æŸ¥åç§°æ˜¯å¦ä¸ºç©ºæˆ–å·²å­˜åœ¨
     if (name.empty() || data.count(name) > 0) {
         return false;
     }
 
     currentRecordingName = name;
     isRecording = true;
-    temp.clear(); // Çå³ıÁÙÊ±Êı¾İ
+    temp.clear(); // æ¸…é™¤ä¸´æ—¶æ•°æ®
     return true;
 }
 
 void StepManager::endRecord() {
     if (isRecording && !currentRecordingName.empty()) {
-        // ±£´æ¼ÇÂ¼µÄ²½Öè
+        // ä¿å­˜è®°å½•çš„æ­¥éª¤
         data[currentRecordingName] = temp;
     }
 
     isRecording = false;
     currentRecordingName.clear();
     temp.clear();
-    update();
 }
 
 void StepManager::update() {
     std::vector<std::string> keys;
-    // Ê¹ÓÃstd::transformËã·¨
+    // ä½¿ç”¨std::transformç®—æ³•
     std::transform(data.begin(), data.end(), std::back_inserter(keys),
         [](const auto& pair) { return pair.first; });
     form->updateData(keys);
 }
 
-StepManager::StepManager()
+StepManager::StepManager(int N)
 {
     std::vector<std::string> valueNames = { "View", "Switch", "Load"  ,"Copy"};
     form = new Form("Memory Name", valueNames);
     exit = new GameObject(glm::vec2(0.0f, 0.0f), 80.0f, 50.0f , glm::vec3(1.0 , 0.0f , 0.0f));
 	exit->setText("Exit");
+
+    std::vector<Move> example{ {0 , 2} };
+    for (int n = 0; n < N - 1; n++) {
+        std::vector<Move> temp(example.begin(), example.end());
+        for (auto& unit : example) {
+            reverse(unit.from, 1, 2);
+            reverse(unit.to, 1, 2);
+        }
+        for (auto& unit : temp) {
+            reverse(unit.from, 0, 1);
+            reverse(unit.to, 0, 1);
+        }
+        example.insert(example.end(), { 0 , 2 });
+        example.insert(example.end(), temp.begin(), temp.end());
+    }
+    data.emplace("AUTO", example);
+    form->updateData({ "AUTO" });
 }
 
 void StepManager::insert(int from, int to) {
@@ -53,24 +69,24 @@ bool StepManager::copy(const std::string& source) {
         newName += '_';
     }
 
-    // ¼ì²éÔ´ÊÇ·ñ´æÔÚ
+    // æ£€æŸ¥æºæ˜¯å¦å­˜åœ¨
     if ( data.count(source) == 0) {
         return false;
     }
 
-    // ¸´ÖÆÊı¾İ
+    // å¤åˆ¶æ•°æ®
     data[newName] = data[source];
     update();
     return true;
 }
 
 bool StepManager::switchNum(const std::string& source, int raw, int target) {
-    // ¼ì²éÔ´ÊÇ·ñ´æÔÚ
+    // æ£€æŸ¥æºæ˜¯å¦å­˜åœ¨
     if (data.count(source) == 0) {
         return false;
     }
 
-    // ±éÀúËùÓĞÒÆ¶¯²½Öè£¬Ìæ»»Êı×Ö
+    // éå†æ‰€æœ‰ç§»åŠ¨æ­¥éª¤ï¼Œæ›¿æ¢æ•°å­—
     for (auto& move : data[source]) {
         if (move.from == raw) {
             move.from = target;
@@ -94,7 +110,7 @@ bool StepManager::switchNum(const std::string& source, int raw, int target) {
     return true;
 }
 
-// ĞÂÔöµÄäÖÈ¾º¯ÊıÊµÏÖ
+// æ–°å¢çš„æ¸²æŸ“å‡½æ•°å®ç°
 void StepManager::Render(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer,
     float width , float height) {
     form->Render(spriteRenderer, textRenderer, width, height);
@@ -162,4 +178,13 @@ void StepManager::regLoadCall(std::function<void(std::vector<Move>*)> callback)
 void StepManager::regExitCall(std::function<void()> callback)
 {
     exitCallBack = callback;
+}
+
+void StepManager::reverse(int& num, int a, int b) {
+    if (num == a) {
+        num = b;
+    }
+    else if (num == b) {
+        num = a;
+    }
 }

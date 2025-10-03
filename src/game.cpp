@@ -244,7 +244,7 @@ void Game::enter() {
     LoadButton->setText("Load");
 
     // Load Step Manager
-    stepManager = new StepManager();
+    stepManager = new StepManager(this->towerLevel);
 
     // Input Record Name
     textInput = new TextInput(this->Width, this->Height);
