@@ -4,8 +4,8 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <algorithm> // 需要包含algorithm头文件
-#include <iterator>  // 需要包含iterator头文件
+#include <algorithm>
+#include <iterator>
 #include "form.h"
 
 struct Move {
