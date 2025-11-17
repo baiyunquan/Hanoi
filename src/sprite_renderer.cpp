@@ -44,7 +44,7 @@ void SpriteRenderer::process_keyboard_input(bool keys[1024], float deltaTime)
     if (keys[GLFW_KEY_D])
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
-    // Ñ¡ÔñÒªµ÷ÕûµÄµÆ¹âÊôĞÔ
+    // Ñ¡ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ÄµÆ¹ï¿½ï¿½ï¿½ï¿½ï¿½
     if (keys[GLFW_KEY_1]) {
         currentLightProperty = 0;
         std::cout << "Selected: Ambient Light" << std::endl;
@@ -58,15 +58,15 @@ void SpriteRenderer::process_keyboard_input(bool keys[1024], float deltaTime)
         std::cout << "Selected: Specular Light" << std::endl;
     }
 
-    // µ÷ÕûÑ¡¶¨µÄµÆ¹âÊôĞÔ
-    if (keys[GLFW_KEY_EQUAL]) { // ¼ÓºÅ¼ü
+    // ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ÄµÆ¹ï¿½ï¿½ï¿½ï¿½ï¿½
+    if (keys[GLFW_KEY_EQUAL]) { // ï¿½ÓºÅ¼ï¿½
         adjustLightProperty(lightAdjustStep);
     }
-    if (keys[GLFW_KEY_MINUS]) { // ¼õºÅ¼ü
+    if (keys[GLFW_KEY_MINUS]) { // ï¿½ï¿½ï¿½Å¼ï¿½
         adjustLightProperty(-lightAdjustStep);
     }
 
-    // Ôö¼Óµ÷Õû²½³¤
+    // ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if (keys[GLFW_KEY_LEFT_BRACKET]) {
         lightAdjustStep = std::max(0.01f, lightAdjustStep - 0.01f);
         std::cout << "Adjust step: " << lightAdjustStep << std::endl;
@@ -109,7 +109,7 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
             glm::vec3(0.0f, 0.0f, -3.0f),
 } , camera() , diffuseMap(diffuseMap) , specularMap(specularMap)
 {
-    // ËùÓĞ×ÅÉ«Æ÷¶¼´Ó´«ÈëµÄÓ³ÉäÖĞ»ñÈ¡
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½Ğ»ï¿½È¡
     this->shader = shaders["sprite"];
     this->rectShader = shaders["rectangle"];
     this->lightingShader = shaders["lighting"];
@@ -210,6 +210,15 @@ void SpriteRenderer::DrawRectangle(glm::vec2 position, glm::vec2 size, float rot
     glBindVertexArray(0);
 }
 
+glm::vec3 SpriteRenderer::ScreenToWorldCoordinates(const glm::vec2& screenCoords) {
+    // ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½-10ï¿½ï¿½10ï¿½Ä·ï¿½Î§
+    float worldX = (screenCoords.x / SCR_WIDTH) * 4.0f;
+    float worldY = (screenCoords.y / SCR_HEIGHT) * 4.0f;
+
+    // ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½3Dï¿½ï¿½ï¿½ê£¬zï¿½ï¿½Ì¶ï¿½Îª0
+    return glm::vec3(worldX, worldY, 0.0f);
+}
+
 void SpriteRenderer::DrawCube(glm::vec3 position)
 {
 
@@ -217,14 +226,14 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
     lightingShader.SetVector3f("viewPos", camera.Position);
     lightingShader.SetFloat("material.shininess", 32.0f);
 
-    // ÉèÖÃ¹âÔ´ÊôĞÔ
-    // ¶¨Ïò¹â
+    // ï¿½ï¿½ï¿½Ã¹ï¿½Ô´ï¿½ï¿½ï¿½ï¿½
+    // ï¿½ï¿½ï¿½ï¿½ï¿½
     lightingShader.SetVector3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
     lightingShader.SetVector3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
     lightingShader.SetVector3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
     lightingShader.SetVector3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-    // µã¹âÔ´
+    // ï¿½ï¿½ï¿½Ô´
     for (unsigned int i = 0; i < pointLightPositions.size(); i++)
     {
         std::string index = std::to_string(i);
@@ -237,7 +246,7 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
         lightingShader.SetFloat(("pointLights[" + index + "].quadratic").c_str(), 0.032f);
     }
 
-    // ¾Û¹âµÆ
+    // ï¿½Û¹ï¿½ï¿½
     lightingShader.SetVector3f("spotLight.position", camera.Position);
     lightingShader.SetVector3f("spotLight.direction", camera.Front);
     lightingShader.SetVector3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -249,37 +258,40 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
     lightingShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
     lightingShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-    // ÉèÖÃÊÓÍ¼ºÍÍ¶Ó°¾ØÕó
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½Í¶Ó°ï¿½ï¿½ï¿½ï¿½
     lightingShader.SetMatrix4("projection", projection);
     lightingShader.SetMatrix4("view", view);
 
-    // ÉèÖÃÄ£ĞÍ¾ØÕó
+    // ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Í¾ï¿½ï¿½ï¿½
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
     lightingShader.SetMatrix4("model", model);
 
-    // ¼ÆËã·¨Ïß¾ØÕó
+    // ï¿½ï¿½ï¿½ã·¨ï¿½ß¾ï¿½ï¿½ï¿½
     glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
     lightingShader.SetMatrix3("normalMatrix", normalMatrix);
 
-    // °ó¶¨ÎÆÀí
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     glActiveTexture(GL_TEXTURE0);
     diffuseMap.Bind();
     glActiveTexture(GL_TEXTURE1);
     specularMap.Bind();
 
-    // »æÖÆÁ¢·½Ìå
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     glBindVertexArray(cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel , glm::vec3 lightColor)
 {
-    glm::vec3 diffuseColor = lightColor * glm::vec3(1.0f);   // ¡û Ô­À´ÊÇ 0.5f
-    glm::vec3 ambientColor = diffuseColor * glm::vec3(0.4f); // ¡û Ô­À´ÊÇ 0.2f
+    glm::vec3 diffuseColor = lightColor * glm::vec3(1.0f);   // ï¿½ï¿½ Ô­ï¿½ï¿½ï¿½ï¿½ 0.5f
+    glm::vec3 ambientColor = diffuseColor * glm::vec3(0.4f); // ï¿½ï¿½ Ô­ï¿½ï¿½ï¿½ï¿½ 0.2f
 
     diskShader.Use();
-    // Ê¹ÓÃÀà³ÉÔ±±äÁ¿ÖĞµÄ¹âÕÕ²ÎÊı£¬±£³ÖÒ»ÖÂĞÔ
+    diskShader.SetVector3f("light.position", pointLightPositions[0]);
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+    diskShader.SetVector3f("viewPos", camera.Position);
+// Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ĞµÄ¹ï¿½ï¿½Õ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
     diskShader.SetVector3f("light.ambient", diffuseColor);
     diskShader.SetVector3f("light.diffuse", ambientColor);
     diskShader.SetVector3f("light.specular", lightSpecular);
@@ -292,19 +304,19 @@ void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel , glm::vec3 lightColor
     diskShader.SetMatrix4("projection", projection);
     diskShader.SetMatrix4("view", view);
 
-    // »æÖÆµ×²¿Ô²Æ¬
+    // ï¿½ï¿½ï¿½Æµ×²ï¿½Ô²Æ¬
     diskShader.SetMatrix4("model", cylinderModel);
-    diskShader.SetFloat("normalSign", -1.0f); // µ×²¿Ô²Æ¬·¨ÏßÏòÏÂ
+    diskShader.SetFloat("normalSign", -1.0f); // ï¿½×²ï¿½Ô²Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     glBindVertexArray(rimVAO);
     glDrawArrays(GL_TRIANGLE_FAN, 0, rimVBOSize / 3);
 
-    // »æÖÆ¶¥²¿Ô²Æ¬ - Ê¹ÓÃÕıÈ·µÄtopVAO²¢ÉèÖÃ·¨ÏßÏòÉÏ
-    diskShader.SetFloat("normalSign", 1.0f); // ¶¥²¿Ô²Æ¬·¨ÏßÏòÉÏ
+    // ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½Ô²Æ¬ - Ê¹ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½topVAOï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    diskShader.SetFloat("normalSign", 1.0f); // ï¿½ï¿½ï¿½ï¿½Ô²Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     glBindVertexArray(topVAO);
     glDrawArrays(GL_TRIANGLE_FAN, 0, topVBOSize / 3);
 
     sideShader.Use();
-    // Ê¹ÓÃÀà³ÉÔ±±äÁ¿ÖĞµÄ¹âÕÕ²ÎÊı£¬±£³ÖÒ»ÖÂĞÔ
+    // Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ĞµÄ¹ï¿½ï¿½Õ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½
     sideShader.SetVector3f("light.ambient", diffuseColor);
     sideShader.SetVector3f("light.diffuse", ambientColor);
     sideShader.SetVector3f("light.specular", lightSpecular);
@@ -320,6 +332,30 @@ void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel , glm::vec3 lightColor
     sideShader.SetMatrix4("model", cylinderModel);
     glBindVertexArray(sideVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, sideVBOSize / 3);
+}
+
+void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
+{
+
+    // Ê¹ï¿½ï¿½ScreenToWorldCoordinatesï¿½ï¿½2Dï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îª3Dï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    glm::vec3 worldPos = ScreenToWorldCoordinates(position);
+
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Í¾ï¿½ï¿½ï¿½
+    glm::mat4 model = glm::mat4(1.0f);
+
+    // Ó¦ï¿½ï¿½Î»ï¿½ï¿½Æ½ï¿½Æ£ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê£©
+    model = glm::translate(model, worldPos);
+
+    // Ó¦ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½
+    model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    // Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // size.xï¿½ï¿½Îªï¿½ë¾¶ï¿½ï¿½size.yï¿½ï¿½Îªï¿½ß¶ï¿½
+    // ×¢ï¿½â£ºScreenToWorldCoordinatesï¿½ï¿½ï¿½ï¿½[-10,10]ï¿½ï¿½Î§ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Òªï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½
+    model = glm::scale(model, glm::vec3(size.x * 0.01f, size.y * 0.01f, size.x * 0.01f));
+
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½DrawCylinderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½
+    DrawCylinder(model, color);
 }
 
 void SpriteRenderer::DrawGround(float height)
@@ -344,11 +380,12 @@ void SpriteRenderer::DrawLightCube()
     
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
-    for (unsigned int i = 0; i < pointLightPositions.size(); i++)
+    //for (unsigned int i = 0; i < pointLightPositions.size(); i++)
+    for (unsigned int i = 0; i < 1; i++)
     {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pointLightPositions[i]);
-        model = glm::scale(model, glm::vec3(0.2f)); // ËõĞ¡¹âÔ´Á¢·½Ìå
+        model = glm::scale(model, glm::vec3(0.2f)); // ï¿½ï¿½Ğ¡ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         lightCubeShader.SetMatrix4("model", model);
         lightCubeShader.SetVector3f("lightColor", 1.0f, 1.0f, 1.0f);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -407,7 +444,7 @@ void SpriteRenderer::DrawLine(glm::vec2 start, glm::vec2 end, float lineWidth, g
     this->rectShader.Use();
     glLineWidth(lineWidth);
 
-    // ¼ÆËãÄ£ĞÍ¾ØÕó
+    // ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Í¾ï¿½ï¿½ï¿½
     glm::vec2 direction = end - start;
     float length = glm::length(direction);
 
@@ -506,11 +543,11 @@ void SpriteRenderer::initBoxData() {
 
 void SpriteRenderer::initGroundData()
 {
-    // ´´½¨µØÃæÍø¸ñ£¨ÀıÈç -10 µ½ +10£¬¹² 20x20 Ã×£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -10 ï¿½ï¿½ +10ï¿½ï¿½ï¿½ï¿½ 20x20 ï¿½×£ï¿½
     std::vector<float> groundVertices;
     for (float x = -netSize; x < netSize; x += netStep) {
         for (float z = -netSize; z < netSize; z += netStep) {
-            // Ã¿¸ö¸ñ×ÓÓÃÁ½¸öÈı½ÇĞÎ»æÖÆ
+            // Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½
             groundVertices.insert(groundVertices.end(), {
             x,     0.0f, z,
             x + netStep,0.0f, z,
@@ -545,27 +582,7 @@ void SpriteRenderer::initCylinderData()
     glGenVertexArrays(1, &topVAO);
     glGenBuffers(1, &topVBO_ID);
 
-    // ÅäÖÃ rim µÄ VAO ºÍ VBO
-    glBindVertexArray(rimVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, rimVBO_ID);
-    glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    rimVBOSize = rimVBO.size();
-
-    // ÅäÖÃ side µÄ VAO ºÍ VBO
-    glBindVertexArray(sideVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, sideVBO_ID);
-    glBufferData(GL_ARRAY_BUFFER, sideVBO.size() * sizeof(float), sideVBO.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    for (int i = 1; i < rimVBO.size(); i += 3) {
-        if (i < rimVBO.size()) rimVBO[i] = 1.0f;
-    }
-    sideVBOSize = sideVBO.size();
-
-    // ÅäÖÃ top µÄ VAO ºÍ VBO
+    // è®¾ç½®é¡¶éƒ¨åœ†ç‰‡çš„VAOå’ŒVBOï¼ˆä¿æŒåŸå§‹rimVBOæ•°æ®ï¼‰
     glBindVertexArray(topVAO);
     glBindBuffer(GL_ARRAY_BUFFER, topVBO_ID);
     glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
@@ -573,5 +590,26 @@ void SpriteRenderer::initCylinderData()
     glEnableVertexAttribArray(0);
     topVBOSize = rimVBO.size();
 
-    glBindVertexArray(0); // ½â°ó VAO
+    // è®¾ç½®ä¾§é¢çš„VAOå’ŒVBO
+    glBindVertexArray(sideVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, sideVBO_ID);
+    glBufferData(GL_ARRAY_BUFFER, sideVBO.size() * sizeof(float), sideVBO.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    sideVBOSize = sideVBO.size();
+
+    // åˆ›å»ºåº•éƒ¨åœ†ç‰‡çš„VAOå’ŒVBOï¼ˆå¤åˆ¶rimVBOå¹¶ä¿®æ”¹yåæ ‡ä¸º0ï¼‰
+    std::vector<float> bottomRimVBO = rimVBO; // å¤åˆ¶ä¸€ä»½é¿å…ä¿®æ”¹åŸå§‹æ•°æ®
+    for (size_t i = 1; i < bottomRimVBO.size(); i += 3) {
+        bottomRimVBO[i] = 0.0f; // è®¾ç½®yåæ ‡ä¸º0
+    }
+    
+    glBindVertexArray(rimVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, rimVBO_ID);
+    glBufferData(GL_ARRAY_BUFFER, bottomRimVBO.size() * sizeof(float), bottomRimVBO.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    rimVBOSize = bottomRimVBO.size();
+
+    glBindVertexArray(0); // è§£ç»‘VAO
 }
