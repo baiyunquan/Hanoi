@@ -119,8 +119,6 @@ Game::~Game()
 
 void Game::Init()
 {
-    // 启用深度测试
-    glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS); // 确保使用默认的深度测试函数
 
     // Load freetype
@@ -344,14 +342,12 @@ void Game::Update(float dt)
 
 void Game::ProcessInput(float dt)
 {
-
+    Renderer->process_keyboard_input(Keys, dt);
 }
 
 int from = -1, to = -1;
 
 void Game::ProcessMouse(float dt, GLFWwindow* window) {
-
-
     // 检测是否为完整的鼠标点击（按下并释放）
     const bool isCompleteClick = (!mousePressed && mouseWasPressed);
     mouseWasPressed = mousePressed;
@@ -542,9 +538,14 @@ void Game::Render()
 {
     //Renderer->DrawLine(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), 3.0f, glm::vec3(1.0f, 1.0f, 1.0f));
     if (State == GAME_MENU) {
+        
         menu->Draw(*Renderer, *Text, this->Width, this->Height);
+        // 启用深度测试
+        glEnable(GL_DEPTH_TEST);
         Renderer->DrawGround(1.0f);
         Renderer->DrawLightCube();
+        // 确保深度测试不会影响文字渲染
+        glDisable(GL_DEPTH_TEST);
         return;
     }
 
