@@ -12,7 +12,7 @@ TextInput::TextInput(float width, float height)
     float bgX = width * 0.3f;
 
     // 创建背景块 - 使用半透明灰色
-    background = new GameObject(glm::vec2(bgX, bgY), bgWidth, bgHeight,
+    background = new Object2D(glm::vec2(bgX, bgY), bgWidth, bgHeight,
         glm::vec3(0.5f, 0.5f, 0.5f));
 
     float inputHeight = height * 0.10f;
@@ -21,7 +21,7 @@ TextInput::TextInput(float width, float height)
     float inputX = width * 0.35f;
 
     // 创建输入区域 - 使用白色背景
-    inputArea = new GameObject(glm::vec2(inputX, inputY),
+    inputArea = new Object2D(glm::vec2(inputX, inputY),
         inputWidth, inputHeight,
         glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -46,7 +46,7 @@ void TextInput::Draw(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer)
     // 绘制输入内容（在输入区域内）
     if (!content.empty()) {
         float textX = inputArea->Position.x + 5.0f; // 留一点边距
-        float textY = inputArea->Position.y + (inputArea->SizeY - 20.0f) / 2.0f; // 垂直居中
+        float textY = inputArea->Position.y + (inputArea->Height - 20.0f) / 2.0f; // 垂直居中
         textRenderer.RenderTextInBox(content, width * 0.38f, height * 0.56f, width * 0.24f , height * 0.08f , 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
     }
 }

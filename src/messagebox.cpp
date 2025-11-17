@@ -11,7 +11,7 @@ MessageBox::MessageBox(float width, float height)
     float bgY = height * 0.3f;
     float bgX = width * 0.25f;
 
-    background = new GameObject(glm::vec2(bgX, bgY), bgWidth, bgHeight,
+    background = new Object2D(glm::vec2(bgX, bgY), bgWidth, bgHeight,
         glm::vec3(0.5f, 0.5f, 0.5f));
 
     // 创建按钮区域 - 使用不同的颜色
@@ -20,7 +20,7 @@ MessageBox::MessageBox(float width, float height)
     float buttonX = width * 0.5f - buttonWidth / 2.0f;
     float buttonY = height * 0.5f;
 
-    buttonArea = new GameObject(glm::vec2(buttonX, buttonY),
+    buttonArea = new Object2D(glm::vec2(buttonX, buttonY),
         buttonWidth, buttonHeight,
         glm::vec3(0.2f, 0.6f, 0.2f)); // 绿色按钮
     buttonArea->setText("OK");

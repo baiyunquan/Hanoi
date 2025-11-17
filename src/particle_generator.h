@@ -7,7 +7,7 @@
 
 #include "shader.h"
 #include "texture.h"
-#include "game_object.h"
+#include "object_2D.h"
 
 
 // Represents a single particle and its state
@@ -29,7 +29,7 @@ public:
     // constructor
     ParticleGenerator(Shader shader, Texture2D texture, unsigned int amount);
     // update all particles
-    void Update(float dt, GameObject& object, unsigned int newParticles, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
+    void Update(float dt, Object2D& object, unsigned int newParticles, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
     // render all particles
     void Draw();
 private:
@@ -45,7 +45,7 @@ private:
     // returns the first Particle index that's currently unused e.g. Life <= 0.0f or 0 if no particle is currently inactive
     unsigned int firstUnusedParticle();
     // respawns particle
-    void respawnParticle(Particle& particle, GameObject& object, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
+    void respawnParticle(Particle& particle, Object2D& object, glm::vec2 offset = glm::vec2(0.0f, 0.0f));
 };
 
 #endif

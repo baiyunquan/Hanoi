@@ -5,19 +5,21 @@
 #include "game.h"
 #include "resource_manager.h"
 #include "sprite_renderer.h"
-#include "game_object.h"
+#include "object_2D.h"
 #include "particle_generator.h"
 #include "post_processor.h"
 #include "text_renderer.h"
 #include "step_manager.h"
-#include "evenbus.h"
+#include "eventbus.h"
 #include "button.h"
 #include "menu.h"
+
 
 // Game-related State data
 SpriteRenderer* Renderer;
 ParticleGenerator* Particles;
 PostProcessor* Effects;
+
 
 ISoundEngine* SoundEngine;
 ISoundSource* trigger;
@@ -29,7 +31,7 @@ EventBus eventBus{};
 
 Button* RecordButton;
 Button* StopButton;
-GameObject* LoadButton;
+Object2D* LoadButton;
 
 Menu* menu;
 
@@ -117,6 +119,10 @@ Game::~Game()
 
 void Game::Init()
 {
+    // 启用深度测试
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS); // 确保使用默认的深度测试函数
+
     // Load freetype
     Text = new TextRenderer(this->Width, this->Height);
     Text->Load("resources/fonts/arial.ttf", 24);
@@ -126,6 +132,12 @@ void Game::Init()
     ResourceManager::LoadShader("shaders/particles/vertShader.glsl", "shaders/particles/fragShader.glsl", nullptr, "particle");
     ResourceManager::LoadShader("shaders/post_processor/vertShader.glsl", "shaders/post_processor/fragShader.glsl", nullptr, "post_processor");
     ResourceManager::LoadShader("shaders/rectangle/vertShader.glsl", "shaders/rectangle/fragShader.glsl", nullptr, "rectangle");
+    ResourceManager::LoadShader("shaders/light/vertShader.glsl", "shaders/multiple_light/fragShader.glsl", nullptr, "lighting");
+    ResourceManager::LoadShader("shaders/light/defaultVertShader.glsl", "shaders/light/lightShader.glsl", nullptr, "lightCube");
+    ResourceManager::LoadShader("shaders/ground/groundVert.glsl", "shaders/ground/groundFrag.glsl", nullptr, "ground");
+    ResourceManager::LoadShader("shaders/lightMaterial/vert.glsl", "shaders/lightMaterial/frag.glsl", nullptr, "lightMaterial");
+    ResourceManager::LoadShader("shaders/cylinder/diskVert.glsl", "shaders/lightMaterial/frag.glsl", nullptr, "disk");
+    ResourceManager::LoadShader("shaders/cylinder/cylinderSideVert.glsl", "shaders/lightMaterial/frag.glsl", nullptr, "cylinderSide");
     // Configure shaders
     glm::mat4 projection = glm::ortho(
         0.0f,
@@ -144,10 +156,13 @@ void Game::Init()
     // 加载纹理
     ResourceManager::LoadTexture("resources/textures/background.jpg", GL_FALSE, "background");
     ResourceManager::LoadTexture("resources/textures/block.png", GL_FALSE, "block");
+    ResourceManager::LoadTexture("resources/textures/container2.png", GL_FALSE, "diffuseMap");
+    ResourceManager::LoadTexture("resources/textures/container2_specular.png", GL_FALSE, "specularMap");
 
     // Set render-specific controls
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), 500);
-    Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"), ResourceManager::GetShader("rectangle"));
+    Renderer = new SpriteRenderer(ResourceManager::Shaders ,
+        ResourceManager::GetTexture("diffuseMap") , ResourceManager::GetTexture("specularMap"));
     Effects = new PostProcessor(ResourceManager::GetShader("post_processor"), this->Width, this->Height);
 
     messageBox = new MessageBox(this->Width, this->Height);
@@ -236,7 +251,7 @@ void Game::enter() {
     );
     StopButton->setText("Stop");
 
-    LoadButton = new GameObject(
+    LoadButton = new Object2D(
         glm::vec2(sideBarX, loadButtonY),
         glm::vec2(buttonWidth, buttonHeight),
         ResourceManager::GetTexture("block")
@@ -335,11 +350,11 @@ void Game::ProcessInput(float dt)
 int from = -1, to = -1;
 
 void Game::ProcessMouse(float dt, GLFWwindow* window) {
+
+
     // 检测是否为完整的鼠标点击（按下并释放）
     const bool isCompleteClick = (!mousePressed && mouseWasPressed);
     mouseWasPressed = mousePressed;
-
-    if (!isCompleteClick) return;
 
     // 获取鼠标位置
     double dmouseX, dmouseY;
@@ -347,6 +362,13 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
 
     float cursorX = static_cast<float>(dmouseX);
     float cursorY = static_cast<float>(dmouseY);
+
+    // camera mouse update
+    Renderer->MouseUpdate(cursorX, cursorY);
+
+    // check button click
+
+    if (!isCompleteClick) return;
 
     if (State == GAME_MENU) {
         menu->mouseClick(cursorX, cursorY);
@@ -435,6 +457,11 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     }
 }
 
+void Game::MouseScroll(double yoffset)
+{
+    Renderer->MouseScroll(yoffset);
+}
+
 // 清除其他塔的盘子选中状态
 void Game::clearOtherPlateSelections(int currentTowerId) {
     for (auto& [towerId, tower] : towers) {
@@ -513,8 +540,11 @@ void Game::movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int t
 
 void Game::Render()
 {
+    //Renderer->DrawLine(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), 3.0f, glm::vec3(1.0f, 1.0f, 1.0f));
     if (State == GAME_MENU) {
         menu->Draw(*Renderer, *Text, this->Width, this->Height);
+        Renderer->DrawGround(1.0f);
+        Renderer->DrawLightCube();
         return;
     }
 
@@ -552,8 +582,6 @@ void Game::Render()
     if (State == GAME_LOAD) {
         stepManager->Render(*Renderer, *Text, this->Width, this->Height);
     }
-
-
 }
 
 void Game::soundTrigger()

@@ -36,7 +36,7 @@ StepManager::StepManager(int N)
 {
     std::vector<std::string> valueNames = { "View", "Switch", "Load"  ,"Copy"};
     form = new Form("Memory Name", valueNames);
-    exit = new GameObject(glm::vec2(0.0f, 0.0f), 80.0f, 50.0f , glm::vec3(1.0 , 0.0f , 0.0f));
+    exit = new Object2D(glm::vec2(0.0f, 0.0f), 80.0f, 50.0f , glm::vec3(1.0 , 0.0f , 0.0f));
 	exit->setText("Exit");
 
     std::vector<Move> example{ {0 , 2} };

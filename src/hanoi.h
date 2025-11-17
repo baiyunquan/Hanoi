@@ -4,7 +4,7 @@
 #include <map>
 #include <glm/glm.hpp>
 
-#include "game_object.h"
+#include "object_2D.h"
 #include "plate.h"
 
 class
@@ -26,8 +26,8 @@ public:
 
 	int numDisks;
 	std::map<int , Plate> disks;
-	GameObject pole;
-	GameObject base;
+	Object2D pole;
+	Object2D base;
 
 	glm::vec2 pos;
 	glm::vec2 size;

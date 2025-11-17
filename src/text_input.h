@@ -1,14 +1,14 @@
 #include <string>
 #include <functional>
 
-#include "game_object.h"
+#include "object_2D.h"
 #include "text_renderer.h"
 #include "sprite_renderer.h"
 
 class TextInput {
 public:
-    GameObject* background;
-    GameObject* inputArea;
+    Object2D* background;
+    Object2D* inputArea;
 
     TextInput(float width, float height);
     ~TextInput();

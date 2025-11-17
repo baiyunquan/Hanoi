@@ -62,13 +62,14 @@ public:
     bool beginRecord(std::string name);
     void clearPlateSelections();
     // ”Œœ∑—≠ª∑
-    void ProcessInput(float dt);
     void ProcessMouse(float dt, GLFWwindow* window);
+    void MouseScroll(double yoffset);
     void clearOtherPlateSelections(int currentTowerId);
     void handleTowerClick(float cursorX, float cursorY);
     bool isMoveValid(Hanoi& targetTower, Plate& plate);
     bool isMoveValid(Hanoi* sourceTower, Hanoi* targetTower);
     void Update(float dt);
+    void ProcessInput(float dt);
     void movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int targetId);
     void Render();
     void soundTrigger();

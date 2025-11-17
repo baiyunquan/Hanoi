@@ -1,14 +1,14 @@
 #include <string>
 #include <functional>
 
-#include "game_object.h"
+#include "object_2D.h"
 #include "text_renderer.h"
 #include "sprite_renderer.h"
 
 class MessageBox {
 public:
-    GameObject* background;
-    GameObject* buttonArea;
+    Object2D* background;
+    Object2D* buttonArea;
 
     MessageBox(float width, float height);
     ~MessageBox();

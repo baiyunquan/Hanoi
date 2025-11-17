@@ -1,4 +1,4 @@
-#include "evenbus.h"
+#include "eventbus.h"
 
 // GameEvent ¹¹Ôìº¯Êı
 GameEvent::GameEvent(const std::string& msg, EventLevel lvl, float time)

@@ -33,8 +33,8 @@ void Line::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float he
 
         // 设置GameObject的位置和大小
         values[i].Position = centeredPos;
-        values[i].SizeX = scaledSize.x;
-        values[i].SizeY = scaledSize.y;
+        values[i].Width = scaledSize.x;
+        values[i].Height = scaledSize.y;
 
         // 渲染GameObject
         values[i].Draw(renderer);
@@ -60,9 +60,9 @@ void Form::updateData(const std::vector<std::string>& data) {
 
         // 如果key不存在，则添加新行
         if (!exists) {
-            std::vector<GameObject> values;
+            std::vector<Object2D> values;
             for (size_t j = 0; j < header.value.size(); j++) {
-                GameObject cell(glm::vec2(0, 0), 0, 0, glm::vec3(0.8f, 0.8f, 0.8f));
+                Object2D cell(glm::vec2(0, 0), 0, 0, glm::vec3(0.8f, 0.8f, 0.8f));
                 cell.setText(header.value[j]); // 初始值为空
                 values.push_back(cell);
             }

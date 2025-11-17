@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, int button, int action, int mods);
@@ -44,6 +45,7 @@ int main(int argc, char *argv[])
     glfwSetKeyCallback(window, key_callback);
     glfwSetMouseButtonCallback(window, mouse_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     glfwSwapInterval(1); // 1表示开启垂直同步，
 
@@ -139,6 +141,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
     }
 
+}
+
+// glfw: whenever the mouse scroll wheel scrolls, this callback is called
+// ----------------------------------------------------------------------
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    Breakout.MouseScroll(yoffset);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

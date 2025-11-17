@@ -7,7 +7,7 @@
 
 #include "text_renderer.h"
 #include "sprite_renderer.h"
-#include "game_object.h"
+#include "object_2D.h"
 
 class Header {
 public:
@@ -21,10 +21,10 @@ public:
 
 class Line {
 public:
-	std::vector<GameObject> values;
+	std::vector<Object2D> values;
 	std::string key;
 
-	Line(std::string key , std::vector<GameObject>& values) : key(key) , values(values) {}
+	Line(std::string key , std::vector<Object2D>& values) : key(key) , values(values) {}
 
 	void Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float height, float keyWidth, float valueWidth, glm::vec2 pos);
 };

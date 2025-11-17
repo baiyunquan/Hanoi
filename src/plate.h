@@ -1,14 +1,11 @@
 #ifndef PLATE_H
 #define PLATE_H
 
-#include "game_object.h"
+#include "object_2D.h"
 
-class Plate : public GameObject {
+class Plate : public Object2D {
 public:
-
-	// 默认构造函数
     Plate();
-    // 声明构造函数，使用默认参数，注意：默认参数只能出现在声明中
     Plate(glm::vec2 pos, float sizeX, float sizeY,int level , glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f));
 
 	int level; // 盘子的大小等级，数字越小表示盘子越大

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "game_object.h"
+#include "object_2D.h"
 
-class Button : public GameObject {
+class Button : public Object2D {
 public:
     // 使用继承构造函数 - 自动继承 GameObject 的所有构造函数
-    using GameObject::GameObject;
+    using Object2D::Object2D;
 
     // 反弹动画状态
     enum BounceState {

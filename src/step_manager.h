@@ -39,7 +39,7 @@ public:
     void regLoadCall(std::function<void(std::vector<Move>*)> callback);
     void regExitCall(std::function<void()> callback);
 private:
-    GameObject* exit;
+    Object2D* exit;
 
     std::map<std::string, std::vector<Move>> data{};
     std::vector<Move> temp{};

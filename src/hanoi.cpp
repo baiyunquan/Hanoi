@@ -8,9 +8,9 @@ Hanoi::Hanoi(int numDisks, glm::vec2 pos, glm::vec2 size, bool empty)
 	unitHeight = size.y / (float)(numDisks + 1);
 	unitWidth = size.x / (float)(numDisks + 3);
 
-	pole = GameObject(glm::vec2(pos.x + (size.x / 2) - (unitWidth / 8), pos.y), unitWidth / 4,
+	pole = Object2D(glm::vec2(pos.x + (size.x / 2) - (unitWidth / 8), pos.y), unitWidth / 4,
 		unitHeight / 2, glm::vec3(1.0, 1.0f, 1.0f));
-	base = GameObject(glm::vec2(pos.x, pos.y + size.y - (unitHeight / 2)), size.x,
+	base = Object2D(glm::vec2(pos.x, pos.y + size.y - (unitHeight / 2)), size.x,
 		unitHeight / 2, glm::vec3(1.0, 1.0f, 1.0f));
 
 	if (!empty) {
@@ -29,22 +29,22 @@ Hanoi::Hanoi(int numDisks, glm::vec2 pos, glm::vec2 size, bool empty)
 		}
 	}
 	else {
-		pole.SizeY += (float)(numDisks)*unitHeight;
+		pole.Height += (float)(numDisks)*unitHeight;
 	}
 }
 
 void Hanoi::Draw(SpriteRenderer& renderer , TextRenderer& textRenderer) {
-	pole.SizeY = (unitHeight / 2) + ((float)(numDisks - disks.size()) * unitHeight);
-//	std::cout << pole.SizeY << std::endl;
+	pole.Height = (unitHeight / 2) + ((float)(numDisks - disks.size()) * unitHeight);
+//	std::cout << pole.Height << std::endl;
 
 	base.Draw(renderer);
 	base.DrawText(textRenderer);
 	pole.Draw(renderer);
 
-	float bottom = pole.Position.y + pole.SizeY;
+	float bottom = pole.Position.y + pole.Height;
 	for(auto& [level , disk] : disks) {
 		/*std::cout << "Drawing disk level " << level << " at position (" 
-			<< disk.Position.x << ", " << bottom << ") with size (" << disk.SizeX << ", " << disk.SizeY << ")\n";*/
+			<< disk.Position.x << ", " << bottom << ") with size (" << disk.Width << ", " << disk.Height << ")\n";*/
 		disk.Position.y = bottom;
 		disk.Draw(renderer);
 		disk.DrawText(textRenderer);
