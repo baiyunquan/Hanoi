@@ -1,5 +1,5 @@
-#include "object_3D.h"
+#include "plate3D.h"
 
-void Object3D::Draw(SpriteRenderer& renderer) {
+void Plate3D::Draw(SpriteRenderer& renderer) {
 	renderer.DrawCylinder2D(this->Position, glm::vec2(this->Width, this->Height), this->Rotation, this->Color);
 }

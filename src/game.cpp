@@ -562,10 +562,13 @@ void Game::Render()
         //glEnable(GL_DEPTH_TEST);
         //Renderer->DrawGround(0.1f);
         Renderer->DrawLightCube();
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            Renderer->DrawCube(cubePositions[i]);
-        }
+        //for (unsigned int i = 0; i < 10; i++)
+        //{
+        //    Renderer->DrawCube(cubePositions[i]);
+        //}
+        //glm::mat4 model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(3.0f, -3.0f, 3.0f));
+        //Renderer->DrawCylinder(model , glm::vec3(1.0f , 1.0f , 1.0f));
         //glDisable(GL_DEPTH_TEST);
         //Renderer->DrawCylinder2D(glm::vec2(0.0f , 0.0f), glm::vec2(30.0f, 30.0f));
         Renderer->DrawCylinder2D(glm::vec2(400, 300), glm::vec2(100, 200), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));

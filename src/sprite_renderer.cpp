@@ -44,7 +44,6 @@ void SpriteRenderer::process_keyboard_input(bool keys[1024], float deltaTime)
     if (keys[GLFW_KEY_D])
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
-    // ѡ��Ҫ�����ĵƹ�����
     if (keys[GLFW_KEY_1]) {
         currentLightProperty = 0;
         std::cout << "Selected: Ambient Light" << std::endl;
@@ -58,15 +57,13 @@ void SpriteRenderer::process_keyboard_input(bool keys[1024], float deltaTime)
         std::cout << "Selected: Specular Light" << std::endl;
     }
 
-    // ����ѡ���ĵƹ�����
-    if (keys[GLFW_KEY_EQUAL]) { // �Ӻż�
+    if (keys[GLFW_KEY_EQUAL]) {
         adjustLightProperty(lightAdjustStep);
     }
-    if (keys[GLFW_KEY_MINUS]) { // ���ż�
+    if (keys[GLFW_KEY_MINUS]) { 
         adjustLightProperty(-lightAdjustStep);
     }
 
-    // ���ӵ�������
     if (keys[GLFW_KEY_LEFT_BRACKET]) {
         lightAdjustStep = std::max(0.01f, lightAdjustStep - 0.01f);
         std::cout << "Adjust step: " << lightAdjustStep << std::endl;
@@ -109,7 +106,6 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
             glm::vec3(0.0f, 0.0f, -3.0f),
 } , camera() , diffuseMap(diffuseMap) , specularMap(specularMap)
 {
-    // ������ɫ�����Ӵ����ӳ���л��?
     this->shader = shaders["sprite"];
     this->rectShader = shaders["rectangle"];
     this->lightingShader = shaders["lighting"];
@@ -126,21 +122,7 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
     this->initCylinderData();
 
     // Initialize projection and view matrices
-<<<<<<< HEAD
-    // 构造函数中修改
-    // 旧代�?
-    UpdateProjection(SCR_WIDTH, SCR_HEIGHT);
-    
-    // 新代�?
-=======
-    // ���캯�����޸�
-    // �ɴ���
-    UpdateProjection(SCR_WIDTH, SCR_HEIGHT);
-    
-    // �´���
->>>>>>> parent of bbdda5e (add cylinder)
     UpdateProjection(width, height);
-    
     UpdateView();
 }
 
@@ -225,11 +207,9 @@ void SpriteRenderer::DrawRectangle(glm::vec2 position, glm::vec2 size, float rot
 }
 
 glm::vec3 SpriteRenderer::ScreenToWorldCoordinates(const glm::vec2& screenCoords) {
-    // ����Ļ�����һ����?10��10�ķ�Χ
     float worldX = (screenCoords.x / SCR_WIDTH) * 4.0f;
     float worldY = (screenCoords.y / SCR_HEIGHT) * 4.0f;
-
-    // ����ת�����?D���꣬z��̶��?
+    
     return glm::vec3(worldX, worldY, 0.0f);
 }
 
@@ -240,14 +220,11 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
     lightingShader.SetVector3f("viewPos", camera.Position);
     lightingShader.SetFloat("material.shininess", 32.0f);
 
-    // ���ù�Դ����
-    // �����?
     lightingShader.SetVector3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
     lightingShader.SetVector3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
     lightingShader.SetVector3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
     lightingShader.SetVector3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-    // ����?
     for (unsigned int i = 0; i < pointLightPositions.size(); i++)
     {
         std::string index = std::to_string(i);
@@ -260,7 +237,6 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
         lightingShader.SetFloat(("pointLights[" + index + "].quadratic").c_str(), 0.032f);
     }
 
-    // �۹��?
     lightingShader.SetVector3f("spotLight.position", camera.Position);
     lightingShader.SetVector3f("spotLight.direction", camera.Front);
     lightingShader.SetVector3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -272,64 +248,84 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
     lightingShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
     lightingShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-    // ������ͼ��ͶӰ����
     lightingShader.SetMatrix4("projection", projection);
     lightingShader.SetMatrix4("view", view);
 
-    // ����ģ�;���
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
     lightingShader.SetMatrix4("model", model);
 
-    // ���㷨�߾���
     glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
     lightingShader.SetMatrix3("normalMatrix", normalMatrix);
 
-    // ������
     glActiveTexture(GL_TEXTURE0);
     diffuseMap.Bind();
     glActiveTexture(GL_TEXTURE1);
     specularMap.Bind();
 
-    // ����������
     glBindVertexArray(cubeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void SpriteRenderer::DrawCylinder()
+void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel , glm::vec3 lightColor)
 {
-<<<<<<< HEAD
+    glm::vec3 diffuseColor = lightColor * glm::vec3(1.0f);   
+    glm::vec3 ambientColor = diffuseColor * glm::vec3(0.4f); 
+
+    diskShader.Use();
+    diskShader.SetVector3f("light.position", pointLightPositions[0]);
+    diskShader.SetVector3f("viewPos", camera.Position);
+    diskShader.SetVector3f("light.ambient", diffuseColor);
+    diskShader.SetVector3f("light.diffuse", ambientColor);
+    diskShader.SetVector3f("light.specular", lightSpecular);
+
+    // Material properties
+    diskShader.SetVector3f("material.ambient", 0.8f, 0.8f, 0.8f);
+    diskShader.SetVector3f("material.diffuse", 1.0f, 1.0f, 1.0f);
+    diskShader.SetVector3f("material.specular", 0.8f, 0.8f, 0.8f);
+    diskShader.SetFloat("material.shininess", 64.0f);
+    diskShader.SetMatrix4("projection", projection);
+    diskShader.SetMatrix4("view", view);
+
+    diskShader.SetMatrix4("model", cylinderModel);
+    diskShader.SetFloat("normalSign", -1.0f);
+    glBindVertexArray(rimVAO);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, rimVBOSize / 3);
+
+    diskShader.SetFloat("normalSign", 1.0f);
+    glBindVertexArray(topVAO);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, topVBOSize / 3);
+
+    sideShader.Use();
+    sideShader.SetVector3f("light.ambient", diffuseColor);
+    sideShader.SetVector3f("light.diffuse", ambientColor);
+    sideShader.SetVector3f("light.specular", lightSpecular);
+
+    // Material properties
+    sideShader.SetVector3f("material.ambient", 0.8f, 0.8f, 0.8f);
+    sideShader.SetVector3f("material.diffuse", 1.0f, 1.0f, 1.0f);
+    sideShader.SetVector3f("material.specular", 0.8f, 0.8f, 0.8f);
+    sideShader.SetFloat("material.shininess", 64.0f);
+
+    sideShader.SetMatrix4("projection", projection);
+    sideShader.SetMatrix4("view", view);
+    sideShader.SetMatrix4("model", cylinderModel);
+    glBindVertexArray(sideVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, sideVBOSize / 3);
 }
 
 void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
-
-    // ʹ��ScreenToWorldCoordinates��2D��Ļ����ת��Ϊ3D��������
     glm::vec3 worldPos = ScreenToWorldCoordinates(position);
-
-    // ����������ģ�;���
     glm::mat4 model = glm::mat4(1.0f);
-
-    // Ӧ��λ��ƽ�ƣ���Բ���������ת������������꣩
     model = glm::translate(model, worldPos);
-
-    // Ӧ����ת�������Ҫ��?
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
-
-    // Ӧ������
-    // size.x��Ϊ�뾶��size.y��Ϊ�߶�
-    // ע�⣺ScreenToWorldCoordinates����[-10,10]��Χ��ֵ����Ҫ�ʵ�����
     model = glm::scale(model, glm::vec3(size.x * 0.01f, size.y * 0.01f, size.x * 0.01f));
-
-    // �������е�DrawCylinder��������Բ����
     DrawCylinder(model, color);
-=======
->>>>>>> parent of bbdda5e (add cylinder)
 }
 
 void SpriteRenderer::DrawGround(float height)
 {
-
     groundShader.Use();
     glBindVertexArray(groundVAO);
     groundShader.SetMatrix4("projection", projection);
@@ -355,7 +351,7 @@ void SpriteRenderer::DrawLightCube()
     {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pointLightPositions[i]);
-        model = glm::scale(model, glm::vec3(0.2f)); // ��С��Դ������
+        model = glm::scale(model, glm::vec3(0.2f)); 
         lightCubeShader.SetMatrix4("model", model);
         lightCubeShader.SetVector3f("lightColor", 1.0f, 1.0f, 1.0f);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -414,7 +410,6 @@ void SpriteRenderer::DrawLine(glm::vec2 start, glm::vec2 end, float lineWidth, g
     this->rectShader.Use();
     glLineWidth(lineWidth);
 
-    // ����ģ�;���
     glm::vec2 direction = end - start;
     float length = glm::length(direction);
 
@@ -513,12 +508,10 @@ void SpriteRenderer::initBoxData() {
 
 void SpriteRenderer::initGroundData()
 {
-    // ���������������� -10 �� +10���� 20x20 �ף�
     std::vector<float> groundVertices;
     for (float x = -netSize; x < netSize; x += netStep) {
         for (float z = -netSize; z < netSize; z += netStep) {
-            // ÿ�����������������λ���
-            groundVertices.insert(groundVertices.end(), {
+             groundVertices.insert(groundVertices.end(), {
             x,     0.0f, z,
             x + netStep,0.0f, z,
             x + netStep,0.0f, z + netStep,
@@ -552,17 +545,13 @@ void SpriteRenderer::initCylinderData()
     glGenVertexArrays(1, &topVAO);
     glGenBuffers(1, &topVBO_ID);
 
-<<<<<<< HEAD
-    // 设置顶部圆片的VAO和VBO（保持原始rimVBO数据�?
-=======
-    // ���� rim �� VAO �� VBO
     glBindVertexArray(rimVAO);
     glBindBuffer(GL_ARRAY_BUFFER, rimVBO_ID);
     glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    rimVBOSize = rimVBO.size();
 
-    // ���� side �� VAO �� VBO
     glBindVertexArray(sideVAO);
     glBindBuffer(GL_ARRAY_BUFFER, sideVBO_ID);
     glBufferData(GL_ARRAY_BUFFER, sideVBO.size() * sizeof(float), sideVBO.data(), GL_STATIC_DRAW);
@@ -572,35 +561,14 @@ void SpriteRenderer::initCylinderData()
     for (int i = 1; i < rimVBO.size(); i += 3) {
         if (i < rimVBO.size()) rimVBO[i] = 1.0f;
     }
-
-    // ���� top �� VAO �� VBO
->>>>>>> parent of bbdda5e (add cylinder)
-    glBindVertexArray(topVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, topVBO_ID);
-    glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // 设置侧面的VAO和VBO
-    glBindVertexArray(sideVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, sideVBO_ID);
-    glBufferData(GL_ARRAY_BUFFER, sideVBO.size() * sizeof(float), sideVBO.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
     sideVBOSize = sideVBO.size();
 
-    // 创建底部圆片的VAO和VBO（复制rimVBO并修改y坐标�?�?
-    std::vector<float> bottomRimVBO = rimVBO; // 复制一份避免修改原始数�?
-    for (size_t i = 1; i < bottomRimVBO.size(); i += 3) {
-        bottomRimVBO[i] = 0.0f; // 设置y坐标�?
-    }
-
-    // 配置 top �?VAO �?VBO
     glBindVertexArray(topVAO);
     glBindBuffer(GL_ARRAY_BUFFER, topVBO_ID);
     glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    topVBOSize = rimVBO.size();
 
-    glBindVertexArray(0); // 解绑VAO
+    glBindVertexArray(0);
 }

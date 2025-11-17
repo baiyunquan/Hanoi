@@ -6,7 +6,7 @@
 // Container object for holding all state relevant for a single
 // game object entity. Each object in the game likely needs the
 // minimal of state as described within Object2D.
-class Object3D : Object2D
+class Object3D : public Object2D
 {
 public:
 	enum ObjectType {
@@ -31,7 +31,10 @@ public:
 		objectType = oj;
 	}
 
-	void Draw(SpriteRenderer renderer);
+	void Draw(SpriteRenderer& renderer);
+	// 空方法
+	virtual void DrawText(TextRenderer& textRenderer) {};
+	virtual bool isChosen(float mouseX, float mouseY) { return false; };
 private :
 	ObjectType objectType = BOX;
 	int PosZ = 0;
