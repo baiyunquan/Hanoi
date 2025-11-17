@@ -126,7 +126,13 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
     this->initCylinderData();
 
     // Initialize projection and view matrices
+    // 构造函数中修改
+    // 旧代码
+    UpdateProjection(SCR_WIDTH, SCR_HEIGHT);
+    
+    // 新代码
     UpdateProjection(width, height);
+    
     UpdateView();
 }
 
@@ -282,56 +288,8 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel , glm::vec3 lightColor)
+void SpriteRenderer::DrawCylinder()
 {
-    glm::vec3 diffuseColor = lightColor * glm::vec3(1.0f);   // �� ԭ���� 0.5f
-    glm::vec3 ambientColor = diffuseColor * glm::vec3(0.4f); // �� ԭ���� 0.2f
-
-    diskShader.Use();
-    diskShader.SetVector3f("light.position", pointLightPositions[0]);
-    // �������λ��
-    diskShader.SetVector3f("viewPos", camera.Position);
-// ʹ�����Ա�����еĹ��ղ���������һ����
-    diskShader.SetVector3f("light.ambient", diffuseColor);
-    diskShader.SetVector3f("light.diffuse", ambientColor);
-    diskShader.SetVector3f("light.specular", lightSpecular);
-
-    // Material properties
-    diskShader.SetVector3f("material.ambient", 0.8f, 0.8f, 0.8f);
-    diskShader.SetVector3f("material.diffuse", 1.0f, 1.0f, 1.0f);
-    diskShader.SetVector3f("material.specular", 0.8f, 0.8f, 0.8f);
-    diskShader.SetFloat("material.shininess", 64.0f);
-    diskShader.SetMatrix4("projection", projection);
-    diskShader.SetMatrix4("view", view);
-
-    // ���Ƶײ�ԲƬ
-    diskShader.SetMatrix4("model", cylinderModel);
-    diskShader.SetFloat("normalSign", -1.0f); // �ײ�ԲƬ��������
-    glBindVertexArray(rimVAO);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, rimVBOSize / 3);
-
-    // ���ƶ���ԲƬ - ʹ����ȷ��topVAO�����÷�������
-    diskShader.SetFloat("normalSign", 1.0f); // ����ԲƬ��������
-    glBindVertexArray(topVAO);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, topVBOSize / 3);
-
-    sideShader.Use();
-    // ʹ�����Ա�����еĹ��ղ���������һ����
-    sideShader.SetVector3f("light.ambient", diffuseColor);
-    sideShader.SetVector3f("light.diffuse", ambientColor);
-    sideShader.SetVector3f("light.specular", lightSpecular);
-
-    // Material properties
-    sideShader.SetVector3f("material.ambient", 0.8f, 0.8f, 0.8f);
-    sideShader.SetVector3f("material.diffuse", 1.0f, 1.0f, 1.0f);
-    sideShader.SetVector3f("material.specular", 0.8f, 0.8f, 0.8f);
-    sideShader.SetFloat("material.shininess", 64.0f);
-
-    sideShader.SetMatrix4("projection", projection);
-    sideShader.SetMatrix4("view", view);
-    sideShader.SetMatrix4("model", cylinderModel);
-    glBindVertexArray(sideVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, sideVBOSize / 3);
 }
 
 void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
@@ -360,6 +318,7 @@ void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float ro
 
 void SpriteRenderer::DrawGround(float height)
 {
+
     groundShader.Use();
     glBindVertexArray(groundVAO);
     groundShader.SetMatrix4("projection", projection);
@@ -588,7 +547,6 @@ void SpriteRenderer::initCylinderData()
     glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    topVBOSize = rimVBO.size();
 
     // 设置侧面的VAO和VBO
     glBindVertexArray(sideVAO);
@@ -603,13 +561,13 @@ void SpriteRenderer::initCylinderData()
     for (size_t i = 1; i < bottomRimVBO.size(); i += 3) {
         bottomRimVBO[i] = 0.0f; // 设置y坐标为0
     }
-    
-    glBindVertexArray(rimVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, rimVBO_ID);
-    glBufferData(GL_ARRAY_BUFFER, bottomRimVBO.size() * sizeof(float), bottomRimVBO.data(), GL_STATIC_DRAW);
+
+    // 配置 top 的 VAO 和 VBO
+    glBindVertexArray(topVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, topVBO_ID);
+    glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    rimVBOSize = bottomRimVBO.size();
 
     glBindVertexArray(0); // 解绑VAO
 }

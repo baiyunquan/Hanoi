@@ -41,8 +41,7 @@ public:
 
     // Render 3D
     void DrawCube(glm::vec3 position);
-    void DrawCylinder(glm::mat4 cylinderModel, glm::vec3 lightColor);
-    void DrawCylinder2D(glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
+    void DrawCylinder();
     void DrawGround(float height);
     void DrawLightCube();
 private:
@@ -62,7 +61,6 @@ private:
     // µÆ¹â¿ØÖÆ
     float lightAdjustStep = 0.1f;
     int currentLightProperty = 0; // 0: ambient, 1: diffuse, 2: specular
-    int rimVBOSize, topVBOSize, sideVBOSize;
 
     // Matrices
     glm::mat4 projection;
