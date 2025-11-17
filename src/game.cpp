@@ -566,6 +566,9 @@ void Game::Render()
         {
             Renderer->DrawCube(cubePositions[i]);
         }
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(3.0f, -3.0f, 3.0f));
+        Renderer->DrawCylinder(model , glm::vec3(1.0f , 1.0f , 1.0f));
         //glDisable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
 
