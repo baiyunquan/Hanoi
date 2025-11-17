@@ -24,7 +24,7 @@ public:
     void adjustLightProperty(float adjustment);
 
     // Constructor (inits shaders/shapes)
-    SpriteRenderer(std::map<std::string, Shader>& shaders, Texture2D diffuseMap, Texture2D specularMap);
+    SpriteRenderer(std::map<std::string, Shader>& shaders, Texture2D diffuseMap, Texture2D specularMap, int width, int height);
 
     // Destructor
     ~SpriteRenderer();
@@ -43,6 +43,10 @@ public:
     void DrawGround(float height);
     void DrawLightCube();
 private:
+
+    int SCR_WIDTH;
+    int SCR_HEIGHT;
+
     // lighting
     glm::vec3 lightPos = { 1.2f, 1.0f, 2.0f };
     // 将原来的值改为更高的值

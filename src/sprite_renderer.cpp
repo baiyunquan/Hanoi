@@ -3,9 +3,6 @@
 #include <GLFW/glfw3.h>
 //#include <iostream>
 
-#define SCR_WIDTH 800
-#define SCR_HEIGHT 600
-
 void SpriteRenderer::MouseScroll(double yoffset) {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
@@ -105,7 +102,7 @@ void SpriteRenderer::adjustLightProperty(float adjustment)
 }
 
 SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders , 
-    Texture2D diffuseMap , Texture2D specularMap) : pointLightPositions{
+    Texture2D diffuseMap , Texture2D specularMap , int width, int height) : pointLightPositions{
             glm::vec3(0.7f, 0.2f, 2.0f),
             glm::vec3(2.3f, -3.3f, -4.0f),
             glm::vec3(-4.0f, 2.0f, -12.0f),
@@ -129,7 +126,13 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
     this->initCylinderData();
 
     // Initialize projection and view matrices
+    // 构造函数中修改
+    // 旧代码
     UpdateProjection(SCR_WIDTH, SCR_HEIGHT);
+    
+    // 新代码
+    UpdateProjection(width, height);
+    
     UpdateView();
 }
 
@@ -258,6 +261,7 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
 
     // 设置模型矩阵
     glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
     lightingShader.SetMatrix4("model", model);
 
     // 计算法线矩阵
@@ -294,16 +298,12 @@ void SpriteRenderer::DrawGround(float height)
 }
 
 void SpriteRenderer::DrawLightCube()
-{
-    // view/projection transformations
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
-
+{    
     // also draw the lamp object(s)
     lightCubeShader.Use();
     lightCubeShader.SetMatrix4("projection", projection);
     lightCubeShader.SetMatrix4("view", view);
-
+    
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
     for (unsigned int i = 0; i < pointLightPositions.size(); i++)

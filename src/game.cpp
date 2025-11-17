@@ -119,6 +119,7 @@ Game::~Game()
 
 void Game::Init()
 {
+    glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS); // 确保使用默认的深度测试函数
 
     // Load freetype
@@ -154,13 +155,13 @@ void Game::Init()
     // 加载纹理
     ResourceManager::LoadTexture("resources/textures/background.jpg", GL_FALSE, "background");
     ResourceManager::LoadTexture("resources/textures/block.png", GL_FALSE, "block");
-    ResourceManager::LoadTexture("resources/textures/container2.png", GL_FALSE, "diffuseMap");
-    ResourceManager::LoadTexture("resources/textures/container2_specular.png", GL_FALSE, "specularMap");
+    ResourceManager::LoadTexture("resources/textures/container2.png", GL_TRUE, "diffuseMap");
+    ResourceManager::LoadTexture("resources/textures/container2_specular.png", GL_TRUE, "specularMap");
 
     // Set render-specific controls
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), 500);
     Renderer = new SpriteRenderer(ResourceManager::Shaders ,
-        ResourceManager::GetTexture("diffuseMap") , ResourceManager::GetTexture("specularMap"));
+        ResourceManager::GetTexture("diffuseMap") , ResourceManager::GetTexture("specularMap") , this->Width , this->Height);
     Effects = new PostProcessor(ResourceManager::GetShader("post_processor"), this->Width, this->Height);
 
     messageBox = new MessageBox(this->Width, this->Height);
@@ -536,21 +537,37 @@ void Game::movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int t
 
 void Game::Render()
 {
+    static glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f,  0.0f,  0.0f),
+        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f,  2.0f, -2.5f),
+        glm::vec3(1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
     //Renderer->DrawLine(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), 3.0f, glm::vec3(1.0f, 1.0f, 1.0f));
     if (State == GAME_MENU) {
-        
         menu->Draw(*Renderer, *Text, this->Width, this->Height);
-        // 启用深度测试
-        glEnable(GL_DEPTH_TEST);
-        Renderer->DrawGround(1.0f);
-        Renderer->DrawLightCube();
-        // 确保深度测试不会影响文字渲染
-        glDisable(GL_DEPTH_TEST);
         return;
     }
 
     messageBox->Draw(*Renderer, *Text);
     if (State == GAME_ACTIVE || State == GAME_SWITCH) {
+
+        //glEnable(GL_DEPTH_TEST);
+        Renderer->DrawGround(1.0f);
+        Renderer->DrawLightCube();
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            Renderer->DrawCube(cubePositions[i]);
+        }
+        //glDisable(GL_DEPTH_TEST);
+        glClear(GL_DEPTH_BUFFER_BIT);
 
         // Render towers
         for (auto& [num, tower] : towers) {
