@@ -109,7 +109,7 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
             glm::vec3(0.0f, 0.0f, -3.0f),
 } , camera() , diffuseMap(diffuseMap) , specularMap(specularMap)
 {
-    // ������ɫ�����Ӵ����ӳ���л�ȡ
+    // ������ɫ�����Ӵ����ӳ���л��?
     this->shader = shaders["sprite"];
     this->rectShader = shaders["rectangle"];
     this->lightingShader = shaders["lighting"];
@@ -126,11 +126,19 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
     this->initCylinderData();
 
     // Initialize projection and view matrices
+<<<<<<< HEAD
     // 构造函数中修改
-    // 旧代码
+    // 旧代�?
     UpdateProjection(SCR_WIDTH, SCR_HEIGHT);
     
-    // 新代码
+    // 新代�?
+=======
+    // ���캯�����޸�
+    // �ɴ���
+    UpdateProjection(SCR_WIDTH, SCR_HEIGHT);
+    
+    // �´���
+>>>>>>> parent of bbdda5e (add cylinder)
     UpdateProjection(width, height);
     
     UpdateView();
@@ -217,11 +225,11 @@ void SpriteRenderer::DrawRectangle(glm::vec2 position, glm::vec2 size, float rot
 }
 
 glm::vec3 SpriteRenderer::ScreenToWorldCoordinates(const glm::vec2& screenCoords) {
-    // ����Ļ�����һ����-10��10�ķ�Χ
+    // ����Ļ�����һ����?10��10�ķ�Χ
     float worldX = (screenCoords.x / SCR_WIDTH) * 4.0f;
     float worldY = (screenCoords.y / SCR_HEIGHT) * 4.0f;
 
-    // ����ת�����3D���꣬z��̶�Ϊ0
+    // ����ת�����?D���꣬z��̶��?
     return glm::vec3(worldX, worldY, 0.0f);
 }
 
@@ -233,13 +241,13 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
     lightingShader.SetFloat("material.shininess", 32.0f);
 
     // ���ù�Դ����
-    // �����
+    // �����?
     lightingShader.SetVector3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
     lightingShader.SetVector3f("dirLight.ambient", 0.05f, 0.05f, 0.05f);
     lightingShader.SetVector3f("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
     lightingShader.SetVector3f("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-    // ���Դ
+    // ����?
     for (unsigned int i = 0; i < pointLightPositions.size(); i++)
     {
         std::string index = std::to_string(i);
@@ -252,7 +260,7 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
         lightingShader.SetFloat(("pointLights[" + index + "].quadratic").c_str(), 0.032f);
     }
 
-    // �۹��
+    // �۹��?
     lightingShader.SetVector3f("spotLight.position", camera.Position);
     lightingShader.SetVector3f("spotLight.direction", camera.Front);
     lightingShader.SetVector3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
@@ -290,6 +298,7 @@ void SpriteRenderer::DrawCube(glm::vec3 position)
 
 void SpriteRenderer::DrawCylinder()
 {
+<<<<<<< HEAD
 }
 
 void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
@@ -304,7 +313,7 @@ void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float ro
     // Ӧ��λ��ƽ�ƣ���Բ���������ת������������꣩
     model = glm::translate(model, worldPos);
 
-    // Ӧ����ת�������Ҫ��
+    // Ӧ����ת�������Ҫ��?
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
 
     // Ӧ������
@@ -314,6 +323,8 @@ void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float ro
 
     // �������е�DrawCylinder��������Բ����
     DrawCylinder(model, color);
+=======
+>>>>>>> parent of bbdda5e (add cylinder)
 }
 
 void SpriteRenderer::DrawGround(float height)
@@ -541,7 +552,29 @@ void SpriteRenderer::initCylinderData()
     glGenVertexArrays(1, &topVAO);
     glGenBuffers(1, &topVBO_ID);
 
-    // 设置顶部圆片的VAO和VBO（保持原始rimVBO数据）
+<<<<<<< HEAD
+    // 设置顶部圆片的VAO和VBO（保持原始rimVBO数据�?
+=======
+    // ���� rim �� VAO �� VBO
+    glBindVertexArray(rimVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, rimVBO_ID);
+    glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // ���� side �� VAO �� VBO
+    glBindVertexArray(sideVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, sideVBO_ID);
+    glBufferData(GL_ARRAY_BUFFER, sideVBO.size() * sizeof(float), sideVBO.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    for (int i = 1; i < rimVBO.size(); i += 3) {
+        if (i < rimVBO.size()) rimVBO[i] = 1.0f;
+    }
+
+    // ���� top �� VAO �� VBO
+>>>>>>> parent of bbdda5e (add cylinder)
     glBindVertexArray(topVAO);
     glBindBuffer(GL_ARRAY_BUFFER, topVBO_ID);
     glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
@@ -556,13 +589,13 @@ void SpriteRenderer::initCylinderData()
     glEnableVertexAttribArray(0);
     sideVBOSize = sideVBO.size();
 
-    // 创建底部圆片的VAO和VBO（复制rimVBO并修改y坐标为0）
-    std::vector<float> bottomRimVBO = rimVBO; // 复制一份避免修改原始数据
+    // 创建底部圆片的VAO和VBO（复制rimVBO并修改y坐标�?�?
+    std::vector<float> bottomRimVBO = rimVBO; // 复制一份避免修改原始数�?
     for (size_t i = 1; i < bottomRimVBO.size(); i += 3) {
-        bottomRimVBO[i] = 0.0f; // 设置y坐标为0
+        bottomRimVBO[i] = 0.0f; // 设置y坐标�?
     }
 
-    // 配置 top 的 VAO 和 VBO
+    // 配置 top �?VAO �?VBO
     glBindVertexArray(topVAO);
     glBindBuffer(GL_ARRAY_BUFFER, topVBO_ID);
     glBufferData(GL_ARRAY_BUFFER, rimVBO.size() * sizeof(float), rimVBO.data(), GL_STATIC_DRAW);
