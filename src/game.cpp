@@ -41,7 +41,7 @@ Game::Game(unsigned int width, unsigned int height)
 
 Game::~Game()
 {
-    // ÊÍ·Å³ÉÔ±±äÁ¿
+    // é‡Šæ”¾æˆå‘˜å˜é‡
     if (textInput) {
         delete textInput;
         textInput = nullptr;
@@ -52,7 +52,7 @@ Game::~Game()
         messageBox = nullptr;
     }
     
-    // ÊÍ·Å°´Å¥×ÊÔ´
+    // é‡Šæ”¾æŒ‰é’®èµ„æº
     if (RecordButton) {
         delete RecordButton;
         RecordButton = nullptr;
@@ -68,7 +68,7 @@ Game::~Game()
         LoadButton = nullptr;
     }
     
-    // ÊÍ·ÅËş×ÊÔ´
+    // é‡Šæ”¾å¡”èµ„æº
     for (auto& [id, tower] : towers) {
         if (tower) {
             delete tower;
@@ -76,19 +76,19 @@ Game::~Game()
     }
     towers.clear();
     
-    // ÊÍ·ÅStepManager
+    // é‡Šæ”¾StepManager
     if (stepManager) {
         delete stepManager;
         stepManager = nullptr;
     }
     
-    // ÊÍ·ÅMenu
+    // é‡Šæ”¾Menu
     if (menu) {
         delete menu;
         menu = nullptr;
     }
     
-    // ÊÍ·ÅäÖÈ¾Ïà¹Ø×ÊÔ´
+    // é‡Šæ”¾æ¸²æŸ“ç›¸å…³èµ„æº
     if (Particles) {
         delete Particles;
         Particles = nullptr;
@@ -104,13 +104,13 @@ Game::~Game()
         Effects = nullptr;
     }
     
-    // ÊÍ·ÅTextRenderer
+    // é‡Šæ”¾TextRenderer
     if (Text) {
         delete Text;
         Text = nullptr;
     }
     
-    // ÊÍ·ÅSoundEngine£¨Ê¹ÓÃdrop¶ø²»ÊÇdelete£©
+    // é‡Šæ”¾SoundEngineï¼ˆä½¿ç”¨dropè€Œä¸æ˜¯deleteï¼‰
     if (SoundEngine) {
         SoundEngine->drop();
         SoundEngine = nullptr;
@@ -120,7 +120,7 @@ Game::~Game()
 void Game::Init()
 {
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS); // È·±£Ê¹ÓÃÄ¬ÈÏµÄÉî¶È²âÊÔº¯Êı
+    glDepthFunc(GL_LESS); // ç¡®ä¿ä½¿ç”¨é»˜è®¤çš„æ·±åº¦æµ‹è¯•å‡½æ•°
 
     // Load freetype
     Text = new TextRenderer(this->Width, this->Height);
@@ -152,7 +152,7 @@ void Game::Init()
     ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
 
     ResourceManager::GetShader("rectangle").Use().SetMatrix4("projection", projection);
-    // ¼ÓÔØÎÆÀí
+    // åŠ è½½çº¹ç†
     ResourceManager::LoadTexture("resources/textures/background.jpg", GL_FALSE, "background");
     ResourceManager::LoadTexture("resources/textures/block.png", GL_FALSE, "block");
     ResourceManager::LoadTexture("resources/textures/container2.png", GL_TRUE, "diffuseMap");
@@ -167,7 +167,7 @@ void Game::Init()
     messageBox = new MessageBox(this->Width, this->Height);
     menu = new Menu(this->Width, this->Height);
 
-    // ÉèÖÃ»Øµ÷º¯Êı
+    // è®¾ç½®å›è°ƒå‡½æ•°
     menu->SetCallback([this](int towers, int disks, bool sound, float volume) {
         std::cout << "Starting game with: " << towers << " towers, "
             << disks << " disks, sound " << (sound ? "ON" : "OFF")
@@ -224,18 +224,18 @@ void Game::enter() {
     sideBarHeight = this->Height - topBarHeight;
 
     // Add buttons
-    // ¼ÆËã°´Å¥µÄ³ß´çºÍÎ»ÖÃ
-    float buttonWidth = this->Width - sideBarX;  // °´Å¥¿í¶ÈÎª²à±ßÀ¸¿í¶È
-    float totalAreaHeight = this->Height - topBarHeight; // ¿ÉÓÃ×Ü¸ß¶È
-    float spacing = totalAreaHeight * 0.05f; // ¼ä¾àÎª×Ü¸ß¶ÈµÄ5%
-    float buttonHeight = (totalAreaHeight - 2 * spacing) / 3; // Ã¿¸ö°´Å¥µÄ¸ß¶È
+    // è®¡ç®—æŒ‰é’®çš„å°ºå¯¸å’Œä½ç½®
+    float buttonWidth = this->Width - sideBarX;  // æŒ‰é’®å®½åº¦ä¸ºä¾§è¾¹æ å®½åº¦
+    float totalAreaHeight = this->Height - topBarHeight; // å¯ç”¨æ€»é«˜åº¦
+    float spacing = totalAreaHeight * 0.05f; // é—´è·ä¸ºæ€»é«˜åº¦çš„5%
+    float buttonHeight = (totalAreaHeight - 2 * spacing) / 3; // æ¯ä¸ªæŒ‰é’®çš„é«˜åº¦
 
-    // ¼ÆËãÃ¿¸ö°´Å¥µÄY×ø±ê
+    // è®¡ç®—æ¯ä¸ªæŒ‰é’®çš„Yåæ ‡
     float recordButtonY = topBarHeight;
     float stopButtonY = topBarHeight + buttonHeight + spacing;
     float loadButtonY = topBarHeight + 2 * (buttonHeight + spacing);
 
-    // ´´½¨°´Å¥¶ÔÏó
+    // åˆ›å»ºæŒ‰é’®å¯¹è±¡
     RecordButton = new Button(
         glm::vec2(sideBarX, recordButtonY),
         glm::vec2(buttonWidth, buttonHeight),
@@ -263,7 +263,7 @@ void Game::enter() {
     // Input Record Name
     textInput = new TextInput(this->Width, this->Height);
     textInput->setOnSubmitCallback([this](const std::string& result) {
-        // ´¦ÀíÊäÈëÍê³ÉºóµÄÂß¼­
+        // å¤„ç†è¾“å…¥å®Œæˆåçš„é€»è¾‘
         std::cout << "Input result: " << result << std::endl;
         if (result.size() == 0) {
             messageBox->setMessage("ERROR : Please Enter Something");
@@ -277,13 +277,13 @@ void Game::enter() {
     });
 
     stepManager->regViewCall([this](const std::string& result) {
-        // ´¦ÀíÊäÈëÍê³ÉºóµÄÂß¼­
+        // å¤„ç†è¾“å…¥å®Œæˆåçš„é€»è¾‘
         std::cout << "Display result: " << result << std::endl;
         messageBox->setMessage(result);
         messageBox->setActive(true);
         });
     stepManager->regSwCall([this](const std::string& result) {
-        // ´¦ÀíÊäÈëÍê³ÉºóµÄÂß¼­
+        // å¤„ç†è¾“å…¥å®Œæˆåçš„é€»è¾‘
         std::cout << "Display result: " << result << std::endl;
         eventBus.AddHighPriorityEvent("Please Choose Source Tower", 3.0f);
         switchTemp = result;
@@ -349,11 +349,11 @@ void Game::ProcessInput(float dt)
 int from = -1, to = -1;
 
 void Game::ProcessMouse(float dt, GLFWwindow* window) {
-    // ¼ì²âÊÇ·ñÎªÍêÕûµÄÊó±êµã»÷£¨°´ÏÂ²¢ÊÍ·Å£©
+    // æ£€æµ‹æ˜¯å¦ä¸ºå®Œæ•´çš„é¼ æ ‡ç‚¹å‡»ï¼ˆæŒ‰ä¸‹å¹¶é‡Šæ”¾ï¼‰
     const bool isCompleteClick = (!mousePressed && mouseWasPressed);
     mouseWasPressed = mousePressed;
 
-    // »ñÈ¡Êó±êÎ»ÖÃ
+    // è·å–é¼ æ ‡ä½ç½®
     double dmouseX, dmouseY;
     glfwGetCursorPos(window, &dmouseX, &dmouseY);
 
@@ -380,7 +380,7 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     }
 
     if (State == GAME_ACTIVE) {
-        // ³¢ÊÔÑ¡Ôñµã»÷µÄÅÌ×Ó
+        // å°è¯•é€‰æ‹©ç‚¹å‡»çš„ç›˜å­
         Plate* clickedPlate = nullptr;
         Hanoi* sourceTower = nullptr;
 
@@ -390,7 +390,7 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
             Plate* topPlate = tower->getTopPlate();
             if (topPlate->isChosen(cursorX, cursorY)) {
 				soundTrigger();
-                // È¡ÏûÆäËûËş¶¥ÅÌ×ÓµÄÑ¡ÖĞ×´Ì¬
+                // å–æ¶ˆå…¶ä»–å¡”é¡¶ç›˜å­çš„é€‰ä¸­çŠ¶æ€
                 clearOtherPlateSelections(towerId);
 
                 topPlate->select();
@@ -400,7 +400,7 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
             }
         }
 
-        // Èç¹ûÃ»ÓĞµã»÷µ½ÅÌ×Ó£¬¼ì²éÖù×Óµã»÷
+        // å¦‚æœæ²¡æœ‰ç‚¹å‡»åˆ°ç›˜å­ï¼Œæ£€æŸ¥æŸ±å­ç‚¹å‡»
         if (!clickedPlate) {
             handleTowerClick(cursorX, cursorY);
         }
@@ -459,7 +459,7 @@ void Game::MouseScroll(double yoffset)
     Renderer->MouseScroll(yoffset);
 }
 
-// Çå³ıÆäËûËşµÄÅÌ×ÓÑ¡ÖĞ×´Ì¬
+// æ¸…é™¤å…¶ä»–å¡”çš„ç›˜å­é€‰ä¸­çŠ¶æ€
 void Game::clearOtherPlateSelections(int currentTowerId) {
     for (auto& [towerId, tower] : towers) {
         if (towerId != currentTowerId && !tower->isEmpty()) {
@@ -471,9 +471,9 @@ void Game::clearOtherPlateSelections(int currentTowerId) {
     }
 }
 
-// ´¦ÀíËşµã»÷ÊÂ¼ş
+// å¤„ç†å¡”ç‚¹å‡»äº‹ä»¶
 void Game::handleTowerClick(float cursorX, float cursorY) {
-    // ²éÕÒµ±Ç°Ñ¡ÖĞµÄÅÌ×Ó
+    // æŸ¥æ‰¾å½“å‰é€‰ä¸­çš„ç›˜å­
     Plate* selectedPlate = nullptr;
 
     int sourceId;
@@ -493,10 +493,10 @@ void Game::handleTowerClick(float cursorX, float cursorY) {
 
     if (!selectedPlate) return;
 
-    // ¼ì²éÊÇ·ñµã»÷ÁËÄ¿±êËş
+    // æ£€æŸ¥æ˜¯å¦ç‚¹å‡»äº†ç›®æ ‡å¡”
     for (auto& [towerId, targetTower] : towers) {
         if (targetTower->pole.isChosen(cursorX, cursorY)) {
-            // ÑéÖ¤ÒÆ¶¯ÊÇ·ñºÏ·¨
+            // éªŒè¯ç§»åŠ¨æ˜¯å¦åˆæ³•
             if (isMoveValid(*targetTower, *selectedPlate)) {
                 movePlate(*sourceTower, sourceId, *targetTower, towerId);
             }
@@ -506,7 +506,7 @@ void Game::handleTowerClick(float cursorX, float cursorY) {
 
 }
 
-// ¼ì²éÒÆ¶¯ÊÇ·ñºÏ·¨
+// æ£€æŸ¥ç§»åŠ¨æ˜¯å¦åˆæ³•
 bool Game::isMoveValid(Hanoi& targetTower, Plate& plate) {
     return targetTower.isEmpty() || targetTower.getTop() > plate.level;
 }
@@ -515,15 +515,15 @@ bool Game::isMoveValid(Hanoi* sourceTower, Hanoi* targetTower) {
     return targetTower->isEmpty() || targetTower->getTop() > sourceTower->getTop();
 }
 
-// ¸¨Öúº¯Êı£ºÖ´ĞĞÅÌ×ÓÒÆ¶¯
+// è¾…åŠ©å‡½æ•°ï¼šæ‰§è¡Œç›˜å­ç§»åŠ¨
 void Game::movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int targetId) {
     auto [plateLevel, plateObj] = sourceTower.PopTop();
 
-    // ¸üĞÂÅÌ×ÓÎ»ÖÃ
+    // æ›´æ–°ç›˜å­ä½ç½®
     const float xOffset = targetTower.pos.x - sourceTower.pos.x;
     plateObj.Position.x += xOffset;
 
-    // ´´½¨²¢Ìí¼ÓÊÂ¼ş
+    // åˆ›å»ºå¹¶æ·»åŠ äº‹ä»¶
     std::string eventMsg = "Switch Tower " + std::to_string(sourceId) +
         " To Tower " + std::to_string(targetId);
     eventBus.AddMediumPriorityEvent(eventMsg, 2.0f);
@@ -531,7 +531,7 @@ void Game::movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int t
     stepManager->insert(sourceId, targetId);
     Step++;
 
-    plateObj.select(); // È¡ÏûÑ¡ÖĞ×´Ì¬
+    plateObj.select(); // å–æ¶ˆé€‰ä¸­çŠ¶æ€
     targetTower.PushTop(plateObj, plateLevel);
 }
 
