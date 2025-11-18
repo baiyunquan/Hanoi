@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 
 void Header::Render(SpriteRenderer& renderer, TextRenderer& textRenderer,float height, float keyWidth, float valueWidth, glm::vec2 pos) {
-    // ¼ÆËãÎÄ±¾Î»ÖÃ£¨¾ÓÖĞÏÔÊ¾£©
+    // è®¡ç®—æ–‡æœ¬ä½ç½®ï¼ˆå±…ä¸­æ˜¾ç¤ºï¼‰
      textRenderer.RenderTextInBox(key, pos.x, pos.y,keyWidth , height, 1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
     float valueColWidth = valueWidth / value.size();
@@ -10,46 +10,46 @@ void Header::Render(SpriteRenderer& renderer, TextRenderer& textRenderer,float h
         textRenderer.RenderTextInBox(value[i], pos.x + keyWidth + (valueColWidth * i), pos.y, valueColWidth , height, 1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
     }
 
-    // ÔÚµ×²¿»­Ò»ÌõÏß
+    // åœ¨åº•éƒ¨ç”»ä¸€æ¡çº¿
     renderer.DrawLine(glm::vec2(pos.x, pos.y + height - 2.0f), glm::vec2(pos.x + keyWidth + (valueWidth * (value.size() - 1)), pos.y + height - 2.0f), 2.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 void Line::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float height, float keyWidth, float valueWidth, glm::vec2 pos) {
-    // Ê¹ÓÃTextRendereräÖÈ¾keyÎÄ±¾
+    // ä½¿ç”¨TextRendereræ¸²æŸ“keyæ–‡æœ¬
     textRenderer.RenderTextInBox(key, pos.x, pos.y, keyWidth, height, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
-    // Ê¹ÓÃGameObjectäÖÈ¾valueÁĞ
+    // ä½¿ç”¨GameObjectæ¸²æŸ“valueåˆ—
     float valueColWidth = valueWidth / values.size();
     for (size_t i = 0; i < values.size(); i++) {
-        // ¼ÆËãÔ­Ê¼µ¥Ôª¸ñÎ»ÖÃºÍ´óĞ¡
+        // è®¡ç®—åŸå§‹å•å…ƒæ ¼ä½ç½®å’Œå¤§å°
         glm::vec2 originalPos(pos.x + keyWidth + i * valueColWidth, pos.y);
         glm::vec2 originalSize(valueColWidth, height);
 
-        // ¼ÆËã80%±ÈÀıµÄ´óĞ¡
+        // è®¡ç®—80%æ¯”ä¾‹çš„å¤§å°
         glm::vec2 scaledSize = originalSize * 0.8f;
 
-        // ¼ÆËã¾ÓÖĞÎ»ÖÃ£¨±£³ÖÖĞĞÄµã²»±ä£©
+        // è®¡ç®—å±…ä¸­ä½ç½®ï¼ˆä¿æŒä¸­å¿ƒç‚¹ä¸å˜ï¼‰
         glm::vec2 centeredPos = originalPos + (originalSize - scaledSize) * 0.5f;
 
-        // ÉèÖÃGameObjectµÄÎ»ÖÃºÍ´óĞ¡
+        // è®¾ç½®GameObjectçš„ä½ç½®å’Œå¤§å°
         values[i].Position = centeredPos;
         values[i].Width = scaledSize.x;
         values[i].Height = scaledSize.y;
 
-        // äÖÈ¾GameObject
+        // æ¸²æŸ“GameObject
         values[i].Draw(renderer);
         values[i].DrawText(textRenderer);
     }
 }
 
-// FormÀàÊµÏÖ
+// Formç±»å®ç°
 Form::Form(std::string keyName, std::vector<std::string> valueName) :
     header(Header(keyName, valueName)) {}
 
 void Form::updateData(const std::vector<std::string>& data) {
-    // Ö»Ìí¼Ó²»´æÔÚµÄkeyÖµ
+    // åªæ·»åŠ ä¸å­˜åœ¨çš„keyå€¼
     for (const auto& key : data) {
-        // ¼ì²ékeyÊÇ·ñÒÑ´æÔÚ
+        // æ£€æŸ¥keyæ˜¯å¦å·²å­˜åœ¨
         bool exists = false;
         for (const auto& line : lines) {
             if (line.key == key) {
@@ -58,12 +58,12 @@ void Form::updateData(const std::vector<std::string>& data) {
             }
         }
 
-        // Èç¹ûkey²»´æÔÚ£¬ÔòÌí¼ÓĞÂĞĞ
+        // å¦‚æœkeyä¸å­˜åœ¨ï¼Œåˆ™æ·»åŠ æ–°è¡Œ
         if (!exists) {
             std::vector<Object2D> values;
             for (size_t j = 0; j < header.value.size(); j++) {
                 Object2D cell(glm::vec2(0, 0), 0, 0, glm::vec3(0.8f, 0.8f, 0.8f));
-                cell.setText(header.value[j]); // ³õÊ¼ÖµÎª¿Õ
+                cell.setText(header.value[j]); // åˆå§‹å€¼ä¸ºç©º
                 values.push_back(cell);
             }
 
@@ -74,7 +74,7 @@ void Form::updateData(const std::vector<std::string>& data) {
 
 
 void Form::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float screenWidth, float screenHeight) {
-    // ¼ÆËã±íµ¥³ß´çºÍÎ»ÖÃ
+    // è®¡ç®—è¡¨å•å°ºå¯¸å’Œä½ç½®
     float margin = 20.0f;
     float headerHeight = 60.0f;
     float rowHeight = 50.0f;
@@ -82,10 +82,10 @@ void Form::Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float sc
     float valueWidth = screenWidth * 4 / 5 - margin;
     glm::vec2 startPos(margin, margin);
 
-    // äÖÈ¾±íÍ·
+    // æ¸²æŸ“è¡¨å¤´
     header.Render(renderer, textRenderer, headerHeight, keyWidth, valueWidth, startPos);
 
-    // äÖÈ¾Êı¾İĞĞ
+    // æ¸²æŸ“æ•°æ®è¡Œ
     for (size_t i = 0; i < lines.size(); i++) {
         glm::vec2 rowPos(startPos.x, startPos.y + headerHeight + i * rowHeight);
         lines[i].Render(renderer, textRenderer, rowHeight, keyWidth, valueWidth, rowPos);

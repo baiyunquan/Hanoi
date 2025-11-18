@@ -27,7 +27,7 @@ enum GameState {
 class Game
 {
 public:
-    // ÓÎÏ·×´Ì¬
+    // æ¸¸æˆçŠ¶æ€
     GameState  State;
     bool  Keys[1024];
     bool  KeysProcessed[1024];
@@ -45,7 +45,7 @@ public:
     std::string switchTemp;
 
     TextInput* textInput;
-    // ´´½¨ÏûÏ¢¿ò
+    // åˆ›å»ºæ¶ˆæ¯æ¡†
     MessageBox* messageBox;
     Timer timer;
 
@@ -53,20 +53,21 @@ public:
     int towerNum = 3;
 	int towerLevel = 5;
 
-    // ¹¹Ôìº¯Êı/Îö¹¹º¯Êı
+    // æ„é€ å‡½æ•°/ææ„å‡½æ•°
     Game(unsigned int width, unsigned int height);
     ~Game();
-    // ³õÊ¼»¯ÓÎÏ·×´Ì¬£¨¼ÓÔØËùÓĞµÄ×ÅÉ«Æ÷/ÎÆÀí/¹Ø¿¨£©
+    // åˆå§‹åŒ–æ¸¸æˆçŠ¶æ€ï¼ˆåŠ è½½æ‰€æœ‰çš„ç€è‰²å™¨/çº¹ç†/å…³å¡ï¼‰
     void Init();
     void enter();
     bool beginRecord(std::string name);
     void clearPlateSelections();
-    // ÓÎÏ·Ñ­»·
+    // æ¸¸æˆå¾ªç¯
     void ProcessMouse(float dt, GLFWwindow* window);
     void MouseScroll(double yoffset);
     void clearOtherPlateSelections(int currentTowerId);
     void handleTowerClick(float cursorX, float cursorY);
-    bool isMoveValid(Hanoi& targetTower, Plate& plate);
+    //bool isMoveValid(Hanoi& targetTower, Plate& plate);
+    bool isMoveValid(Hanoi& targetTower, Plate3D& plate);
     bool isMoveValid(Hanoi* sourceTower, Hanoi* targetTower);
     void Update(float dt);
     void ProcessInput(float dt);

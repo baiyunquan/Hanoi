@@ -3,14 +3,14 @@
 #include <string>
 #include <queue>
 
-// ÊÂ¼şµÈ¼¶Ã¶¾Ù
+// äº‹ä»¶ç­‰çº§æšä¸¾
 enum class EventLevel {
-    HIGH,    // ¸ß¼¶ÊÂ¼ş
-    MEDIUM,  // ÖĞ¼¶ÊÂ¼ş
-    LOW      // µÍ¼¶ÊÂ¼ş
+    HIGH,    // é«˜çº§äº‹ä»¶
+    MEDIUM,  // ä¸­çº§äº‹ä»¶
+    LOW      // ä½çº§äº‹ä»¶
 };
 
-// ÊÂ¼ş½á¹¹
+// äº‹ä»¶ç»“æ„
 struct GameEvent {
     std::string message;
     EventLevel level;
@@ -19,7 +19,7 @@ struct GameEvent {
     GameEvent(const std::string& msg = "", EventLevel lvl = EventLevel::LOW, float time = 10.0f);
 };
 
-// ÊÂ¼ş×ÜÏßÀà
+// äº‹ä»¶æ€»çº¿ç±»
 class EventBus {
 private:
     std::queue<GameEvent> highPriorityEvents;
@@ -29,18 +29,18 @@ private:
     float remainingTime = 0.0f;
 
 public:
-    // Ìí¼ÓÊÂ¼şµ½ÏàÓ¦¶ÓÁĞ
+    // æ·»åŠ äº‹ä»¶åˆ°ç›¸åº”é˜Ÿåˆ—
     void AddEvent(const GameEvent& event);
 
-    // ¸üĞÂÊÂ¼şÏÔÊ¾Ê±¼ä²¢»ñÈ¡µ±Ç°Ó¦ÏÔÊ¾µÄÊÂ¼ş
+    // æ›´æ–°äº‹ä»¶æ˜¾ç¤ºæ—¶é—´å¹¶è·å–å½“å‰åº”æ˜¾ç¤ºçš„äº‹ä»¶
     void Update(float dt);
 
     std::string GetCurrentMessage() const;
 
-    // Çå¿ÕËùÓĞÊÂ¼ş¶ÓÁĞ
+    // æ¸…ç©ºæ‰€æœ‰äº‹ä»¶é˜Ÿåˆ—
     void ClearAll();
 
-    // ¼ì²éÊÇ·ñÓĞÊÂ¼şÕıÔÚÏÔÊ¾
+    // æ£€æŸ¥æ˜¯å¦æœ‰äº‹ä»¶æ­£åœ¨æ˜¾ç¤º
     bool IsDisplayingEvent() const;
     void AddHighPriorityEvent(const std::string& message, float time);
     void AddMediumPriorityEvent(const std::string& message, float time);

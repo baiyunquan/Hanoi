@@ -1,11 +1,11 @@
 #include "eventbus.h"
 
-// GameEvent ¹¹Ôìº¯Êı
+// GameEvent æ„é€ å‡½æ•°
 GameEvent::GameEvent(const std::string& msg, EventLevel lvl, float time)
     : message(msg), level(lvl), displayTime(time) {
 }
 
-// Ìí¼ÓÊÂ¼şµ½ÏàÓ¦¶ÓÁĞ
+// æ·»åŠ äº‹ä»¶åˆ°ç›¸åº”é˜Ÿåˆ—
 void EventBus::AddEvent(const GameEvent& event) {
     switch (event.level) {
     case EventLevel::HIGH:
@@ -20,17 +20,17 @@ void EventBus::AddEvent(const GameEvent& event) {
     }
 }
 
-// ¸üĞÂÊÂ¼şÏÔÊ¾Ê±¼ä
+// æ›´æ–°äº‹ä»¶æ˜¾ç¤ºæ—¶é—´
 void EventBus::Update(float dt) {
     if (remainingTime > 0.0f) {
         remainingTime -= dt;
     }
 
-    // Èç¹ûµ±Ç°ÊÂ¼şÒÑ½áÊø»òÃ»ÓĞµ±Ç°ÊÂ¼ş£¬»ñÈ¡ÏÂÒ»¸öÊÂ¼ş
+    // å¦‚æœå½“å‰äº‹ä»¶å·²ç»“æŸæˆ–æ²¡æœ‰å½“å‰äº‹ä»¶ï¼Œè·å–ä¸‹ä¸€ä¸ªäº‹ä»¶
     if (remainingTime <= 0.0f) {
-        // ÓÅÏÈ´Ó¸ßÓÅÏÈ¼¶¶ÓÁĞ»ñÈ¡ÊÂ¼ş
+        // ä¼˜å…ˆä»é«˜ä¼˜å…ˆçº§é˜Ÿåˆ—è·å–äº‹ä»¶
         if (!highPriorityEvents.empty()) {
-            currentEvent = highPriorityEvents.front(); // ¸´ÖÆÊÂ¼ş¶ø²»ÊÇ»ñÈ¡Ö¸Õë
+            currentEvent = highPriorityEvents.front(); // å¤åˆ¶äº‹ä»¶è€Œä¸æ˜¯è·å–æŒ‡é’ˆ
             highPriorityEvents.pop();
             remainingTime = currentEvent.displayTime;
         }
@@ -45,18 +45,18 @@ void EventBus::Update(float dt) {
             remainingTime = currentEvent.displayTime;
         }
         else {
-            currentEvent = GameEvent(); // ÖØÖÃÎª¿ÕÊÂ¼ş
+            currentEvent = GameEvent(); // é‡ç½®ä¸ºç©ºäº‹ä»¶
             remainingTime = 0.0f;
         }
     }
 }
 
-// »ñÈ¡µ±Ç°ÊÂ¼şÏûÏ¢
+// è·å–å½“å‰äº‹ä»¶æ¶ˆæ¯
 std::string EventBus::GetCurrentMessage() const {
     return currentEvent.message;
 }
 
-// Çå¿ÕËùÓĞÊÂ¼ş¶ÓÁĞ
+// æ¸…ç©ºæ‰€æœ‰äº‹ä»¶é˜Ÿåˆ—
 void EventBus::ClearAll() {
     while (!highPriorityEvents.empty()) highPriorityEvents.pop();
     while (!mediumPriorityEvents.empty()) mediumPriorityEvents.pop();
@@ -65,12 +65,12 @@ void EventBus::ClearAll() {
     remainingTime = 0.0f;
 }
 
-// ¼ì²éÊÇ·ñÓĞÊÂ¼şÕıÔÚÏÔÊ¾
+// æ£€æŸ¥æ˜¯å¦æœ‰äº‹ä»¶æ­£åœ¨æ˜¾ç¤º
 bool EventBus::IsDisplayingEvent() const {
     return remainingTime > 0.0f && !currentEvent.message.empty();
 }
 
-// Ìí¼ÓÆäËûÊÂ¼şµÄ·½·¨Ê¾Àı
+// æ·»åŠ å…¶ä»–äº‹ä»¶çš„æ–¹æ³•ç¤ºä¾‹
 void EventBus::AddHighPriorityEvent(const std::string& message , float time) {
     this->AddEvent(GameEvent(message, EventLevel::HIGH , time));
 }

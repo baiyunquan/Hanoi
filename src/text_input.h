@@ -20,7 +20,7 @@ public:
     bool isActive() const;
     void setActive(bool active);
 
-    // 添加回调函数用于处理输入完成
+    // 娣诲姞鍥炶皟鍑芥暟鐢ㄤ簬澶勭悊杈撳叆瀹屾垚
     void setOnSubmitCallback(std::function<void(const std::string&)> callback);
 
 private:

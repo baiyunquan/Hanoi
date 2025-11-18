@@ -6,7 +6,7 @@ Plate::Plate()
     : Object2D(), level(0){
 }
 
-// ¹¹Ôìº¯ÊýµÄ¶¨Òå£¬³õÊ¼»¯ÁÐ±íÖÐµ÷ÓÃ»ùÀà¹¹Ôìº¯Êý
+// æž„é€ å‡½æ•°çš„å®šä¹‰ï¼Œåˆå§‹åŒ–åˆ—è¡¨ä¸­è°ƒç”¨åŸºç±»æž„é€ å‡½æ•°
 Plate::Plate(glm::vec2 pos, float sizeX, float sizeY, int level , glm::vec3 color, glm::vec2 velocity)
     : Object2D(pos, sizeX, sizeY, color, velocity) {
 	this->level = level;

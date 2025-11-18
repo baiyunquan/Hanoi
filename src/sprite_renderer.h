@@ -33,7 +33,7 @@ public:
     void DrawLine(glm::vec2 start, glm::vec2 end, float lineWidth, glm::vec3 color);
     void DrawRectangle(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color);
 
-    glm::vec3 ScreenToWorldCoordinates(const glm::vec2& screenCoords);
+    glm::vec3 ScreenToWorldCoordinates(const glm::vec2& screenCoords, const glm::vec2& size);
 
     // Update projection and view matrices
     void UpdateProjection(float width, float height);
@@ -52,14 +52,14 @@ private:
 
     // lighting
     glm::vec3 lightPos = { 1.2f, 1.0f, 2.0f };
-    // ½«Ô­À´µÄÖµ¸ÄÎª¸ü¸ßµÄÖµ
-    glm::vec3 lightAmbient = { 0.5f, 0.5f, 0.5f };  // ´Ó0.2Ôö¼Óµ½0.5
-    glm::vec3 lightDiffuse = { 0.8f, 0.8f, 0.8f };  // ´Ó0.5Ôö¼Óµ½0.8
-    glm::vec3 lightSpecular = { 1.0f, 1.0f, 1.0f }; // ±£³Ö²»±ä£¨ÒÑ¾­ÊÇ×î´óÖµ£©
+    // å°†åŸæ¥çš„å€¼æ”¹ä¸ºæ›´é«˜çš„å€¼
+    glm::vec3 lightAmbient = { 0.5f, 0.5f, 0.5f };  // ä»0.2å¢åŠ åˆ°0.5
+    glm::vec3 lightDiffuse = { 0.8f, 0.8f, 0.8f };  // ä»0.5å¢åŠ åˆ°0.8
+    glm::vec3 lightSpecular = { 1.0f, 1.0f, 1.0f }; // ä¿æŒä¸å˜ï¼ˆå·²ç»æ˜¯æœ€å¤§å€¼ï¼‰
 
     const float netSize = 20.0f;
-    const float netStep = 1.0f; // Ã¿¸ñ1Ã×
-    // µÆ¹â¿ØÖÆ
+    const float netStep = 1.0f; // æ¯æ ¼1ç±³
+    // ç¯å…‰æ§åˆ¶
     float lightAdjustStep = 0.1f;
     int currentLightProperty = 0; // 0: ambient, 1: diffuse, 2: specular
     int rimVBOSize, topVBOSize, sideVBOSize;
@@ -84,7 +84,7 @@ private:
     unsigned int cubeVBO, cubeVAO;
     unsigned int lightCubeVAO;
     unsigned int groundVAO, groundVBO;
-    // Ìí¼Ó rim ºÍ side µÄ VAO ºÍ VBO
+    // æ·»åŠ  rim å’Œ side çš„ VAO å’Œ VBO
     unsigned int rimVAO, rimVBO_ID, sideVAO, sideVBO_ID;
     unsigned int topVAO, topVBO_ID;
     // load textures (we now use a utility function to keep the code more organized)

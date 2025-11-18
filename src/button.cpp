@@ -17,36 +17,36 @@ void Button::UpdateBounceAnimation(float dt)
 
     if (bounceState == SHRINKING)
     {
-        // ËõÐ¡½×¶Î (0% - 50%)
-        float progress = bounceProgress * 2.0f; // Ó³Éäµ½ 0-1
+        // ç¼©å°é˜¶æ®µ (0% - 50%)
+        float progress = bounceProgress * 2.0f; // æ˜ å°„åˆ° 0-1
         if (progress > 1.0f) progress = 1.0f;
 
-        // Ê¹ÓÃ¶þ´Î»º¶¯º¯ÊýÊµÏÖÆ½»¬ËõÐ¡£¬ËõÐ¡µ½Ô­À´µÄ80%
-        float scale = 1.0f - progress * progress * 0.2f; // ËõÐ¡µ½80%
+        // ä½¿ç”¨äºŒæ¬¡ç¼“åŠ¨å‡½æ•°å®žçŽ°å¹³æ»‘ç¼©å°ï¼Œç¼©å°åˆ°åŽŸæ¥çš„80%
+        float scale = 1.0f - progress * progress * 0.2f; // ç¼©å°åˆ°80%
         Width = originalSizeX * scale;
         Height = originalSizeY * scale;
 
         if (bounceProgress >= 0.5f)
         {
             bounceState = EXPANDING;
-            bounceProgress = 0.5f; // ÖØÖÃ½ø¶È£¬´Ó50%¿ªÊ¼
+            bounceProgress = 0.5f; // é‡ç½®è¿›åº¦ï¼Œä»Ž50%å¼€å§‹
         }
     }
     else if (bounceState == EXPANDING)
     {
-        // À©´ó½×¶Î (50% - 100%)
-        float progress = (bounceProgress - 0.5f) * 2.0f; // Ó³Éäµ½ 0-1
+        // æ‰©å¤§é˜¶æ®µ (50% - 100%)
+        float progress = (bounceProgress - 0.5f) * 2.0f; // æ˜ å°„åˆ° 0-1
         if (progress > 1.0f) progress = 1.0f;
 
-        // Ê¹ÓÃµ¯ÐÔº¯ÊýÊµÏÖÓÐµ¯ÐÔµÄÀ©´óÐ§¹û£¬´Ó80%À©´óµ½100%
-        float scale = 0.8f + progress * progress * (1.2f - progress); // ´Ó80%À©´óµ½100%
+        // ä½¿ç”¨å¼¹æ€§å‡½æ•°å®žçŽ°æœ‰å¼¹æ€§çš„æ‰©å¤§æ•ˆæžœï¼Œä»Ž80%æ‰©å¤§åˆ°100%
+        float scale = 0.8f + progress * progress * (1.2f - progress); // ä»Ž80%æ‰©å¤§åˆ°100%
         Width = originalSizeX * scale;
         Height = originalSizeY * scale;
 
         if (bounceProgress >= 1.0f)
         {
             bounceState = NONE;
-            // È·±£×îÖÕ»Ö¸´µ½Ô­Ê¼´óÐ¡
+            // ç¡®ä¿æœ€ç»ˆæ¢å¤åˆ°åŽŸå§‹å¤§å°
             Width = originalSizeX;
             Height = originalSizeY;
         }
@@ -55,7 +55,7 @@ void Button::UpdateBounceAnimation(float dt)
 
 void Button::Draw(SpriteRenderer& renderer)
 {
-    // ÒÆ³ýÑÕÉ«±ä»¯Ð§¹û£¬Ê¼ÖÕÊ¹ÓÃÔ­Ê¼ÑÕÉ«
+    // ç§»é™¤é¢œè‰²å˜åŒ–æ•ˆæžœï¼Œå§‹ç»ˆä½¿ç”¨åŽŸå§‹é¢œè‰²
     glm::vec3 drawColor = this->Color;
 
     if (isRect) {

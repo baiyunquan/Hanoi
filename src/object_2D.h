@@ -32,7 +32,7 @@ public:
     virtual void Draw(SpriteRenderer& renderer);
     // Draw text
     virtual void DrawText(TextRenderer& textRenderer);
-    // ÅĞ¶ÏÊó±êÊÇ·ñÔÚPlateÉÏ
+    // åˆ¤æ–­é¼ æ ‡æ˜¯å¦åœ¨Plateä¸Š
     virtual bool isChosen(float mouseX, float mouseY);
 
     std::string getText();

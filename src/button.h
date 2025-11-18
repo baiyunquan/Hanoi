@@ -4,28 +4,28 @@
 
 class Button : public Object2D {
 public:
-    // Ê¹ÓÃ¼Ì³Ğ¹¹Ôìº¯Êı - ×Ô¶¯¼Ì³Ğ GameObject µÄËùÓĞ¹¹Ôìº¯Êı
+    // ä½¿ç”¨ç»§æ‰¿æ„é€ å‡½æ•° - è‡ªåŠ¨ç»§æ‰¿ GameObject çš„æ‰€æœ‰æ„é€ å‡½æ•°
     using Object2D::Object2D;
 
-    // ·´µ¯¶¯»­×´Ì¬
+    // åå¼¹åŠ¨ç”»çŠ¶æ€
     enum BounceState {
         NONE,
         SHRINKING,
         EXPANDING
     };
 
-    // ·´µ¯¶¯»­·½·¨
-    void StartBounceAnimation(float duration = 0.3f); // Ëõ¶Ì¶¯»­Ê±¼ä
+    // åå¼¹åŠ¨ç”»æ–¹æ³•
+    void StartBounceAnimation(float duration = 0.3f); // ç¼©çŸ­åŠ¨ç”»æ—¶é—´
     void UpdateBounceAnimation(float dt);
     bool IsAnimating() const { return bounceState != NONE; }
 
-    // ÖØĞ´ Draw ·½·¨
+    // é‡å†™ Draw æ–¹æ³•
     void Draw(SpriteRenderer& renderer) override;
 
 private:
-    // ·´µ¯¶¯»­ÊôĞÔ
+    // åå¼¹åŠ¨ç”»å±æ€§
     BounceState bounceState = NONE;
     float bounceProgress = 0.0f;
-    float bounceDuration = 0.3f; // Ëõ¶Ì¶¯»­Ê±¼ä
+    float bounceDuration = 0.3f; // ç¼©çŸ­åŠ¨ç”»æ—¶é—´
     float originalSizeX, originalSizeY;
 };

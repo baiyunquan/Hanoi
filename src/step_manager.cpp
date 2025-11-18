@@ -1,4 +1,4 @@
-﻿#include "step_manager.h"
+#include "step_manager.h"
 #include "form.h"
 
 bool StepManager::record(const std::string& name) {

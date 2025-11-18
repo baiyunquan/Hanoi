@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-    glfwSwapInterval(1); // 1±íÊ¾¿ªÆô´¹Ö±Í¬²½£¬
+    glfwSwapInterval(1); // 1è¡¨ç¤ºå¼€å¯å‚ç›´åŒæ­¥ï¼Œ
 
     // OpenGL configuration
     // --------------------
@@ -114,22 +114,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
     if (Breakout.State == GAME_MENU) return;
 
-    // µ±ÓÃ»§°´ÏÂESC¼üÊ±£¬¹Ø±Õ´°¿Ú
+    // tell GLFW to capture our mouse
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // å½“ç”¨æˆ·æŒ‰ä¸‹ESCé”®æ—¶ï¼Œå…³é—­çª—å£
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         if (Breakout.textInput->isActive()) {
-            // Èç¹ûÔÚÎÄ±¾ÊäÈëÄ£Ê½£¬ESC¼üÍË³öÎÄ±¾ÊäÈëÄ£Ê½
+            // å¦‚æœåœ¨æ–‡æœ¬è¾“å…¥æ¨¡å¼ï¼ŒESCé”®é€€å‡ºæ–‡æœ¬è¾“å…¥æ¨¡å¼
             Breakout.textInput->setActive(false);
         }
         else {
-            // ·ñÔò¹Ø±ÕÓ¦ÓÃ³ÌĞò
+            // å¦åˆ™å…³é—­åº”ç”¨ç¨‹åº
             glfwSetWindowShouldClose(window, true);
         }
     }
 
-    // ½«°´¼üÊÂ¼ş´«µİ¸øTextInput´¦Àí
+    // å°†æŒ‰é”®äº‹ä»¶ä¼ é€’ç»™TextInputå¤„ç†
     Breakout.textInput->ProcessKey(key, action);
 
-    // Èç¹û²»ÊÇÎÄ±¾ÊäÈëÄ£Ê½£¬´¦ÀíÓÎÏ·°´¼ü
+    // å¦‚æœä¸æ˜¯æ–‡æœ¬è¾“å…¥æ¨¡å¼ï¼Œå¤„ç†æ¸¸æˆæŒ‰é”®
     if (!Breakout.textInput->isActive()) {
         if (key >= 0 && key < 1024) {
             if (action == GLFW_PRESS)

@@ -8,8 +8,8 @@ class Timer {
 public:
     std::vector<Move>* temp;
     int step = 0;
-    float accumulator = 0.0f;  // ÓÃÓÚÀÛ»ıÊ±¼ä
-    bool isRunning = false;    // ¼ÆÊ±Æ÷ÔËĞĞ×´Ì¬
+    float accumulator = 0.0f;  // ç”¨äºç´¯ç§¯æ—¶é—´
+    bool isRunning = false;    // è®¡æ—¶å™¨è¿è¡ŒçŠ¶æ€
 
     void init(std::vector<Move>* ptr) {
         temp = ptr;
@@ -27,9 +27,9 @@ public:
 
         accumulator += dt;
 
-        // Ã¿2Ãë´¦ÀíÒ»¸öMove
+        // æ¯2ç§’å¤„ç†ä¸€ä¸ªMove
         if (accumulator >= 2.0f) {
-            accumulator = 0.0f;  // ÖØÖÃÀÛ»ıÊ±¼ä
+            accumulator = 0.0f;  // é‡ç½®ç´¯ç§¯æ—¶é—´
 
             if (step < temp->size()) {
                 if (callBack) {
@@ -38,7 +38,7 @@ public:
                 step++;
             }
 
-            // ¼ì²éÊÇ·ñËùÓĞMove¶¼ÒÑ´¦Àí
+            // æ£€æŸ¥æ˜¯å¦æ‰€æœ‰Moveéƒ½å·²å¤„ç†
             if (step >= temp->size()) {
                 isRunning = false;
                 return false;

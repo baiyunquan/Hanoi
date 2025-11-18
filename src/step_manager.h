@@ -28,7 +28,7 @@ public:
     bool copy(const std::string& source);
     bool switchNum(const std::string& source, int raw, int target);
 
-    // ĞÂÔöµÄäÖÈ¾º¯Êı
+    // æ–°å¢çš„æ¸²æŸ“å‡½æ•°
     void Render(SpriteRenderer& renderer, TextRenderer& textRenderer, float screenWidth, float screenHeight);
 
     void onMouseReleased(float x, float y);

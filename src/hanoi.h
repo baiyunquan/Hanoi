@@ -4,30 +4,30 @@
 #include <map>
 #include <glm/glm.hpp>
 
-#include "object_2D.h"
-#include "plate.h"
+#include "object_3D.h"
+#include "plate3D.h"
 
 class
 	Hanoi {
 public:
-	// ¹¹Ôìº¯Êı
+	// æ„é€ å‡½æ•°
 	Hanoi(int numDisks, glm::vec2 pos, glm::vec2 size, bool empty);
-	// äÖÈ¾ººÅµËş
+	// æ¸²æŸ“æ±‰è¯ºå¡”
 	void Draw(SpriteRenderer& renderer, TextRenderer& textRenderer);
-	// Ñ¹Èë¶¥²ãÅÌ×Ó
-	bool PushTop(Plate top, int plateLevel);
-	// µ¯³ö¶¥²ãÅÌ×Ó
-	std::pair<int , Plate> PopTop();
+	// å‹å…¥é¡¶å±‚ç›˜å­
+	bool PushTop(Plate3D top, int plateLevel);
+	// å¼¹å‡ºé¡¶å±‚ç›˜å­
+	std::pair<int , Plate3D> PopTop();
 
 	bool isEmpty();
-	Plate* getTopPlate();
+	Plate3D* getTopPlate();
 	bool isFull();
 	int getTop();
 
 	int numDisks;
-	std::map<int , Plate> disks;
-	Object2D pole;
-	Object2D base;
+	std::map<int , Plate3D> disks;
+	Object3D pole;
+	Object3D base;
 
 	glm::vec2 pos;
 	glm::vec2 size;

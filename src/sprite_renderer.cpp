@@ -129,6 +129,8 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
 void SpriteRenderer::UpdateProjection(float width, float height)
 {
     projection = glm::perspective(glm::radians(camera.Zoom), width / height, 0.1f, 100.0f);
+    SCR_HEIGHT = height;
+    SCR_WIDTH = width;
 }
 
 void SpriteRenderer::UpdateView()
@@ -206,9 +208,9 @@ void SpriteRenderer::DrawRectangle(glm::vec2 position, glm::vec2 size, float rot
     glBindVertexArray(0);
 }
 
-glm::vec3 SpriteRenderer::ScreenToWorldCoordinates(const glm::vec2& screenCoords) {
-    float worldX = (screenCoords.x / SCR_WIDTH) * 4.0f;
-    float worldY = (screenCoords.y / SCR_HEIGHT) * 4.0f;
+glm::vec3 SpriteRenderer::ScreenToWorldCoordinates(const glm::vec2& screenCoords , const glm::vec2& size) {
+    float worldX = ((screenCoords.x + size.x / 2) / SCR_WIDTH) * 4.0f;
+    float worldY = (1.0f - (screenCoords.y + size.y) / SCR_HEIGHT) * 4.0f;
     
     return glm::vec3(worldX, worldY, 0.0f);
 }
@@ -316,11 +318,13 @@ void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel , glm::vec3 lightColor
 
 void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
-    glm::vec3 worldPos = ScreenToWorldCoordinates(position);
+    glm::vec3 worldPos = ScreenToWorldCoordinates(position , size);
     glm::mat4 model = glm::mat4(1.0f);
+    float heightConvert = 4.0f / SCR_HEIGHT;
+    float widthConvert = 2.0f / SCR_WIDTH; // radius is half of size.x
     model = glm::translate(model, worldPos);
+    model = glm::scale(model, glm::vec3(size.x * widthConvert, size.y * heightConvert, size.x * widthConvert));
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 1.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(size.x * 0.01f, size.y * 0.01f, size.x * 0.01f));
     DrawCylinder(model, color);
 }
 

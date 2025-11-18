@@ -381,13 +381,13 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
 
     if (State == GAME_ACTIVE) {
         // 尝试选择点击的盘子
-        Plate* clickedPlate = nullptr;
+        Plate3D* clickedPlate = nullptr;
         Hanoi* sourceTower = nullptr;
 
         for (auto& [towerId, tower] : towers) {
             if (tower->isEmpty()) continue;
 
-            Plate* topPlate = tower->getTopPlate();
+            Plate3D* topPlate = tower->getTopPlate();
             if (topPlate->isChosen(cursorX, cursorY)) {
 				soundTrigger();
                 // 取消其他塔顶盘子的选中状态
@@ -463,7 +463,7 @@ void Game::MouseScroll(double yoffset)
 void Game::clearOtherPlateSelections(int currentTowerId) {
     for (auto& [towerId, tower] : towers) {
         if (towerId != currentTowerId && !tower->isEmpty()) {
-            Plate& otherPlate = tower->disks.begin()->second;
+            Plate3D& otherPlate = tower->disks.begin()->second;
             if (otherPlate.isSelect()) {
                 otherPlate.select();
             }
@@ -474,14 +474,14 @@ void Game::clearOtherPlateSelections(int currentTowerId) {
 // 处理塔点击事件
 void Game::handleTowerClick(float cursorX, float cursorY) {
     // 查找当前选中的盘子
-    Plate* selectedPlate = nullptr;
+    Plate3D* selectedPlate = nullptr;
 
     int sourceId;
     Hanoi* sourceTower = nullptr;
 
     for (auto& [towerId, tower] : towers) {
         if (!tower->isEmpty()) {
-            Plate& plate = tower->disks.begin()->second;
+            Plate3D& plate = tower->disks.begin()->second;
             if (plate.isSelect()) {
                 selectedPlate = &plate;
                 sourceTower = tower;
@@ -507,7 +507,7 @@ void Game::handleTowerClick(float cursorX, float cursorY) {
 }
 
 // 检查移动是否合法
-bool Game::isMoveValid(Hanoi& targetTower, Plate& plate) {
+bool Game::isMoveValid(Hanoi& targetTower, Plate3D& plate) {
     return targetTower.isEmpty() || targetTower.getTop() > plate.level;
 }
 
@@ -560,7 +560,7 @@ void Game::Render()
     if (State == GAME_ACTIVE || State == GAME_SWITCH) {
 
         //glEnable(GL_DEPTH_TEST);
-        //Renderer->DrawGround(0.1f);
+        Renderer->DrawGround(-0.1f);
         Renderer->DrawLightCube();
         //for (unsigned int i = 0; i < 10; i++)
         //{
@@ -571,14 +571,14 @@ void Game::Render()
         //Renderer->DrawCylinder(model , glm::vec3(1.0f , 1.0f , 1.0f));
         //glDisable(GL_DEPTH_TEST);
         //Renderer->DrawCylinder2D(glm::vec2(0.0f , 0.0f), glm::vec2(30.0f, 30.0f));
-        Renderer->DrawCylinder2D(glm::vec2(400, 300), glm::vec2(100, 200), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
-        glClear(GL_DEPTH_BUFFER_BIT);
+        //Renderer->DrawCylinder2D(glm::vec2(400, 300), glm::vec2(100, 200), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         // Render towers
         for (auto& [num, tower] : towers) {
             tower->Draw(*Renderer, *Text);
         }
+
+        glClear(GL_DEPTH_BUFFER_BIT);
 
         // Render topbar
         std::string tbText{ "Step: " };

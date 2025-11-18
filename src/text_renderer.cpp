@@ -149,7 +149,7 @@ float TextRenderer::calculateHeight(std::string text, float scale) {
     float maxHeight = 0.0f;
     float minBearingY = FLT_MAX;
 
-    // ²éÕÒÎÄ±¾ÖĞ×î¸ß×Ö·ûºÍ×îµÍµÄbearing.y
+    // æŸ¥æ‰¾æ–‡æœ¬ä¸­æœ€é«˜å­—ç¬¦å’Œæœ€ä½çš„bearing.y
     for (char c : text) {
         Character ch = Characters[c];
         float height = ch.Size.y * scale;
@@ -161,12 +161,12 @@ float TextRenderer::calculateHeight(std::string text, float scale) {
         }
     }
 
-    // ¿¼ÂÇ×Ö·û¿ÉÄÜÏòÏÂÑÓÉìµÄ²¿·Ö£¨Èç'g', 'p', 'q'µÈ£©
-    // ×Ü¸ß¶È = ×î¸ß×Ö·ûµÄ¸ß¶È + ÏòÏÂÑÓÉìµÄ²¿·Ö
+    // è€ƒè™‘å­—ç¬¦å¯èƒ½å‘ä¸‹å»¶ä¼¸çš„éƒ¨åˆ†ï¼ˆå¦‚'g', 'p', 'q'ç­‰ï¼‰
+    // æ€»é«˜åº¦ = æœ€é«˜å­—ç¬¦çš„é«˜åº¦ + å‘ä¸‹å»¶ä¼¸çš„éƒ¨åˆ†
     return maxHeight + (Characters['H'].Bearing.y - minBearingY) * scale;
 }
 
-// ¼ÆËãÎÄ±¾ÔÚÖ¸¶¨¿í¶ÈºÍ¸ß¶ÈÏÂµÄ×î¼ÑËõ·Å±ÈÀı
+// è®¡ç®—æ–‡æœ¬åœ¨æŒ‡å®šå®½åº¦å’Œé«˜åº¦ä¸‹çš„æœ€ä½³ç¼©æ”¾æ¯”ä¾‹
 float TextRenderer::CalculateOptimalScale(const std::string& text,
     float availableWidth,
     float availableHeight) {
@@ -174,27 +174,27 @@ float TextRenderer::CalculateOptimalScale(const std::string& text,
         return 1.0f;
     }
 
-    // ³õÊ¼Ëõ·Å±ÈÀı
+    // åˆå§‹ç¼©æ”¾æ¯”ä¾‹
     float scale = 1.0f;
     float minScale = 0.1f;
     float maxScale = 10.0f;
 
-    // Ê¹ÓÃ¶ş·Ö²éÕÒ·¨ÕÒµ½×î¼ÑËõ·Å±ÈÀı
-    for (int i = 0; i < 10; i++) { // µü´ú10´ÎÓ¦¸Ã×ã¹»¾«È·
-        // Ê¹ÓÃµ±Ç°Ëõ·Å±ÈÀı·Ö¸îÎÄ±¾
+    // ä½¿ç”¨äºŒåˆ†æŸ¥æ‰¾æ³•æ‰¾åˆ°æœ€ä½³ç¼©æ”¾æ¯”ä¾‹
+    for (int i = 0; i < 10; i++) { // è¿­ä»£10æ¬¡åº”è¯¥è¶³å¤Ÿç²¾ç¡®
+        // ä½¿ç”¨å½“å‰ç¼©æ”¾æ¯”ä¾‹åˆ†å‰²æ–‡æœ¬
         std::vector<std::string> lines = SplitTextIntoLines(text, availableWidth, scale);
 
-        // ¼ÆËãÎÄ±¾¿é¸ß¶È
+        // è®¡ç®—æ–‡æœ¬å—é«˜åº¦
         float textHeight = CalculateTextBlockHeight(lines, scale);
 
-        // ¼ì²éÊÇ·ñÊÊºÏ¿ÉÓÃ¸ß¶È
+        // æ£€æŸ¥æ˜¯å¦é€‚åˆå¯ç”¨é«˜åº¦
         if (textHeight <= availableHeight) {
-            // ÎÄ±¾¸ß¶ÈÊÊºÏ£¬³¢ÊÔÔö´óËõ·Å±ÈÀı
+            // æ–‡æœ¬é«˜åº¦é€‚åˆï¼Œå°è¯•å¢å¤§ç¼©æ”¾æ¯”ä¾‹
             minScale = scale;
             scale = (scale + maxScale) / 2.0f;
         }
         else {
-            // ÎÄ±¾¸ß¶ÈÌ«´ó£¬¼õĞ¡Ëõ·Å±ÈÀı
+            // æ–‡æœ¬é«˜åº¦å¤ªå¤§ï¼Œå‡å°ç¼©æ”¾æ¯”ä¾‹
             maxScale = scale;
             scale = (minScale + scale) / 2.0f;
         }
@@ -203,7 +203,7 @@ float TextRenderer::CalculateOptimalScale(const std::string& text,
     return scale;
 }
 
-// ×Ô¶¯¼ÆËãËõ·Å±ÈÀı²¢ÔÚÇøÓòÄÚäÖÈ¾ÎÄ±¾
+// è‡ªåŠ¨è®¡ç®—ç¼©æ”¾æ¯”ä¾‹å¹¶åœ¨åŒºåŸŸå†…æ¸²æŸ“æ–‡æœ¬
 void TextRenderer::RenderTextAutoScale(const std::string& text,
     float x, float y, float width, float height,
     glm::vec3 color) {
@@ -211,45 +211,45 @@ void TextRenderer::RenderTextAutoScale(const std::string& text,
         return;
     }
 
-    // ¼ÆËã×î¼ÑËõ·Å±ÈÀı
+    // è®¡ç®—æœ€ä½³ç¼©æ”¾æ¯”ä¾‹
     float optimalScale = 1.0;
     if (text.size() > 10) {
         optimalScale = CalculateOptimalScale(text, width, height);
     }
 
-    // Ê¹ÓÃ×î¼ÑËõ·Å±ÈÀıäÖÈ¾ÎÄ±¾
+    // ä½¿ç”¨æœ€ä½³ç¼©æ”¾æ¯”ä¾‹æ¸²æŸ“æ–‡æœ¬
     RenderTextInBox(text, x, y, width, height, optimalScale, color);
 }
 
-// ¸Ä½øµÄÎÄ±¾¿é¸ß¶È¼ÆËã
+// æ”¹è¿›çš„æ–‡æœ¬å—é«˜åº¦è®¡ç®—
 float TextRenderer::CalculateTextBlockHeight(const std::vector<std::string>& lines, float scale) {
     if (lines.empty()) return 0.0f;
 
-    // Ê¹ÓÃ×ÖÌåµÄÊµ¼Ê¶ÈÁ¿ĞÅÏ¢¼ÆËãĞĞ¸ß
-    // Èç¹ûÃ»ÓĞ±£´æ×ÖÌå¶ÈÁ¿ĞÅÏ¢£¬Ê¹ÓÃ×Ö·û'H'µÄ¸ß¶È×÷Îª²Î¿¼
+    // ä½¿ç”¨å­—ä½“çš„å®é™…åº¦é‡ä¿¡æ¯è®¡ç®—è¡Œé«˜
+    // å¦‚æœæ²¡æœ‰ä¿å­˜å­—ä½“åº¦é‡ä¿¡æ¯ï¼Œä½¿ç”¨å­—ç¬¦'H'çš„é«˜åº¦ä½œä¸ºå‚è€ƒ
     float lineHeight;
     if (Characters.find('H') != Characters.end()) {
-        // ĞĞ¸ß = ×Ö·û¸ß¶È + Ò»Ğ©¶îÍâ¼ä¾à
+        // è¡Œé«˜ = å­—ç¬¦é«˜åº¦ + ä¸€äº›é¢å¤–é—´è·
         lineHeight = (Characters['H'].Size.y + Characters['H'].Bearing.y * 0.2f) * scale;
     }
     else if (!Characters.empty()) {
-        // Ê¹ÓÃµÚÒ»¸ö¿ÉÓÃ×Ö·û
+        // ä½¿ç”¨ç¬¬ä¸€ä¸ªå¯ç”¨å­—ç¬¦
         Character firstChar = Characters.begin()->second;
         lineHeight = (firstChar.Size.y + firstChar.Bearing.y * 0.2f) * scale;
     }
     else {
-        // Ä¬ÈÏĞĞ¸ß
+        // é»˜è®¤è¡Œé«˜
         lineHeight = 20.0f * scale;
     }
 
     return lines.size() * lineHeight;
 }
 
-// ¸Ä½øµÄÎÄ±¾·Ö¸îËã·¨
+// æ”¹è¿›çš„æ–‡æœ¬åˆ†å‰²ç®—æ³•
 std::vector<std::string> TextRenderer::SplitTextIntoLines(const std::string& text, float maxWidth, float scale) {
     std::vector<std::string> lines;
 
-    // Èç¹û²»ĞèÒª»»ĞĞ£¨¿í¶È×ã¹»£©£¬Ö±½Ó·µ»Øµ¥ĞĞ
+    // å¦‚æœä¸éœ€è¦æ¢è¡Œï¼ˆå®½åº¦è¶³å¤Ÿï¼‰ï¼Œç›´æ¥è¿”å›å•è¡Œ
     if (calculateWidth(text, scale) <= maxWidth) {
         lines.push_back(text);
         return lines;
@@ -260,7 +260,7 @@ std::vector<std::string> TextRenderer::SplitTextIntoLines(const std::string& tex
     std::string currentLine;
 
     while (stream >> word) {
-        // ²âÊÔÌí¼ÓÕâ¸ö´ÊºóÊÇ·ñ»á³¬³ö¿í¶È
+        // æµ‹è¯•æ·»åŠ è¿™ä¸ªè¯åæ˜¯å¦ä¼šè¶…å‡ºå®½åº¦
         std::string testLine = currentLine.empty() ? word : currentLine + " " + word;
         float testWidth = calculateWidth(testLine, scale);
 
@@ -268,14 +268,14 @@ std::vector<std::string> TextRenderer::SplitTextIntoLines(const std::string& tex
             currentLine = testLine;
         }
         else {
-            // µ±Ç°ĞĞÒÑÂú£¬Ìí¼Óµ½ĞĞÁĞ±í
+            // å½“å‰è¡Œå·²æ»¡ï¼Œæ·»åŠ åˆ°è¡Œåˆ—è¡¨
             if (!currentLine.empty()) {
                 lines.push_back(currentLine);
             }
 
-            // Èç¹ûµ¥¸ö´Ê¾Í³¬¹ı¿í¶È£¬Ç¿ÖÆ·Ö¸î
+            // å¦‚æœå•ä¸ªè¯å°±è¶…è¿‡å®½åº¦ï¼Œå¼ºåˆ¶åˆ†å‰²
             if (calculateWidth(word, scale) > maxWidth) {
-                // ½«³¤´Ê·Ö¸îÎª¶à¸ö²¿·Ö
+                // å°†é•¿è¯åˆ†å‰²ä¸ºå¤šä¸ªéƒ¨åˆ†
                 std::string part;
                 for (char c : word) {
                     std::string testPart = part + std::string(1, c);
@@ -297,7 +297,7 @@ std::vector<std::string> TextRenderer::SplitTextIntoLines(const std::string& tex
         }
     }
 
-    // Ìí¼Ó×îºóÒ»ĞĞ
+    // æ·»åŠ æœ€åä¸€è¡Œ
     if (!currentLine.empty()) {
         lines.push_back(currentLine);
     }
@@ -305,35 +305,35 @@ std::vector<std::string> TextRenderer::SplitTextIntoLines(const std::string& tex
     return lines;
 }
 
-// ÔÚÖ¸¶¨¾ØĞÎÄÚäÖÈ¾ÎÄ±¾£¬×Ô¶¯»»ĞĞ²¢¾ÓÖĞ
+// åœ¨æŒ‡å®šçŸ©å½¢å†…æ¸²æŸ“æ–‡æœ¬ï¼Œè‡ªåŠ¨æ¢è¡Œå¹¶å±…ä¸­
 void TextRenderer::RenderTextInBox(const std::string& text,
     float x, float y, float width, float height,
     float scale, glm::vec3 color) {
-    // ·Ö¸îÎÄ±¾Îª¶àĞĞ
+    // åˆ†å‰²æ–‡æœ¬ä¸ºå¤šè¡Œ
     std::vector<std::string> lines = SplitTextIntoLines(text, width, scale);
 
     if (lines.empty()) return;
 
-    // ¼ÆËãÎÄ±¾¿éµÄ×Ü¸ß¶È
+    // è®¡ç®—æ–‡æœ¬å—çš„æ€»é«˜åº¦
     float textHeight = CalculateTextBlockHeight(lines, scale);
 
-    // ¼ÆËãÆğÊ¼YÎ»ÖÃ£¨´¹Ö±¾ÓÖĞ£©
+    // è®¡ç®—èµ·å§‹Yä½ç½®ï¼ˆå‚ç›´å±…ä¸­ï¼‰
     float startY = y + (height - textHeight) / 2.0f;
 
-    // Ê¹ÓÃ'H'×Ö·ûµÄ¸ß¶È×÷ÎªĞĞ¸ß²Î¿¼
+    // ä½¿ç”¨'H'å­—ç¬¦çš„é«˜åº¦ä½œä¸ºè¡Œé«˜å‚è€ƒ
     float lineHeight = Characters['H'].Bearing.y * 1.5f * scale;
 
-    // äÖÈ¾Ã¿Ò»ĞĞ
+    // æ¸²æŸ“æ¯ä¸€è¡Œ
     for (size_t i = 0; i < lines.size(); i++) {
         const std::string& line = lines[i];
 
-        // ¼ÆËãĞĞµÄ¿í¶È
+        // è®¡ç®—è¡Œçš„å®½åº¦
         float lineWidth = calculateWidth(line, scale);
 
-        // ¼ÆËãÆğÊ¼XÎ»ÖÃ£¨Ë®Æ½¾ÓÖĞ£©
+        // è®¡ç®—èµ·å§‹Xä½ç½®ï¼ˆæ°´å¹³å±…ä¸­ï¼‰
         float startX = x + (width - lineWidth) / 2.0f;
 
-        // äÖÈ¾ÕâÒ»ĞĞ
+        // æ¸²æŸ“è¿™ä¸€è¡Œ
         RenderText(line, startX, startY + i * lineHeight, scale, color);
     }
 }

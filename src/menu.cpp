@@ -5,7 +5,7 @@
 
 Menu::Menu(float width, float height)
 {
-    // ÉèÖÃÇøÓò - Õ¼ÆÁÄ»µ×²¿70%ÇøÓò
+    // è®¾ç½®åŒºåŸŸ - å å±å¹•åº•éƒ¨70%åŒºåŸŸ
     float centerX = width * 0.5f;
     float settingsY = height * 0.3f;
     float settingsHeight = height * 0.7f;
@@ -15,11 +15,11 @@ Menu::Menu(float width, float height)
     float buttonHeight = height * 0.07f;
     float buttonSpacing = height * 0.03f;
 
-    // ¼ÆËãÁĞÎ»ÖÃºÍĞĞ¸ß - È·±£¶ÔÆë
+    // è®¡ç®—åˆ—ä½ç½®å’Œè¡Œé«˜ - ç¡®ä¿å¯¹é½
     float startY = settingsY + settingsHeight * 0.1f + 10.0f;
     float rowHeight = settingsHeight * 0.15f;
 
-    // ËşÊıÁ¿¼Ó¼õ°´Å¥ - È·±£´óĞ¡ºÍÎ»ÖÃÍêÈ«Ò»ÖÂ
+    // å¡”æ•°é‡åŠ å‡æŒ‰é’® - ç¡®ä¿å¤§å°å’Œä½ç½®å®Œå…¨ä¸€è‡´
     towerAdd = new Button(glm::vec2(buttonColumnX, startY), 
                          buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
     towerAdd->setText("+");
@@ -28,7 +28,7 @@ Menu::Menu(float width, float height)
                          buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
     towerSub->setText("-");
 
-    // ÅÌÊıÁ¿¼Ó¼õ°´Å¥ - È·±£´óĞ¡ºÍÎ»ÖÃÍêÈ«Ò»ÖÂ
+    // ç›˜æ•°é‡åŠ å‡æŒ‰é’® - ç¡®ä¿å¤§å°å’Œä½ç½®å®Œå…¨ä¸€è‡´
     diskAdd = new Button(glm::vec2(buttonColumnX, startY + rowHeight),
                         buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
     diskAdd->setText("+");
@@ -37,11 +37,11 @@ Menu::Menu(float width, float height)
                         buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
     diskSub->setText("-");
 
-    // ÉùÒô¿ª¹Ø°´Å¥
+    // å£°éŸ³å¼€å…³æŒ‰é’®
     soundOn = new Button(glm::vec2(buttonColumnX, startY + 2 * rowHeight),
                         buttonWidth * 2 + buttonSpacing * 0.5f, buttonHeight, glm::vec3(0.3f, 0.4f, 0.8f));
 
-    // ÒôÁ¿¼Ó¼õ°´Å¥ - È·±£´óĞ¡ºÍÎ»ÖÃÍêÈ«Ò»ÖÂ
+    // éŸ³é‡åŠ å‡æŒ‰é’® - ç¡®ä¿å¤§å°å’Œä½ç½®å®Œå…¨ä¸€è‡´
     volumeAdd = new Button(glm::vec2(buttonColumnX, startY + 3 * rowHeight),
                           buttonWidth, buttonHeight, glm::vec3(0.2f, 0.6f, 0.3f));
     volumeAdd->setText("+");
@@ -50,7 +50,7 @@ Menu::Menu(float width, float height)
                           buttonWidth, buttonHeight, glm::vec3(0.8f, 0.2f, 0.2f));
     volumeSub->setText("-");
 
-    // OK°´Å¥
+    // OKæŒ‰é’®
     okButton = new Button(glm::vec2(centerX - width * 0.125f, startY + 4.5f * rowHeight),
                          width * 0.25f, buttonHeight * 1.3f, glm::vec3(0.1f, 0.7f, 0.1f));
     okButton->setText("OK");
@@ -58,41 +58,41 @@ Menu::Menu(float width, float height)
 
 void Menu::Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height)
 {
-    // »æÖÆ±êÌâ - Õ¼ÆÁÄ»¶¥²¿30%ÇøÓò
+    // ç»˜åˆ¶æ ‡é¢˜ - å å±å¹•é¡¶éƒ¨30%åŒºåŸŸ
     float titleHeight = height * 0.3f;
     tr.RenderTextInBox("Hanoi Tower", 0, 0, width, titleHeight, 2.0f, glm::vec3(0.4f, 0.4f, 0.8f));
 
-    // ÉèÖÃÇøÓò - Õ¼ÆÁÄ»µ×²¿70%ÇøÓò
+    // è®¾ç½®åŒºåŸŸ - å å±å¹•åº•éƒ¨70%åŒºåŸŸ
     float settingsY = titleHeight;
     float settingsHeight = height - titleHeight;
 
-    // ¼ÆËãÁĞÎ»ÖÃºÍĞĞ¸ß - È·±£¶ÔÆë
+    // è®¡ç®—åˆ—ä½ç½®å’Œè¡Œé«˜ - ç¡®ä¿å¯¹é½
     float labelColumnX = width * 0.25f;
     float valueColumnX = width * 0.45f;
     float columnWidth = width * 0.15f;
     float startY = settingsY + settingsHeight * 0.1f;
     float rowHeight = settingsHeight * 0.15f;
 
-    // ËşÊıÁ¿ - È·±£±êÇ©¡¢ÊıÖµºÍ°´Å¥¶ÔÆë
+    // å¡”æ•°é‡ - ç¡®ä¿æ ‡ç­¾ã€æ•°å€¼å’ŒæŒ‰é’®å¯¹é½
     tr.RenderTextInBox("Towers:", labelColumnX, startY, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
     tr.RenderTextInBox(std::to_string(towerCount), valueColumnX, startY, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
 
-    // ÅÌÊıÁ¿ - È·±£±êÇ©¡¢ÊıÖµºÍ°´Å¥¶ÔÆë
+    // ç›˜æ•°é‡ - ç¡®ä¿æ ‡ç­¾ã€æ•°å€¼å’ŒæŒ‰é’®å¯¹é½
     tr.RenderTextInBox("Disks:", labelColumnX, startY + rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
     tr.RenderTextInBox(std::to_string(diskCount), valueColumnX, startY + rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
 
-    // ÉùÒôÉèÖÃ - È·±£±êÇ©¡¢ÊıÖµºÍ°´Å¥¶ÔÆë
+    // å£°éŸ³è®¾ç½® - ç¡®ä¿æ ‡ç­¾ã€æ•°å€¼å’ŒæŒ‰é’®å¯¹é½
     tr.RenderTextInBox("Sound:", labelColumnX, startY + 2 * rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
     tr.RenderTextInBox(soundEnabled ? "ON" : "OFF", valueColumnX, startY + 2 * rowHeight, columnWidth, rowHeight, 1.2f,
                       soundEnabled ? glm::vec3(0.2f, 0.6f, 0.2f) : glm::vec3(0.8f, 0.2f, 0.2f));
 
-    // ÒôÁ¿ÉèÖÃ - È·±£±êÇ©¡¢ÊıÖµºÍ°´Å¥¶ÔÆë
+    // éŸ³é‡è®¾ç½® - ç¡®ä¿æ ‡ç­¾ã€æ•°å€¼å’ŒæŒ‰é’®å¯¹é½
     tr.RenderTextInBox("Volume:", labelColumnX, startY + 3 * rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
     std::stringstream volumeStr;
     volumeStr << std::fixed << std::setprecision(1) << volume;
     tr.RenderTextInBox(volumeStr.str(), valueColumnX, startY + 3 * rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
 
-    // »æÖÆËùÓĞ°´Å¥
+    // ç»˜åˆ¶æ‰€æœ‰æŒ‰é’®
     towerAdd->Draw(sr);
     towerAdd->DrawText(tr);
 
@@ -133,7 +133,7 @@ Menu::~Menu()
 
 void Menu::mouseClick(float x, float y)
 {
-    // ¼ì²éÃ¿¸ö°´Å¥ÊÇ·ñ±»µã»÷
+    // æ£€æŸ¥æ¯ä¸ªæŒ‰é’®æ˜¯å¦è¢«ç‚¹å‡»
     if (towerAdd->isChosen(x, y)) {
         towerAdd->StartBounceAnimation();
         towerCount = std::min(MAX_TOWERS, towerCount + 1);
@@ -170,7 +170,7 @@ void Menu::mouseClick(float x, float y)
     }
 }
 
-// ¸üĞÂ°´Å¥¶¯»­×´Ì¬
+// æ›´æ–°æŒ‰é’®åŠ¨ç”»çŠ¶æ€
 void Menu::Update(float dt)
 {
     towerAdd->UpdateBounceAnimation(dt);
@@ -183,7 +183,7 @@ void Menu::Update(float dt)
     okButton->UpdateBounceAnimation(dt);
 }
 
-// ÉèÖÃ»Øµ÷º¯Êı
+// è®¾ç½®å›è°ƒå‡½æ•°
 void Menu::SetCallback(std::function<void(int, int, bool, float)> callback)
 {
     this->callBack = callback;

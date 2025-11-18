@@ -11,7 +11,7 @@ TextInput::TextInput(float width, float height)
     float bgY = height * 0.4f;
     float bgX = width * 0.3f;
 
-    // ´´½¨±³¾°¿é - Ê¹ÓÃ°ëÍ¸Ã÷»ÒÉ«
+    // åˆ›å»ºèƒŒæ™¯å— - ä½¿ç”¨åŠé€æ˜ç°è‰²
     background = new Object2D(glm::vec2(bgX, bgY), bgWidth, bgHeight,
         glm::vec3(0.5f, 0.5f, 0.5f));
 
@@ -20,7 +20,7 @@ TextInput::TextInput(float width, float height)
     float inputY = height * 0.55f;
     float inputX = width * 0.35f;
 
-    // ´´½¨ÊäÈëÇøÓò - Ê¹ÓÃ°×É«±³¾°
+    // åˆ›å»ºè¾“å…¥åŒºåŸŸ - ä½¿ç”¨ç™½è‰²èƒŒæ™¯
     inputArea = new Object2D(glm::vec2(inputX, inputY),
         inputWidth, inputHeight,
         glm::vec3(1.0f, 1.0f, 1.0f));
@@ -35,18 +35,18 @@ TextInput::~TextInput() {
 void TextInput::Draw(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer) {
     if (!active) return;
 
-    // »æÖÆ±³¾°
+    // ç»˜åˆ¶èƒŒæ™¯
     background->Draw(spriteRenderer);
 
-    // »æÖÆÊäÈëÇøÓò
+    // ç»˜åˆ¶è¾“å…¥åŒºåŸŸ
     inputArea->Draw(spriteRenderer);
 
     textRenderer.RenderTextInBox("Enter Name(Press Enter to End)", width * 0.3f , height * 0.4f , width * 0.4f , height * 0.15f ,1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
 
-    // »æÖÆÊäÈëÄÚÈİ£¨ÔÚÊäÈëÇøÓòÄÚ£©
+    // ç»˜åˆ¶è¾“å…¥å†…å®¹ï¼ˆåœ¨è¾“å…¥åŒºåŸŸå†…ï¼‰
     if (!content.empty()) {
-        float textX = inputArea->Position.x + 5.0f; // ÁôÒ»µã±ß¾à
-        float textY = inputArea->Position.y + (inputArea->Height - 20.0f) / 2.0f; // ´¹Ö±¾ÓÖĞ
+        float textX = inputArea->Position.x + 5.0f; // ç•™ä¸€ç‚¹è¾¹è·
+        float textY = inputArea->Position.y + (inputArea->Height - 20.0f) / 2.0f; // å‚ç›´å±…ä¸­
         textRenderer.RenderTextInBox(content, width * 0.38f, height * 0.56f, width * 0.24f , height * 0.08f , 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
     }
 }
@@ -54,29 +54,29 @@ void TextInput::Draw(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer)
 void TextInput::ProcessKey(int key, int action) {
     if (!active) return;
 
-    // Ö»ÔÚ¼üÊÍ·ÅÊ±´¦ÀíÊäÈë
+    // åªåœ¨é”®é‡Šæ”¾æ—¶å¤„ç†è¾“å…¥
     if (action == GLFW_RELEASE) {
-        // ´¦ÀíÍË¸ñ¼ü
+        // å¤„ç†é€€æ ¼é”®
         if (key == GLFW_KEY_BACKSPACE && !content.empty()) {
             content.pop_back();
         }
-        // ´¦Àí»Ø³µ¼ü
+        // å¤„ç†å›è½¦é”®
         else if (key == GLFW_KEY_ENTER || key == GLFW_KEY_KP_ENTER) {
             if (onSubmitCallback) {
                 onSubmitCallback(content);
             }
             active = false;
         }
-        // ´¦ÀíESC¼ü
+        // å¤„ç†ESCé”®
         else if (key == GLFW_KEY_ESCAPE) {
             active = false;
         }
-        // ´¦Àí¿É´òÓ¡×Ö·û£¨ASCII·¶Î§32-126£©
+        // å¤„ç†å¯æ‰“å°å­—ç¬¦ï¼ˆASCIIèŒƒå›´32-126ï¼‰
         else if (key >= 32 && key <= 126) {
-            // ²»´¦Àí´óĞ¡Ğ´£¬Ö±½Ó×ª»»ÎªĞ¡Ğ´
+            // ä¸å¤„ç†å¤§å°å†™ï¼Œç›´æ¥è½¬æ¢ä¸ºå°å†™
             char c = static_cast<char>(key);
             if (c >= 'A' && c <= 'Z') {
-                c = c - 'A' + 'a'; // ×ª»»ÎªĞ¡Ğ´
+                c = c - 'A' + 'a'; // è½¬æ¢ä¸ºå°å†™
             }
             content += c;
         }

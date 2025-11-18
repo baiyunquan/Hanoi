@@ -5,7 +5,7 @@
 MessageBox::MessageBox(float width, float height)
     : active(false), message(""), width(width), height(height) {
 
-    // ´´½¨±³¾°¿é - Ê¹ÓÃ°ëÍ¸Ã÷»ÒÉ«
+    // åˆ›å»ºèƒŒæ™¯å— - ä½¿ç”¨åŠé€æ˜Žç°è‰²
     float bgHeight = height * 0.4f;
     float bgWidth = width * 0.5f;
     float bgY = height * 0.3f;
@@ -14,7 +14,7 @@ MessageBox::MessageBox(float width, float height)
     background = new Object2D(glm::vec2(bgX, bgY), bgWidth, bgHeight,
         glm::vec3(0.5f, 0.5f, 0.5f));
 
-    // ´´½¨°´Å¥ÇøÓò - Ê¹ÓÃ²»Í¬µÄÑÕÉ«
+    // åˆ›å»ºæŒ‰é’®åŒºåŸŸ - ä½¿ç”¨ä¸åŒçš„é¢œè‰²
     float buttonWidth = width * 0.15f;
     float buttonHeight = height * 0.08f;
     float buttonX = width * 0.5f - buttonWidth / 2.0f;
@@ -22,7 +22,7 @@ MessageBox::MessageBox(float width, float height)
 
     buttonArea = new Object2D(glm::vec2(buttonX, buttonY),
         buttonWidth, buttonHeight,
-        glm::vec3(0.2f, 0.6f, 0.2f)); // ÂÌÉ«°´Å¥
+        glm::vec3(0.2f, 0.6f, 0.2f)); // ç»¿è‰²æŒ‰é’®
     buttonArea->setText("OK");
 }
 
@@ -34,13 +34,13 @@ MessageBox::~MessageBox() {
 void MessageBox::Draw(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer) {
     if (!active) return;
 
-    // »æÖÆ±³¾°
+    // ç»˜åˆ¶èƒŒæ™¯
     background->Draw(spriteRenderer);
 
-    // »æÖÆ°´Å¥ÇøÓò
+    // ç»˜åˆ¶æŒ‰é’®åŒºåŸŸ
     buttonArea->Draw(spriteRenderer);
 
-    // »æÖÆÏûÏ¢ÎÄ±¾£¨ÔÚ±³¾°ÇøÓòÄÚ£©
+    // ç»˜åˆ¶æ¶ˆæ¯æ–‡æœ¬ï¼ˆåœ¨èƒŒæ™¯åŒºåŸŸå†…ï¼‰
     if (!message.empty()) {
         textRenderer.RenderTextInBox(message,
             width * 0.3f, height * 0.4f,
@@ -48,7 +48,7 @@ void MessageBox::Draw(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer
             1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
     }
 
-    // »æÖÆ°´Å¥ÎÄ±¾
+    // ç»˜åˆ¶æŒ‰é’®æ–‡æœ¬
     buttonArea->DrawText(textRenderer);
 }
 
@@ -56,7 +56,7 @@ void MessageBox::Draw(SpriteRenderer& spriteRenderer, TextRenderer& textRenderer
 void MessageBox::ProcessMouseClick(float x, float y) {
     if (!active) return;
 
-    // ¼ì²éÊÇ·ñµã»÷ÁË°´Å¥ÇøÓò
+    // æ£€æŸ¥æ˜¯å¦ç‚¹å‡»äº†æŒ‰é’®åŒºåŸŸ
     if (buttonArea->isChosen(x, y)) {
         if (onConfirmCallback) {
             onConfirmCallback();

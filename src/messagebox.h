@@ -22,7 +22,7 @@ public:
     bool isActive() const;
     void setActive(bool active);
 
-    // 设置确认按钮回调函数
+    // 璁剧疆纭鎸夐挳鍥炶皟鍑芥暟
     void setOnConfirmCallback(std::function<void()> callback);
 
 private:

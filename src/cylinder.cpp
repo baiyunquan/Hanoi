@@ -45,7 +45,7 @@ void Cylinder::createCircleWireVertices(int sector, float z , std::vector<float>
     glm::vec3 vecticalVector(0, 0, (vectical ? 1 : -1));
     double offset = 2.0 * my_pi / sector;
 
-    // Ã¿¸öÏß¶Î 3 ¸ö¶¥µã + Ò»¸ö´¹Ö± ¡Á 3 floats
+    // æ¯ä¸ªçº¿æ®µ 3 ä¸ªé¡¶ç‚¹ + ä¸€ä¸ªå‚ç›´ Ã— 3 floats
     target.resize(sector * (2 + 2) * 3);
 
 //    double angle1 = 0;
@@ -62,7 +62,7 @@ void Cylinder::createCircleWireVertices(int sector, float z , std::vector<float>
 
         //std::cout << x1 << " " << y1 << " " << x2 << " " << y2 << "\n";
 
-        int j = i * 12; // 2 vertices ¡Á 6
+        int j = i * 12; // 2 vertices Ã— 6
 
         // First point
         target[j + 0] = x1; target[j + 1] = y1; target[j + 2] = z;
@@ -110,13 +110,13 @@ void Cylinder::createCylinderSideFewSector(int sector,
         // Mid vector (connect top to bottom)
         float mid[3];
         if (i & 0x1) {
-            // Odd sector: connect B_top ¡ú A_bot
+            // Odd sector: connect B_top â†’ A_bot
             mid[0] = A_bot[0] - B_top[0];
             mid[1] = A_bot[1] - B_top[1];
             mid[2] = A_bot[2] - B_top[2];
         }
         else {
-            // Even sector: connect A_top ¡ú B_bot
+            // Even sector: connect A_top â†’ B_bot
             mid[0] = B_bot[0] - A_top[0];
             mid[1] = B_bot[1] - A_top[1];
             mid[2] = B_bot[2] - A_top[2];

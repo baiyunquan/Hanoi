@@ -37,20 +37,20 @@ void ParticleGenerator::Update(GLfloat dt, Object2D& object, GLuint newParticles
 
 void ParticleGenerator::Draw()
 {
-    // ±£´æµ±Ç°°ó¶¨µÄÎÆÀí
+    // ä¿å­˜å½“å‰ç»‘å®šçš„çº¹ç†
     GLint prevTexture;
     glGetIntegerv(GL_TEXTURE_BINDING_2D, &prevTexture);
 
-    // ±£´æµ±Ç°»ìºÏº¯Êı
+    // ä¿å­˜å½“å‰æ··åˆå‡½æ•°
     GLint srcBlend, dstBlend;
     glGetIntegerv(GL_BLEND_SRC_ALPHA, &srcBlend);
     glGetIntegerv(GL_BLEND_DST_ALPHA, &dstBlend);
 
-    // Ê¹ÓÃ¼Ó·¨»ìºÏ
+    // ä½¿ç”¨åŠ æ³•æ··åˆ
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     this->shader.Use();
 
-    // °ó¶¨Á£×ÓÎÆÀí
+    // ç»‘å®šç²’å­çº¹ç†
     this->texture.Bind();
 
     for (Particle& particle : this->particles)
@@ -66,10 +66,10 @@ void ParticleGenerator::Draw()
         }
     }
 
-    // »Ö¸´Ö®Ç°µÄÎÆÀí°ó¶¨
+    // æ¢å¤ä¹‹å‰çš„çº¹ç†ç»‘å®š
     glBindTexture(GL_TEXTURE_2D, prevTexture);
 
-    // »Ö¸´Ö®Ç°µÄ»ìºÏº¯Êı
+    // æ¢å¤ä¹‹å‰çš„æ··åˆå‡½æ•°
     glBlendFunc(srcBlend, dstBlend);
 }
 

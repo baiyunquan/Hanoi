@@ -12,26 +12,26 @@ public:
     Button* diskAdd, * diskSub;
     Button* soundOn;
     Button* volumeAdd, * volumeSub;
-    Button* okButton; // Ìí¼ÓOK°´Å¥
+    Button* okButton; // æ·»åŠ OKæŒ‰é’®
 
     Menu(float width, float height);
     void Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height);
-    ~Menu(); // Ìí¼ÓÎö¹¹º¯Êı
+    ~Menu(); // æ·»åŠ ææ„å‡½æ•°
 
-    void Update(float dt); // Ìí¼Ó¸üĞÂº¯Êı
+    void Update(float dt); // æ·»åŠ æ›´æ–°å‡½æ•°
     void mouseClick(float x, float y);
-    void SetCallback(std::function<void(int, int, bool, float)> callback); // ÉèÖÃ»Øµ÷º¯Êı
+    void SetCallback(std::function<void(int, int, bool, float)> callback); // è®¾ç½®å›è°ƒå‡½æ•°
 
 private:
     std::function<void(int, int, bool, float)> callBack;
 
-    // ²Ëµ¥×´Ì¬
+    // èœå•çŠ¶æ€
     int towerCount = 3;
     int diskCount = 5;
     bool soundEnabled = true;
     float volume = 1.0f;
 
-    // ³£Á¿¶¨Òå
+    // å¸¸é‡å®šä¹‰
     const int MIN_TOWERS = 3;
     const int MAX_TOWERS = 8;
     const int MIN_DISKS = 3;

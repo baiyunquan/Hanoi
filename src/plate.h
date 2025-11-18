@@ -8,7 +8,7 @@ public:
     Plate();
     Plate(glm::vec2 pos, float sizeX, float sizeY,int level , glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f));
 
-	int level; // 盘子的大小等级，数字越小表示盘子越大
+	int level; // 鐩樺瓙鐨勫ぇ灏忕瓑绾э紝鏁板瓧瓒婂皬琛ㄧず鐩樺瓙瓒婂ぇ
 
     void select() { selected = !selected; }
 
@@ -16,7 +16,7 @@ public:
     // Draw sprite
     void Draw(SpriteRenderer& renderer);
 private:
-    bool selected = false; // 盘子是否被选中
+    bool selected = false; // 鐩樺瓙鏄惁琚�変腑
 };
 
 #endif
