@@ -601,6 +601,10 @@ void Game::Render()
         LoadButton->DrawText(*Text);
 
         textInput->Draw(*Renderer, *Text);
+
+        // Display Cross
+        Renderer->DrawLine(glm::vec2(-30.0f + this->Width / 2, this->Height / 2), glm::vec2(30.0f + this->Width / 2, this->Height / 2), 4.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+        Renderer->DrawLine(glm::vec2(this->Width / 2, -30.0f + this->Height / 2), glm::vec2(this->Width / 2, 30.0f + this->Height / 2), 4.0f, glm::vec3(1.0f, 1.0f, 1.0f));
     }
 
     if (State == GAME_LOAD) {

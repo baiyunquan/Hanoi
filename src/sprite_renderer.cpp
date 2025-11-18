@@ -5,6 +5,7 @@
 
 void SpriteRenderer::MouseScroll(double yoffset) {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
+    UpdateProjection(SCR_WIDTH, SCR_HEIGHT);
 }
 
 void SpriteRenderer::MouseUpdate(float xpos, float ypos)
