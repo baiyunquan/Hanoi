@@ -33,7 +33,7 @@ public:
     // Draw text
     virtual void DrawText(TextRenderer& textRenderer);
     // 判断鼠标是否在Plate上
-    virtual bool isChosen(float mouseX, float mouseY);
+    virtual bool isChosen(float mouseX, float mouseY, Camera* cam = NULL);
 
     std::string getText();
 

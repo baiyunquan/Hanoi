@@ -44,7 +44,7 @@ void Object2D::DrawText(TextRenderer& textRenderer)
     }
 }
 
-bool Object2D::isChosen(float mouseX, float mouseY) {
+bool Object2D::isChosen(float mouseX, float mouseY, Camera* cam) {
     return mouseX >= Position.x && mouseX <= Position.x + Width &&
         mouseY >= Position.y && mouseY <= Position.y + Height;
 }

@@ -1,6 +1,5 @@
 #include "sprite_renderer.h"
-#include <vector>
-#include <GLFW/glfw3.h>
+
 //#include <iostream>
 
 void SpriteRenderer::MouseScroll(double yoffset) {
@@ -105,7 +104,7 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
             glm::vec3(2.3f, -3.3f, -4.0f),
             glm::vec3(-4.0f, 2.0f, -12.0f),
             glm::vec3(0.0f, 0.0f, -3.0f),
-} , camera() , diffuseMap(diffuseMap) , specularMap(specularMap)
+} , camera(glm::vec3(0.613333344f, 2.77999997f, 0.000000000f)), diffuseMap(diffuseMap), specularMap(specularMap)
 {
     this->shader = shaders["sprite"];
     this->rectShader = shaders["rectangle"];
@@ -209,13 +208,6 @@ void SpriteRenderer::DrawRectangle(glm::vec2 position, glm::vec2 size, float rot
     glBindVertexArray(0);
 }
 
-glm::vec3 SpriteRenderer::ScreenToWorldCoordinates(const glm::vec2& screenCoords , const glm::vec2& size) {
-    float worldX = ((screenCoords.x + size.x / 2) / SCR_WIDTH) * 4.0f;
-    float worldY = (1.0f - (screenCoords.y + size.y) / SCR_HEIGHT) * 4.0f;
-    
-    return glm::vec3(worldX, worldY, 0.0f);
-}
-
 void SpriteRenderer::DrawCube(glm::vec3 position)
 {
 
@@ -317,9 +309,16 @@ void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel , glm::vec3 lightColor
     glDrawArrays(GL_TRIANGLE_STRIP, 0, sideVBOSize / 3);
 }
 
+glm::vec3 SpriteRenderer::ScreenToWorldCoordinates(const glm::vec2& screenCoords, const glm::vec2& size) {
+    float worldX = ((screenCoords.x + size.x / 2) / SCR_WIDTH) * 4.0f;
+    float worldY = (1.0f - (screenCoords.y + size.y) / SCR_HEIGHT) * 4.0f;
+
+    return glm::vec3(worldX, worldY, 0.0f);
+}
+
 void SpriteRenderer::DrawCylinder2D(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
-    glm::vec3 worldPos = ScreenToWorldCoordinates(position , size);
+    glm::vec3 worldPos = ScreenToWorldCoordinates(position, size);
     glm::mat4 model = glm::mat4(1.0f);
     float heightConvert = 4.0f / SCR_HEIGHT;
     float widthConvert = 2.0f / SCR_WIDTH; // radius is half of size.x
@@ -411,7 +410,7 @@ void SpriteRenderer::initLineData() {
     glBindVertexArray(0);
 }
 
-void SpriteRenderer::DrawLine(glm::vec2 start, glm::vec2 end, float lineWidth, glm::vec3 color) {
+void SpriteRenderer::DrawLine(glm::vec2& start, glm::vec2& end, float lineWidth, glm::vec3& color) {
     this->rectShader.Use();
     glLineWidth(lineWidth);
 

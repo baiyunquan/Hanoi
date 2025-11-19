@@ -76,6 +76,9 @@ public:
     void soundTrigger();
 
     void ResetLevel();
+
+private:
+
 };
 
 #endif

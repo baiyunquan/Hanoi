@@ -388,7 +388,7 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
             if (tower->isEmpty()) continue;
 
             Plate3D* topPlate = tower->getTopPlate();
-            if (topPlate->isChosen(cursorX, cursorY)) {
+            if (topPlate->isChosen(cursorX, cursorY, &Renderer->camera)) {
 				soundTrigger();
                 // 取消其他塔顶盘子的选中状态
                 clearOtherPlateSelections(towerId);
@@ -405,19 +405,19 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
             handleTowerClick(cursorX, cursorY);
         }
 
-        if (RecordButton->isChosen(cursorX, cursorY)) {
+        if (RecordButton->isChosen(cursorX, cursorY, NULL)) {
             textInput->setActive(true);
             RecordButton->StartBounceAnimation();
             soundTrigger();
         }
 
-        if (StopButton->isChosen(cursorX, cursorY)) {
+        if (StopButton->isChosen(cursorX, cursorY, NULL)) {
             stepManager->endRecord();
             StopButton->StartBounceAnimation();
             soundTrigger();
         }
 
-        if (LoadButton->isChosen(cursorX, cursorY)) {
+        if (LoadButton->isChosen(cursorX, cursorY, NULL)) {
             State = GAME_LOAD;
             soundTrigger();
         }
@@ -429,7 +429,7 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
 
     if (State == GAME_SWITCH) {
         for (auto& [i, tower] : towers) {
-            if (tower->base.isChosen(cursorX, cursorY)) {
+            if (tower->base.isChosen(cursorX, cursorY, &Renderer->camera)) {
                 if (from < 0) {
                     from = i;
                     tower->base.setText("From");
@@ -495,7 +495,7 @@ void Game::handleTowerClick(float cursorX, float cursorY) {
 
     // 检查是否点击了目标塔
     for (auto& [towerId, targetTower] : towers) {
-        if (targetTower->pole.isChosen(cursorX, cursorY)) {
+        if (targetTower->pole.isChosen(cursorX, cursorY, &Renderer->camera)) {
             // 验证移动是否合法
             if (isMoveValid(*targetTower, *selectedPlate)) {
                 movePlate(*sourceTower, sourceId, *targetTower, towerId);
@@ -560,7 +560,7 @@ void Game::Render()
     if (State == GAME_ACTIVE || State == GAME_SWITCH) {
 
         //glEnable(GL_DEPTH_TEST);
-        Renderer->DrawGround(-0.1f);
+        //Renderer->DrawGround(-0.1f);
         Renderer->DrawLightCube();
         //for (unsigned int i = 0; i < 10; i++)
         //{
@@ -570,8 +570,8 @@ void Game::Render()
         //model = glm::translate(model, glm::vec3(3.0f, -3.0f, 3.0f));
         //Renderer->DrawCylinder(model , glm::vec3(1.0f , 1.0f , 1.0f));
         //glDisable(GL_DEPTH_TEST);
-        //Renderer->DrawCylinder2D(glm::vec2(0.0f , 0.0f), glm::vec2(30.0f, 30.0f));
-        //Renderer->DrawCylinder2D(glm::vec2(400, 300), glm::vec2(100, 200), 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+        //Renderer->DrawCylinder2D(glm::vec2(0.0f , 0.0f), glm::vec2(300.0f, 300.0f) , 0.0f , glm::vec3(1.0f , 0.0f , 0.0f));
+        //Renderer->DrawCylinder2D(glm::vec2(0.0f, 0.0f), glm::vec2(600.0f, 600.0f));
 
         // Render towers
         for (auto& [num, tower] : towers) {
@@ -579,6 +579,11 @@ void Game::Render()
         }
 
         glClear(GL_DEPTH_BUFFER_BIT);
+
+        Text->RenderTextInBox("Front: " + std::to_string(Renderer->camera.Front.x) + " " + std::to_string(Renderer->camera.Front.y) + " " + std::to_string(Renderer->camera.Front.z)
+            , 0.0f , this->Height - 60.0f ,400.0f , 30.0f , 0.9f , glm::vec3(1.0f));
+        Text->RenderTextInBox("Position: " + std::to_string(Renderer->camera.Position.x) + " " + std::to_string(Renderer->camera.Position.y) + " " + std::to_string(Renderer->camera.Position.z)
+            , 0.0f, this->Height - 30.0f, 400.0f, 30.0f, 0.9f, glm::vec3(1.0f));
 
         // Render topbar
         std::string tbText{ "Step: " };
@@ -603,8 +608,8 @@ void Game::Render()
         textInput->Draw(*Renderer, *Text);
 
         // Display Cross
-        Renderer->DrawLine(glm::vec2(-30.0f + this->Width / 2, this->Height / 2), glm::vec2(30.0f + this->Width / 2, this->Height / 2), 4.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-        Renderer->DrawLine(glm::vec2(this->Width / 2, -30.0f + this->Height / 2), glm::vec2(this->Width / 2, 30.0f + this->Height / 2), 4.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+        Renderer->DrawLine(glm::vec2(-30.0f + this->Width / 2, this->Height / 2), glm::vec2(30.0f + this->Width / 2, this->Height / 2), 4.0f, glm::vec3(1.0f));
+        Renderer->DrawLine(glm::vec2(this->Width / 2, -30.0f + this->Height / 2), glm::vec2(this->Width / 2, 30.0f + this->Height / 2), 4.0f, glm::vec3(1.0f));
     }
 
     if (State == GAME_LOAD) {

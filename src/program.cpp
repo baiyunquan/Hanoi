@@ -53,12 +53,16 @@ int main(int argc, char *argv[])
     // --------------------
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // initialize game
     // ---------------
+    // 在Init()调用前添加
+    // 初始化CoordinateTrans单例
+    CoordinateTrans::getInstance()->setDimensions(SCREEN_WIDTH, SCREEN_HEIGHT);
     Breakout.Init();
-
+    
     // deltaTime variables
     // -------------------
     float deltaTime = 0.0f;

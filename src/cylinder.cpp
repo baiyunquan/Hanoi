@@ -24,11 +24,11 @@ void Cylinder::generateCylinder(int sector, std::vector<float>& rim, std::vector
 
     rim.resize((sector + 2) * 3);
     // central point
-    rim[0] = 0; rim[1] = 1.0f; rim[2] = 0;
+    rim[0] = 0; rim[1] = 0.0f; rim[2] = 0;
 
     for (int i = 0; i <= sector; i++) {
         int j = i * 3 + 3;
-        rim[j] = cosf(offset * i); rim[j + 1] = 1.0f; rim[j + 2] = sinf(offset * i);
+        rim[j] = cosf(offset * i); rim[j + 1] = 0.0f; rim[j + 2] = sinf(offset * i);
     }
 
     side.resize((sector + 1) * 2 * 3);

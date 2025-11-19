@@ -18,3 +18,17 @@ Object3D::Object3D(glm::vec2 pos, float Width, float Height, glm::vec3 color, gl
 void Object3D::Draw(SpriteRenderer& renderer) {
 	renderer.DrawCylinder2D(this->Position, glm::vec2(this->Width, this->Height), this->Rotation, this->Color);
 }
+
+bool Object3D::isChosen(float mouseX, float mouseY, Camera* cam){
+    if (cam == NULL) {
+        return false;
+    }
+
+    CoordinateTrans* coordTrans = CoordinateTrans::getInstance();
+    return coordTrans->cylinderIsChosen(
+        cam->Position,
+        cam->Front,
+        this->Position,
+        glm::vec2(this->Width, this->Height)
+    );
+};
