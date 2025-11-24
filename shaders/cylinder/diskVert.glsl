@@ -14,10 +14,10 @@ void main()
     vec4 worldPos = model * vec4(aPos, 1.0);
     FragPos = worldPos.xyz;
 
-    // Ô²Æ¬·¨Ïß£ºÊ¼ÖÕ´¹Ö±ÓÚÆ½Ãæ
+    // åœ†ç‰‡æ³•çº¿ï¼šå§‹ç»ˆå‚ç›´äºå¹³é¢
     vec3 localNormal = vec3(0.0, normalSign, 0.0);
 
-    // ±ä»»·¨Ïß£¨×¢Òâ£ºÆ½ÒÆ²»Ó°Ïì·¨Ïß£¬µ«Ğı×ª/Ëõ·ÅĞèÒª normalMatrix£©
+    // å˜æ¢æ³•çº¿ï¼ˆæ³¨æ„ï¼šå¹³ç§»ä¸å½±å“æ³•çº¿ï¼Œä½†æ—‹è½¬/ç¼©æ”¾éœ€è¦ normalMatrixï¼‰
     mat3 normalMatrix = transpose(inverse(mat3(model)));
     Normal = normalMatrix * localNormal;
 

@@ -1,5 +1,5 @@
 #version 330 core
-layout (location = 0) in vec4 vertex; // °üº¬ vec2 position ºÍ vec2 texCoords
+layout (location = 0) in vec4 vertex; // åŒ…å« vec2 position å’Œ vec2 texCoords
 
 uniform mat4 projection;
 uniform mat4 model;

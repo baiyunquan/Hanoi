@@ -13,7 +13,7 @@ void main()
     vec4 worldPos = model * vec4(aPos, 1.0);
     FragPos = worldPos.xyz;
 
-    // ²àÃæ·¨Ïß£º¾¶Ïò (x, 0 , z)
+    // ä¾§é¢æ³•çº¿ï¼šå¾„å‘ (x, 0 , z)
     vec3 localNormal = normalize(vec3(aPos.x, 0.0, aPos.z));
 
     mat3 normalMatrix = transpose(inverse(mat3(model)));

@@ -2,17 +2,17 @@
 in vec3 worldPos;
 out vec4 FragColor;
 
-uniform float tileSize; // Ã¿¸ö¸ñ×ÓµÄ´óĞ¡£¬±ÈÈç 1.0
+uniform float tileSize; // æ¯ä¸ªæ ¼å­çš„å¤§å°ï¼Œæ¯”å¦‚ 1.0
 
 void main()
 {
-    // ¼ÆËãµ±Ç°Æ¬¶ÎËùÔÚµÄ¸ñ×Ó×ø±ê
+    // è®¡ç®—å½“å‰ç‰‡æ®µæ‰€åœ¨çš„æ ¼å­åæ ‡
     int x = int(floor(worldPos.x / tileSize));
     int z = int(floor(worldPos.z / tileSize));
 
-    // ºÚ°×Ïà¼ä£º(x + z) % 2 == 0 Îª°×É«£¬·ñÔòÎªºÚÉ«
+    // é»‘ç™½ç›¸é—´ï¼š(x + z) % 2 == 0 ä¸ºç™½è‰²ï¼Œå¦åˆ™ä¸ºé»‘è‰²
     if ((x + z) % 2 == 0)
-        FragColor = vec4(1.0, 1.0, 1.0, 1.0); // °×
+        FragColor = vec4(1.0, 1.0, 1.0, 1.0); // ç™½
     else
-        FragColor = vec4(0.0, 0.0, 0.0, 1.0); // ºÚ
+        FragColor = vec4(0.0, 0.0, 0.0, 1.0); // é»‘
 }

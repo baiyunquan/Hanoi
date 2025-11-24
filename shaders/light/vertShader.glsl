@@ -10,12 +10,12 @@ out vec2 TexCoords;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform mat3 normalMatrix; // ÐÂÔö£º·¨Ïß¾ØÕó
+uniform mat3 normalMatrix; // æ–°å¢žï¼šæ³•çº¿çŸ©é˜µ
 
 void main()
 {
     FragPos = vec3(model * vec4(aPos, 1.0));
-    Normal = normalMatrix * aNormal; // Ê¹ÓÃCPU¼ÆËãµÄ·¨Ïß¾ØÕó
+    Normal = normalMatrix * aNormal; // ä½¿ç”¨CPUè®¡ç®—çš„æ³•çº¿çŸ©é˜µ
     TexCoords = aTexCoords;
     
     gl_Position = projection * view * vec4(FragPos, 1.0);
