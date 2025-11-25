@@ -3,14 +3,15 @@ out vec4 FragColor;
 
 in vec3 FragPos;
 in vec3 Normal;
-in vec2 TexCoords;
 
-// 材质属性
+// 材质属性（使用纯色，不使用纹理）
 struct Material {
-    sampler2D diffuse;
-    sampler2D specular;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 color;         // 添加材质基础颜色
     float shininess;
-}; 
+};
 
 // 平行光
 struct DirLight {
@@ -74,6 +75,9 @@ void main()
     // 第三阶段：聚光灯贡献
     result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
     
+    // 应用材质基础颜色
+    result *= material.color;
+    
     FragColor = vec4(result, 1.0);
 }
 
@@ -86,10 +90,10 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     // 镜面光着色
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    // 合并结果
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    // 合并结果（使用纯色材质，不使用纹理采样）
+    vec3 ambient = light.ambient * material.ambient;
+    vec3 diffuse = light.diffuse * diff * material.diffuse;
+    vec3 specular = light.specular * spec * material.specular;
     return (ambient + diffuse + specular);
 }
 
@@ -105,10 +109,10 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // 衰减
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
-    // 合并结果
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    // 合并结果（使用纯色材质，不使用纹理采样）
+    vec3 ambient = light.ambient * material.ambient;
+    vec3 diffuse = light.diffuse * diff * material.diffuse;
+    vec3 specular = light.specular * spec * material.specular;
     ambient *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
@@ -131,10 +135,10 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float theta = dot(lightDir, normalize(-light.direction)); 
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-    // 合并结果
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    // 合并结果（使用纯色材质，不使用纹理采样）
+    vec3 ambient = light.ambient * material.ambient;
+    vec3 diffuse = light.diffuse * diff * material.diffuse;
+    vec3 specular = light.specular * spec * material.specular;
     ambient *= attenuation * intensity;
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;

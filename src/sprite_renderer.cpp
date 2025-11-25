@@ -34,8 +34,7 @@ void SpriteRenderer::MouseUpdate(float xpos, float ypos)
 // ---------------------------------------------------------------------------------------------------------
 void SpriteRenderer::process_keyboard_input(bool keys[1024], float deltaTime)
 {
-
-    if (keys[GLFW_KEY_W])
+if (keys[GLFW_KEY_W])
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (keys[GLFW_KEY_S])
         camera.ProcessKeyboard(BACKWARD, deltaTime);
@@ -101,9 +100,11 @@ void SpriteRenderer::adjustLightProperty(float adjustment)
 SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders , 
     Texture2D diffuseMap , Texture2D specularMap , int width, int height) : pointLightPositions{
             glm::vec3(0.7f, 0.2f, 2.0f),
-            glm::vec3(2.3f, -3.3f, -4.0f),
+            glm::vec3(2.3f, 3.3f, -4.0f),
             glm::vec3(-4.0f, 2.0f, -12.0f),
             glm::vec3(0.0f, 0.0f, -3.0f),
+            glm::vec3(0.0f , 3.0f, 0.0f),
+            glm::vec3(3.0f , 3.0f , 0.0f),
 } , camera(glm::vec3(0.613333344f, 2.77999997f, 0.000000000f)), diffuseMap(diffuseMap), specularMap(specularMap)
 {
     this->shader = shaders["sprite"];
@@ -208,15 +209,14 @@ void SpriteRenderer::DrawRectangle(glm::vec2 position, glm::vec2 size, float rot
     glBindVertexArray(0);
 }
 
-// 修改initLightingShader方法，降低光源强度
 void SpriteRenderer::initLightingShader() {
     lightingShader.Use();
     lightingShader.SetFloat("material.shininess", 32.0f);
 
     lightingShader.SetVector3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
-    lightingShader.SetVector3f("dirLight.ambient", 0.03f, 0.03f, 0.03f); // 降低环境光
-    lightingShader.SetVector3f("dirLight.diffuse", 0.2f, 0.2f, 0.2f);   // 降低漫反射光
-    lightingShader.SetVector3f("dirLight.specular", 0.3f, 0.3f, 0.3f); // 降低镜面反射光
+    lightingShader.SetVector3f("dirLight.ambient", 0.03f, 0.03f, 0.03f); 
+    lightingShader.SetVector3f("dirLight.diffuse", 0.2f, 0.2f, 0.2f); 
+    lightingShader.SetVector3f("dirLight.specular", 0.3f, 0.3f, 0.3f);
 
     for (unsigned int i = 0; i < pointLightPositions.size(); i++)
     {
@@ -246,10 +246,42 @@ void SpriteRenderer::initLightingShader() {
 void SpriteRenderer::initDiskShader() {
     diskShader.Use();
     // Material properties
-    diskShader.SetVector3f("material.ambient", 0.4f, 0.4f, 0.4f);   // 降低环境反射
-    diskShader.SetVector3f("material.diffuse", 0.6f, 0.6f, 0.6f);   // 降低漫反射
-    diskShader.SetVector3f("material.specular", 0.5f, 0.5f, 0.5f);  // 降低镜面反射
-    diskShader.SetFloat("material.shininess", 40.0f); // 降低光泽度
+    diskShader.SetVector3f("material.ambient", 0.4f, 0.4f, 0.4f);   
+    diskShader.SetVector3f("material.diffuse", 0.6f, 0.6f, 0.6f);   
+    diskShader.SetVector3f("material.specular", 0.5f, 0.5f, 0.5f);  
+    diskShader.SetVector3f("material.color", 1.0f, 1.0f, 1.0f);     // 设置默认材质颜色为白色
+    diskShader.SetFloat("material.shininess", 40.0f);
+    
+    // 平行光参数
+    diskShader.SetVector3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+    diskShader.SetVector3f("dirLight.ambient", 0.03f, 0.03f, 0.03f);
+    diskShader.SetVector3f("dirLight.diffuse", 0.2f, 0.2f, 0.2f);
+    diskShader.SetVector3f("dirLight.specular", 0.3f, 0.3f, 0.3f);
+    
+    // 点光源参数
+    for (unsigned int i = 0; i < pointLightPositions.size(); i++)
+    {
+        std::string index = std::to_string(i);
+        diskShader.SetVector3f(("pointLights[" + index + "].position").c_str(), pointLightPositions[i]);
+        diskShader.SetVector3f(("pointLights[" + index + "].ambient").c_str(), 0.03f, 0.03f, 0.03f);
+        diskShader.SetVector3f(("pointLights[" + index + "].diffuse").c_str(), 0.4f, 0.4f, 0.4f);
+        diskShader.SetVector3f(("pointLights[" + index + "].specular").c_str(), 0.6f, 0.6f, 0.6f);
+        diskShader.SetFloat(("pointLights[" + index + "].constant").c_str(), 1.0f);
+        diskShader.SetFloat(("pointLights[" + index + "].linear").c_str(), 0.09f);
+        diskShader.SetFloat(("pointLights[" + index + "].quadratic").c_str(), 0.032f);
+    }
+    
+    // 聚光灯参数
+    diskShader.SetVector3f("spotLight.position", camera.Position);
+    diskShader.SetVector3f("spotLight.direction", camera.Front);
+    diskShader.SetVector3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+    diskShader.SetVector3f("spotLight.diffuse", 0.6f, 0.6f, 0.6f);
+    diskShader.SetVector3f("spotLight.specular", 0.8f, 0.8f, 0.8f);
+    diskShader.SetFloat("spotLight.constant", 1.0f);
+    diskShader.SetFloat("spotLight.linear", 0.09f);
+    diskShader.SetFloat("spotLight.quadratic", 0.032f);
+    diskShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+    diskShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 }
 
 // 修改initSideShader方法，降低材质反射系数
@@ -257,27 +289,51 @@ void SpriteRenderer::initSideShader() {
     sideShader.Use();
 
     // Material properties
-    sideShader.SetVector3f("material.ambient", 0.4f, 0.4f, 0.4f);   // 降低环境反射
-    sideShader.SetVector3f("material.diffuse", 0.6f, 0.6f, 0.6f);   // 降低漫反射
-    sideShader.SetVector3f("material.specular", 0.5f, 0.5f, 0.5f);  // 降低镜面反射
+    sideShader.SetVector3f("material.ambient", 0.4f, 0.4f, 0.4f);   
+    sideShader.SetVector3f("material.diffuse", 0.6f, 0.6f, 0.6f);   
+    sideShader.SetVector3f("material.specular", 0.5f, 0.5f, 0.5f);  
     sideShader.SetFloat("material.shininess", 40.0f); // 降低光泽度
+    
+    // 平行光参数
+    sideShader.SetVector3f("dirLight.direction", -0.2f, -1.0f, -0.3f);
+    sideShader.SetVector3f("dirLight.ambient", 0.03f, 0.03f, 0.03f);
+    sideShader.SetVector3f("dirLight.diffuse", 0.2f, 0.2f, 0.2f);
+    sideShader.SetVector3f("dirLight.specular", 0.3f, 0.3f, 0.3f);
+    
+    // 点光源参数
+    for (unsigned int i = 0; i < pointLightPositions.size(); i++)
+    {
+        std::string index = std::to_string(i);
+        sideShader.SetVector3f(("pointLights[" + index + "].position").c_str(), pointLightPositions[i]);
+        sideShader.SetVector3f(("pointLights[" + index + "].ambient").c_str(), 0.03f, 0.03f, 0.03f);
+        sideShader.SetVector3f(("pointLights[" + index + "].diffuse").c_str(), 0.4f, 0.4f, 0.4f);
+        sideShader.SetVector3f(("pointLights[" + index + "].specular").c_str(), 0.6f, 0.6f, 0.6f);
+        sideShader.SetFloat(("pointLights[" + index + "].constant").c_str(), 1.0f);
+        sideShader.SetFloat(("pointLights[" + index + "].linear").c_str(), 0.09f);
+        sideShader.SetFloat(("pointLights[" + index + "].quadratic").c_str(), 0.032f);
+    }
+    
+    // 聚光灯参数
+    sideShader.SetVector3f("spotLight.position", camera.Position);
+    sideShader.SetVector3f("spotLight.direction", camera.Front);
+    sideShader.SetVector3f("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+    sideShader.SetVector3f("spotLight.diffuse", 0.6f, 0.6f, 0.6f);
+    sideShader.SetVector3f("spotLight.specular", 0.8f, 0.8f, 0.8f);
+    sideShader.SetFloat("spotLight.constant", 1.0f);
+    sideShader.SetFloat("spotLight.linear", 0.09f);
+    sideShader.SetFloat("spotLight.quadratic", 0.032f);
+    sideShader.SetFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+    sideShader.SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 }
 
-// 修改DrawCylinder方法，调整光照颜色计算
 void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel, glm::vec3 lightColor)
 {
-    glm::vec3 diffuseColor = lightColor * glm::vec3(0.6f);    // 降低漫反射颜色强度
-    glm::vec3 ambientColor = diffuseColor * glm::vec3(0.4f);  // 环境光基于降低后的漫反射光
-
+    // 设置viewPos（相机位置）和材质颜色
     diskShader.Use();
-    diskShader.SetVector3f("light.position", pointLightPositions[0]);
     diskShader.SetVector3f("viewPos", camera.Position);
-    diskShader.SetVector3f("light.ambient", ambientColor);
-    diskShader.SetVector3f("light.diffuse", diffuseColor);
-    diskShader.SetVector3f("light.specular", lightSpecular * 0.7f); // 降低镜面反射光强度
+    diskShader.SetVector3f("material.color", lightColor);  // 使用传入的颜色
     diskShader.SetMatrix4("projection", projection);
     diskShader.SetMatrix4("view", view);
-
     diskShader.SetMatrix4("model", cylinderModel);
     diskShader.SetFloat("normalSign", -1.0f);
     glBindVertexArray(rimVAO);
@@ -288,10 +344,8 @@ void SpriteRenderer::DrawCylinder(glm::mat4 cylinderModel, glm::vec3 lightColor)
     glDrawArrays(GL_TRIANGLE_FAN, 0, topVBOSize / 3);
 
     sideShader.Use();
-    sideShader.SetVector3f("light.ambient", ambientColor);
-    sideShader.SetVector3f("light.diffuse", diffuseColor);
-    sideShader.SetVector3f("light.specular", lightSpecular * 0.7f); // 降低镜面反射光强度
-
+    sideShader.SetVector3f("viewPos", camera.Position);
+    sideShader.SetVector3f("material.color", lightColor);  // 使用传入的颜色
     sideShader.SetMatrix4("projection", projection);
     sideShader.SetMatrix4("view", view);
     sideShader.SetMatrix4("model", cylinderModel);
@@ -340,8 +394,8 @@ void SpriteRenderer::DrawLightCube()
     
     // we now draw as many light bulbs as we have point lights.
     glBindVertexArray(lightCubeVAO);
-    //for (unsigned int i = 0; i < pointLightPositions.size(); i++)
-    for (unsigned int i = 0; i < 1; i++)
+    for (unsigned int i = 0; i < pointLightPositions.size(); i++)
+    //for (unsigned int i = 0; i < 1; i++)
     {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pointLightPositions[i]);

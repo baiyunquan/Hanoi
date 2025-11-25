@@ -78,7 +78,7 @@ Game::~Game()
     
     // 释放StepManager
     if (stepManager) {
-        delete stepManager;
+delete stepManager;
         stepManager = nullptr;
     }
     
@@ -135,8 +135,8 @@ void Game::Init()
     ResourceManager::LoadShader("shaders/light/defaultVertShader.glsl", "shaders/light/lightShader.glsl", nullptr, "lightCube");
     ResourceManager::LoadShader("shaders/ground/groundVert.glsl", "shaders/ground/groundFrag.glsl", nullptr, "ground");
     ResourceManager::LoadShader("shaders/lightMaterial/vert.glsl", "shaders/lightMaterial/frag.glsl", nullptr, "lightMaterial");
-    ResourceManager::LoadShader("shaders/cylinder/diskVert.glsl", "shaders/lightMaterial/frag.glsl", nullptr, "disk");
-    ResourceManager::LoadShader("shaders/cylinder/cylinderSideVert.glsl", "shaders/lightMaterial/frag.glsl", nullptr, "cylinderSide");
+    ResourceManager::LoadShader("shaders/cylinder/diskVert.glsl", "shaders/multiple_light/materialFrag.glsl", nullptr, "disk");
+    ResourceManager::LoadShader("shaders/cylinder/cylinderSideVert.glsl", "shaders/multiple_light/materialFrag.glsl", nullptr, "cylinderSide");
     // Configure shaders
     glm::mat4 projection = glm::ortho(
         0.0f,
@@ -364,7 +364,6 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     Renderer->MouseUpdate(cursorX, cursorY);
 
     // check button click
-
     if (!isCompleteClick) return;
 
     if (State == GAME_MENU) {
@@ -380,7 +379,54 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     }
 
     if (State == GAME_ACTIVE) {
-        // 尝试选择点击的盘子
+        // 检查是否已经有盘子被选中
+        bool hasSelectedPlate = false;
+        for (auto& [towerId, tower] : towers) {
+            if (!tower->isEmpty()) {
+                Plate3D& plate = tower->disks.begin()->second;
+                if (plate.isSelect()) {
+                    hasSelectedPlate = true;
+                    break;
+                }
+            }
+        }
+
+        // 如果有盘子被选中，优先检查柱子点击
+        if (hasSelectedPlate) {
+            // 先尝试处理柱子点击
+            bool towerClicked = false;
+            for (auto& [towerId, tower] : towers) {
+                if (tower->pole.isChosen(cursorX, cursorY, &Renderer->camera)) {
+                    handleTowerClick(cursorX, cursorY);
+                    towerClicked = true;
+                    break;
+                }
+            }
+            
+            // 如果点击了柱子，直接返回，不再检查盘子点击
+            if (towerClicked) {
+                // 继续处理其他按钮点击
+                if (RecordButton->isChosen(cursorX, cursorY, NULL)) {
+                    textInput->setActive(true);
+                    RecordButton->StartBounceAnimation();
+                    soundTrigger();
+                }
+
+                if (StopButton->isChosen(cursorX, cursorY, NULL)) {
+                    stepManager->endRecord();
+                    StopButton->StartBounceAnimation();
+                    soundTrigger();
+                }
+
+                if (LoadButton->isChosen(cursorX, cursorY, NULL)) {
+                    State = GAME_LOAD;
+                    soundTrigger();
+                }
+                return;
+            }
+        }
+
+        // 尝试选择点击的盘子（只有在没有选中盘子或没有点击柱子时执行）
         Plate3D* clickedPlate = nullptr;
         Hanoi* sourceTower = nullptr;
 
@@ -389,7 +435,7 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
 
             Plate3D* topPlate = tower->getTopPlate();
             if (topPlate->isChosen(cursorX, cursorY, &Renderer->camera)) {
-				soundTrigger();
+                soundTrigger();
                 // 取消其他塔顶盘子的选中状态
                 clearOtherPlateSelections(towerId);
 
@@ -400,8 +446,8 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
             }
         }
 
-        // 如果没有点击到盘子，检查柱子点击
-        if (!clickedPlate) {
+        // 如果没有点击到盘子，检查柱子点击（当没有选中盘子时执行）
+        if (!clickedPlate && !hasSelectedPlate) {
             handleTowerClick(cursorX, cursorY);
         }
 
@@ -438,14 +484,14 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
                 else {
                     if (to < 0) {
                         to = i;
-						towers[from]->base.setText(std::to_string(from));
+                        towers[from]->base.setText(std::to_string(from));
 
                         stepManager->switchNum(switchTemp, from, to);
 
                         eventBus.ClearAll();
-						eventBus.AddHighPriorityEvent("Switch Complete", 2.0f);
+                        eventBus.AddHighPriorityEvent("Switch Complete", 2.0f);
 
-						from = -1 , to = -1;
+                        from = -1 , to = -1;
                         State = GAME_ACTIVE;
                     }
                 }
@@ -560,7 +606,7 @@ void Game::Render()
     if (State == GAME_ACTIVE || State == GAME_SWITCH) {
 
         //glEnable(GL_DEPTH_TEST);
-        //Renderer->DrawGround(-0.1f);
+        Renderer->DrawGround(-0.1f);
         Renderer->DrawLightCube();
         //for (unsigned int i = 0; i < 10; i++)
         //{
