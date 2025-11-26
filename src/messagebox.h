@@ -18,9 +18,9 @@ public:
 
     std::string getMessage() const;
     void setMessage(const std::string& message);
+    void setMessage(const std::string& message, Texture2D& texture);
 
     bool isActive() const;
-    void setActive(bool active);
 
     // 设置确认按钮回调函数
     void setOnConfirmCallback(std::function<void()> callback);
@@ -28,9 +28,14 @@ public:
 private:
     std::string message;
     bool active;
+    bool hasTexture;
+    Texture2D sideTexture;
+
     std::function<void()> onConfirmCallback;
 
     float width;
     float height;
 
+    void setActive(bool active);
+    void setTexture(Texture2D& texture);
 };

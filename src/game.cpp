@@ -158,6 +158,7 @@ void Game::Init()
     ResourceManager::LoadTexture("resources/textures/block.png", GL_FALSE, "block");
     ResourceManager::LoadTexture("resources/textures/container2.png", GL_TRUE, "diffuseMap");
     ResourceManager::LoadTexture("resources/textures/container2_specular.png", GL_TRUE, "specularMap");
+    ResourceManager::LoadTexture("resources/textures/alien.png", GL_TRUE, "alien");
 
     // Set render-specific controls
     Particles = new ParticleGenerator(ResourceManager::GetShader("particle"), ResourceManager::GetTexture("particle"), 500);
@@ -268,12 +269,10 @@ void Game::enter() {
         std::cout << "Input result: " << result << std::endl;
         if (result.size() == 0) {
             messageBox->setMessage("ERROR : Please Enter Something");
-            messageBox->setActive(true);
             return;
         }
         if (!this->beginRecord(result)) {
             messageBox->setMessage("ERROR : Please Choose Another Name");
-            messageBox->setActive(true);
         }
     });
 
@@ -281,7 +280,6 @@ void Game::enter() {
         // 处理输入完成后的逻辑
         std::cout << "Display result: " << result << std::endl;
         messageBox->setMessage(result);
-        messageBox->setActive(true);
         });
     stepManager->regSwCall([this](const std::string& result) {
         // 处理输入完成后的逻辑
@@ -292,7 +290,7 @@ void Game::enter() {
         });
 
     stepManager->regLoadCall([this](std::vector<Move>* load) {
-timer.init(load);
+        timer.init(load);
 		clearPlateSelections();
         State = GAME_ACTIVE;
     });
@@ -314,6 +312,8 @@ timer.init(load);
         }
     });
 
+    messageBox->setMessage(std::string("Specifically we want you to move piles ") + "of radioactive disks from an old reactor. Just be sure"
+        + " not to put a bigger disk on top of a smaller disk or the whole ship will blow up.", ResourceManager::GetTexture("alien"));
 }
 
 bool Game::beginRecord(std::string name) {
@@ -603,10 +603,9 @@ void Game::Render()
         return;
     }
 
-    messageBox->Draw(*Renderer, *Text);
     if (State == GAME_ACTIVE || State == GAME_SWITCH) {
 
-        //glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
         Renderer->DrawGround(-0.1f);
         Renderer->DrawLightCube();
         //for (unsigned int i = 0; i < 10; i++)
@@ -616,7 +615,6 @@ void Game::Render()
         //glm::mat4 model = glm::mat4(1.0f);
         //model = glm::translate(model, glm::vec3(3.0f, -3.0f, 3.0f));
         //Renderer->DrawCylinder(model , glm::vec3(1.0f , 1.0f , 1.0f));
-        //glDisable(GL_DEPTH_TEST);
         //Renderer->DrawCylinder2D(glm::vec2(0.0f , 0.0f), glm::vec2(300.0f, 300.0f) , 0.0f , glm::vec3(1.0f , 0.0f , 0.0f));
         //Renderer->DrawCylinder2D(glm::vec2(0.0f, 0.0f), glm::vec2(600.0f, 600.0f));
 
@@ -624,6 +622,7 @@ void Game::Render()
             tower->Draw(*Renderer, *Text);
         }
         Renderer->DrawSkyBox();
+        glDisable(GL_DEPTH_TEST);
 
         // 渲染UI和文本
         Text->RenderTextInBox("Front: " + std::to_string(Renderer->camera.Front.x) + " " + std::to_string(Renderer->camera.Front.y) + " " + std::to_string(Renderer->camera.Front.z)
@@ -657,6 +656,8 @@ void Game::Render()
         Renderer->DrawLine(glm::vec2(-30.0f + this->Width / 2, this->Height / 2), glm::vec2(30.0f + this->Width / 2, this->Height / 2), 4.0f, glm::vec3(1.0f));
         Renderer->DrawLine(glm::vec2(this->Width / 2, -30.0f + this->Height / 2), glm::vec2(this->Width / 2, 30.0f + this->Height / 2), 4.0f, glm::vec3(1.0f));
     }
+
+    messageBox->Draw(*Renderer, *Text);
 
     if (State == GAME_LOAD) {
         stepManager->Render(*Renderer, *Text, this->Width, this->Height);

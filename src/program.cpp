@@ -117,8 +117,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
     if (Breakout.State == GAME_MENU) return;
 
-    // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    static bool cursorState = false;
+    if (Breakout.State == GAME_ACTIVE) {
+        if (key == GLFW_KEY_F && action == GLFW_RELEASE) {
+            cursorState = !cursorState;
+            if (cursorState) {
+                // tell GLFW to capture our mouse
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetCursorPos(window, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0);
+            }
+            else {
+                // tell GLFW to release our mouse
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+        }
+    }
 
     // 当用户按下ESC键时，关闭窗口
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
