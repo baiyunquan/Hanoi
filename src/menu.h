@@ -8,6 +8,7 @@
 
 class Menu {
 public:
+    Button* groundOn;
     Button* towerAdd, * towerSub;
     Button* diskAdd, * diskSub;
     Button* soundOn;
@@ -20,12 +21,13 @@ public:
 
     void Update(float dt); // 添加更新函数
     void mouseClick(float x, float y);
-    void SetCallback(std::function<void(int, int, bool, float)> callback); // 设置回调函数
+    void SetCallback(std::function<void(bool , int, int, bool, float)> callback); // 设置回调函数
 
 private:
-    std::function<void(int, int, bool, float)> callBack;
+    std::function<void(bool ,int, int, bool, float)> callBack;
 
     // 菜单状态
+    bool groundEnabled = false;
     int towerCount = 3;
     int diskCount = 5;
     bool soundEnabled = true;

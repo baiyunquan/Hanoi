@@ -30,8 +30,8 @@ public:
     SpriteRenderer(std::map<std::string, Shader>& shaders, Texture2D diffuseMap, Texture2D specularMap, int width, int height);
 
     void initSkyBox();
-
     void DrawSkyBox();
+    void DrawMenuSkyBox(float deltaTime, float fovDegrees, float aspect);
 
     // Destructor
     ~SpriteRenderer();
@@ -108,7 +108,8 @@ private:
     int groundVerticesSize;
 
     // sky box texture
-    unsigned int cubemapTexture;
+    unsigned int cubemapTexture0;
+    unsigned int cubemapTexture1;
 
     // positions of the point lights
     std::vector<glm::vec3> pointLightPositions;

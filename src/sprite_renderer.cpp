@@ -131,7 +131,7 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
 }
 
 void SpriteRenderer::initSkyBox() {
-    std::vector<std::string> faces
+    std::vector<std::string> faces1
     {
         "resources/textures/skybox/right.jpg",
         "resources/textures/skybox/left.jpg",
@@ -140,7 +140,17 @@ void SpriteRenderer::initSkyBox() {
         "resources/textures/skybox/front.jpg",
         "resources/textures/skybox/back.jpg"
     };
-    cubemapTexture = ResourceManager::loadCubemap(faces);
+    cubemapTexture1 = ResourceManager::loadCubemap(faces1);
+
+    std::vector<std::string> faces0{
+        "resources/textures/menu/px.png",
+        "resources/textures/menu/nx.png",
+        "resources/textures/menu/py.png",
+        "resources/textures/menu/ny.png",
+        "resources/textures/menu/pz.png",
+        "resources/textures/menu/nz.png"
+    };
+    cubemapTexture0 = ResourceManager::loadCubemap(faces0);
 
     skyboxShader.Use();
     skyboxShader.SetInteger("skybox", 0);
@@ -210,10 +220,38 @@ void SpriteRenderer::DrawSkyBox() {
     // skybox cube
     glBindVertexArray(skyboxVAO);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture1);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
     glDepthFunc(GL_LESS); // set depth function back to default
+}
+
+void SpriteRenderer::DrawMenuSkyBox(float deltaTime, float fovDegrees, float aspect) {
+    glDepthFunc(GL_LEQUAL);
+    skyboxShader.Use();
+
+    static float rotationAngle = 0.0f;
+    rotationAngle += glm::radians(15.0f) * deltaTime;
+
+    // View: rotate around Y-axis in XZ plane
+    glm::vec3 eye(0.0f, 0.0f, 0.0f);
+    glm::vec3 center(std::cos(rotationAngle), 0.0f, std::sin(rotationAngle));
+    glm::vec3 up(0.0f, 1.0f, 0.0f);
+    glm::mat4 skyView = glm::lookAt(eye, center, up);
+
+    // Local projection matrix for skybox
+    glm::mat4 skyProjection = glm::perspective(glm::radians(fovDegrees), aspect, 0.1f, 100.0f);
+
+    skyboxShader.SetMatrix4("view", skyView);
+    skyboxShader.SetMatrix4("projection", skyProjection);
+
+    glBindVertexArray(skyboxVAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+
+    glDepthFunc(GL_LESS);
 }
 
 void SpriteRenderer::UpdateProjection(float width, float height)

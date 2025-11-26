@@ -4,6 +4,7 @@
 #include <iomanip>
 
 Menu::Menu(float width, float height)
+    : groundEnabled(false) // 初始化 Ground 开关为关闭
 {
     // 设置区域 - 占屏幕底部70%区域
     float centerX = width * 0.5f;
@@ -18,6 +19,10 @@ Menu::Menu(float width, float height)
     // 计算列位置和行高 - 确保对齐
     float startY = settingsY + settingsHeight * 0.1f + 10.0f;
     float rowHeight = settingsHeight * 0.15f;
+
+    // Ground 开关按钮
+    groundOn = new Button(glm::vec2(buttonColumnX, startY - rowHeight), // 在 Tower 上方
+                          buttonWidth * 2 + buttonSpacing * 0.5f, buttonHeight, glm::vec3(0.3f, 0.4f, 0.8f));
 
     // 塔数量加减按钮 - 确保大小和位置完全一致
     towerAdd = new Button(glm::vec2(buttonColumnX, startY), 
@@ -73,6 +78,15 @@ void Menu::Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height)
     float startY = settingsY + settingsHeight * 0.1f;
     float rowHeight = settingsHeight * 0.15f;
 
+    // Ground 设置 - 确保标签、数值和按钮对齐
+    tr.RenderTextInBox("Ground:", labelColumnX, startY - rowHeight, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
+    tr.RenderTextInBox(groundEnabled ? "ON" : "OFF", valueColumnX, startY - rowHeight, columnWidth, rowHeight, 1.2f,
+                       groundEnabled ? glm::vec3(0.2f, 0.6f, 0.2f) : glm::vec3(0.8f, 0.2f, 0.2f));
+
+    groundOn->Draw(sr);
+    groundOn->setText(groundEnabled ? "ON" : "OFF");
+    groundOn->DrawText(tr);
+
     // 塔数量 - 确保标签、数值和按钮对齐
     tr.RenderTextInBox("Towers:", labelColumnX, startY, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
     tr.RenderTextInBox(std::to_string(towerCount), valueColumnX, startY, columnWidth, rowHeight, 1.2f, glm::vec3(1.0f));
@@ -121,6 +135,7 @@ void Menu::Draw(SpriteRenderer& sr, TextRenderer& tr, float width, float height)
 
 Menu::~Menu()
 {
+    delete groundOn; // 释放 Ground 按钮
     delete towerAdd;
     delete towerSub;
     delete diskAdd;
@@ -134,7 +149,11 @@ Menu::~Menu()
 void Menu::mouseClick(float x, float y)
 {
     // 检查每个按钮是否被点击
-    if (towerAdd->isChosen(x, y)) {
+    if (groundOn->isChosen(x, y)) {
+        groundOn->StartBounceAnimation();
+        groundEnabled = !groundEnabled;
+    }
+    else if (towerAdd->isChosen(x, y)) {
         towerAdd->StartBounceAnimation();
         towerCount = std::min(MAX_TOWERS, towerCount + 1);
     }
@@ -165,7 +184,7 @@ void Menu::mouseClick(float x, float y)
     else if (okButton->isChosen(x, y)) {
         okButton->StartBounceAnimation();
         if (callBack) {
-            callBack(towerCount, diskCount, soundEnabled, volume);
+            callBack(groundEnabled , towerCount, diskCount, soundEnabled, volume);
         }
     }
 }
@@ -173,6 +192,7 @@ void Menu::mouseClick(float x, float y)
 // 更新按钮动画状态
 void Menu::Update(float dt)
 {
+    groundOn->UpdateBounceAnimation(dt); // 更新 Ground 按钮动画
     towerAdd->UpdateBounceAnimation(dt);
     towerSub->UpdateBounceAnimation(dt);
     diskAdd->UpdateBounceAnimation(dt);
@@ -184,7 +204,7 @@ void Menu::Update(float dt)
 }
 
 // 设置回调函数
-void Menu::SetCallback(std::function<void(int, int, bool, float)> callback)
+void Menu::SetCallback(std::function<void(bool ,int, int, bool, float)> callback)
 {
     this->callBack = callback;
 }

@@ -170,7 +170,7 @@ void Game::Init()
     menu = new Menu(this->Width, this->Height);
 
     // 设置回调函数
-    menu->SetCallback([this](int towers, int disks, bool sound, float volume) {
+    menu->SetCallback([this](bool ground ,int towers, int disks, bool sound, float volume) {
         std::cout << "Starting game with: " << towers << " towers, "
             << disks << " disks, sound " << (sound ? "ON" : "OFF")
             << ", volume: " << volume << std::endl;
@@ -178,6 +178,7 @@ void Game::Init()
         this->towerLevel = disks;
         this->volume = volume;
         this->sound = sound;
+        this->ground = ground;
         this->enter();
         State = GAME_ACTIVE;
     });
@@ -582,7 +583,7 @@ void Game::movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int t
     targetTower.PushTop(plateObj, plateLevel);
 }
 
-void Game::Render()
+void Game::Render(float deltaTime)
 {
     static glm::vec3 cubePositions[] = {
         glm::vec3(0.0f,  0.0f,  0.0f),
@@ -599,6 +600,9 @@ void Game::Render()
 
     //Renderer->DrawLine(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), 3.0f, glm::vec3(1.0f, 1.0f, 1.0f));
     if (State == GAME_MENU) {
+        glEnable(GL_DEPTH_TEST);
+        Renderer->DrawMenuSkyBox(deltaTime, 45.0f, Width / Height);
+        glDisable(GL_DEPTH_TEST);
         menu->Draw(*Renderer, *Text, this->Width, this->Height);
         return;
     }
@@ -606,7 +610,10 @@ void Game::Render()
     if (State == GAME_ACTIVE || State == GAME_SWITCH) {
 
         glEnable(GL_DEPTH_TEST);
-        Renderer->DrawGround(-0.1f);
+        if(ground)
+        {
+            Renderer->DrawGround(-0.1f);
+        }
         Renderer->DrawLightCube();
         //for (unsigned int i = 0; i < 10; i++)
         //{
@@ -668,4 +675,9 @@ void Game::soundTrigger()
 {
     if (sound)
         SoundEngine->play2D(trigger, false);
+}
+
+void Game::ResetLevel()
+{
+
 }

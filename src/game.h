@@ -35,6 +35,7 @@ public:
     bool mouseWasPressed = false;
     bool isTextInputMode = false;
     bool sound = false;
+    bool ground = false;
 
     unsigned int     Width, Height;
     int topBarHeight;
@@ -72,7 +73,7 @@ public:
     void Update(float dt);
     void ProcessInput(float dt);
     void movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int targetId);
-    void Render();
+    void Render(float deltaTime);
     void soundTrigger();
 
     void ResetLevel();
