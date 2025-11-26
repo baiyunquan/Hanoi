@@ -13,6 +13,7 @@
 #include "shader.h"
 #include "cylinder.h"
 #include "camera.h"
+#include "resource_manager.h"
 
 class SpriteRenderer
 {
@@ -27,6 +28,10 @@ public:
 
     // Constructor (inits shaders/shapes)
     SpriteRenderer(std::map<std::string, Shader>& shaders, Texture2D diffuseMap, Texture2D specularMap, int width, int height);
+
+    void initSkyBox();
+
+    void DrawSkyBox();
 
     // Destructor
     ~SpriteRenderer();
@@ -45,8 +50,6 @@ public:
 
     // Render 3D
     void DrawCube(glm::vec3 position);
-    void initDiskShader();
-    void initSideShader();
     void DrawCylinder(glm::mat4 cylinderModel, glm::vec3 color);
     void DrawCylinder2D(glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawGround(float height);
@@ -84,6 +87,8 @@ private:
     Shader lightMaterialShader;
     Shader diskShader;
     Shader sideShader;
+    Shader skyboxShader;
+
     unsigned int quadVAO;
     // Initializes and configures the quad's buffer and vertex attributes
     unsigned int lineVAO, lineVBO;
@@ -93,12 +98,17 @@ private:
     // 添加 rim 和 side 的 VAO 和 VBO
     unsigned int rimVAO, rimVBO_ID, sideVAO, sideVBO_ID;
     unsigned int topVAO, topVBO_ID;
+    // add sky box VAO VBO
+    unsigned int skyboxVAO, skyboxVBO;
     // load textures (we now use a utility function to keep the code more organized)
     // -----------------------------------------------------------------------------
     Texture2D diffuseMap;
     Texture2D specularMap;
 
     int groundVerticesSize;
+
+    // sky box texture
+    unsigned int cubemapTexture;
 
     // positions of the point lights
     std::vector<glm::vec3> pointLightPositions;
@@ -108,6 +118,8 @@ private:
     void initGroundData();
     void initCylinderData();
     void initRenderData();
+    void initDiskShader();
+    void initSideShader();
 };
 
 #endif

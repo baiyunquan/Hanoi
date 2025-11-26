@@ -137,6 +137,7 @@ void Game::Init()
     ResourceManager::LoadShader("shaders/lightMaterial/vert.glsl", "shaders/lightMaterial/frag.glsl", nullptr, "lightMaterial");
     ResourceManager::LoadShader("shaders/cylinder/diskVert.glsl", "shaders/multiple_light/materialFrag.glsl", nullptr, "disk");
     ResourceManager::LoadShader("shaders/cylinder/cylinderSideVert.glsl", "shaders/multiple_light/materialFrag.glsl", nullptr, "cylinderSide");
+    ResourceManager::LoadShader("shaders/skybox/skyboxVert.glsl", "shaders/skybox/skyboxFrag.glsl", nullptr , "skybox");
     // Configure shaders
     glm::mat4 projection = glm::ortho(
         0.0f,
@@ -291,7 +292,7 @@ void Game::enter() {
         });
 
     stepManager->regLoadCall([this](std::vector<Move>* load) {
-        timer.init(load);
+timer.init(load);
 		clearPlateSelections();
         State = GAME_ACTIVE;
     });
@@ -619,13 +620,12 @@ void Game::Render()
         //Renderer->DrawCylinder2D(glm::vec2(0.0f , 0.0f), glm::vec2(300.0f, 300.0f) , 0.0f , glm::vec3(1.0f , 0.0f , 0.0f));
         //Renderer->DrawCylinder2D(glm::vec2(0.0f, 0.0f), glm::vec2(600.0f, 600.0f));
 
-        // Render towers
         for (auto& [num, tower] : towers) {
             tower->Draw(*Renderer, *Text);
         }
+        Renderer->DrawSkyBox();
 
-        glClear(GL_DEPTH_BUFFER_BIT);
-
+        // 渲染UI和文本
         Text->RenderTextInBox("Front: " + std::to_string(Renderer->camera.Front.x) + " " + std::to_string(Renderer->camera.Front.y) + " " + std::to_string(Renderer->camera.Front.z)
             , 0.0f , this->Height - 60.0f ,400.0f , 30.0f , 0.9f , glm::vec3(1.0f));
         Text->RenderTextInBox("Position: " + std::to_string(Renderer->camera.Position.x) + " " + std::to_string(Renderer->camera.Position.y) + " " + std::to_string(Renderer->camera.Position.z)

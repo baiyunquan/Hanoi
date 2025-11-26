@@ -8,6 +8,7 @@
 
 #include "texture.h"
 #include "shader.h"
+#include <vector>
 
 
 // A static singleton ResourceManager class that hosts several
@@ -31,6 +32,7 @@ public:
     static Texture2D GetTexture(std::string name);
     // properly de-allocates all loaded resources
     static void      Clear();
+    static unsigned int loadCubemap(std::vector<std::string>& faces);
 private:
     // private constructor, that is we do not want any actual resource manager objects. Its members and functions should be publicly available (static).
     ResourceManager() { }

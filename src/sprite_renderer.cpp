@@ -115,16 +115,105 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
     this->lightMaterialShader = shaders["lightMaterial"];
     this->diskShader = shaders["disk"];
     this->sideShader = shaders["cylinderSide"];
+    this->skyboxShader = shaders["skybox"];
 
+    this->initLightingShader();
     this->initRenderData();
     this->initLineData();
     this->initBoxData();
     this->initGroundData();
     this->initCylinderData();
+    this->initSkyBox();
 
     // Initialize projection and view matrices
     UpdateProjection(width, height);
     UpdateView();
+}
+
+void SpriteRenderer::initSkyBox() {
+    std::vector<std::string> faces
+    {
+        "resources/textures/skybox/right.jpg",
+        "resources/textures/skybox/left.jpg",
+        "resources/textures/skybox/top.jpg",
+        "resources/textures/skybox/bottom.jpg",
+        "resources/textures/skybox/front.jpg",
+        "resources/textures/skybox/back.jpg"
+    };
+    cubemapTexture = ResourceManager::loadCubemap(faces);
+
+    skyboxShader.Use();
+    skyboxShader.SetInteger("skybox", 0);
+
+    float skyboxVertices[] = {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+
+    glGenVertexArrays(1, &skyboxVAO);
+    glGenBuffers(1, &skyboxVBO);
+    glBindVertexArray(skyboxVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+}
+
+void SpriteRenderer::DrawSkyBox() {
+    // draw skybox as last
+    glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+    skyboxShader.Use();
+    view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+    skyboxShader.SetMatrix4("view", view);
+    skyboxShader.SetMatrix4("projection", projection);
+    // skybox cube
+    glBindVertexArray(skyboxVAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+    glDepthFunc(GL_LESS); // set depth function back to default
 }
 
 void SpriteRenderer::UpdateProjection(float width, float height)
@@ -623,4 +712,29 @@ void SpriteRenderer::initCylinderData()
     
     initDiskShader();
     initSideShader();
+}
+
+void SpriteRenderer::DrawCube(glm::vec3 position)
+{
+
+    lightingShader.Use();
+    lightingShader.SetVector3f("viewPos", camera.Position);
+
+    lightingShader.SetMatrix4("projection", projection);
+    lightingShader.SetMatrix4("view", view);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
+    lightingShader.SetMatrix4("model", model);
+
+    glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+    lightingShader.SetMatrix3("normalMatrix", normalMatrix);
+
+    glActiveTexture(GL_TEXTURE0);
+    diffuseMap.Bind();
+    glActiveTexture(GL_TEXTURE1);
+    specularMap.Bind();
+
+    glBindVertexArray(cubeVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
