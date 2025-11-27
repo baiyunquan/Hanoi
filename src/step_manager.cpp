@@ -32,6 +32,11 @@ void StepManager::update() {
     form->updateData(keys);
 }
 
+void StepManager::clear() {
+    data.clear();
+    update();
+}
+
 StepManager::StepManager(int N)
 {
     std::vector<std::string> valueNames = { "View", "Switch", "Load"  ,"Copy"};

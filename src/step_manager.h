@@ -34,6 +34,8 @@ public:
     void onMouseReleased(float x, float y);
     std::string movesToString(const std::vector<Move>& moves);
 
+    void clear();
+
     void regViewCall(std::function<void(std::string &)> callback);
     void regSwCall(std::function<void(std::string&)> callback);
     void regLoadCall(std::function<void(std::vector<Move>*)> callback);

@@ -179,9 +179,56 @@ void Game::Init()
         this->volume = volume;
         this->sound = sound;
         this->ground = ground;
-        this->enter();
+        if (!initialized) {
+            this->enter();
+        }
+        else {
+            this->Reenter();
+        }
+
         State = GAME_ACTIVE;
     });
+}
+
+void Game::Reenter() {
+    SoundEngine = createIrrKlangDevice();
+    if (!SoundEngine)
+    {
+        std::cout << "Fail to load SoundEngine" << std::endl;
+    }
+    // Load Sound
+    if (sound) {
+        ISoundSource* background = SoundEngine->addSoundSourceFromFile("resources/audio/funky_stars.mp3");
+        background->setDefaultVolume(volume / 3);
+        SoundEngine->play2D(background, true);
+		trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
+    }
+
+    float tenH = this->Height * 0.1f;
+    float eightH = this->Height * 0.08f;
+
+    float twentyW = this->Width * 0.2f;
+    float twelfthW = this->Width * 0.12f;
+    float twoW = this->Width * 0.02f;
+    float sixW = this->Width * 0.06f;
+
+    float towerWidth = (this->Width - twentyW) / static_cast<float>(this->towerNum);
+    float towerhHeight = this->Height - tenH;
+
+    towers.emplace(0, new Hanoi(towerLevel, glm::vec2(twoW, eightH), glm::vec2(towerWidth, towerhHeight), false));
+    for (int i = 1; i < this->towerNum; i++) {
+        float posX = twoW + (static_cast<float>(i) * towerWidth) + (sixW / static_cast<float>(towerNum - 1)) * static_cast<float>(i);
+        float posY = eightH;
+        towers.emplace(i, new Hanoi(towerLevel, glm::vec2(posX, posY), glm::vec2(towerWidth, towerhHeight), true));
+    }
+
+    for (auto& [i, tower] : towers) {
+        tower->base.setText(std::to_string(i));
+    }
+
+    messageBox->setOnConfirmCallback([&]() {});
+    messageBox->setMessage(std::string("Specifically we want you to move piles ") + "of radioactive disks from an old reactor. Just be sure"
+        + " not to put a bigger disk on top of a smaller disk or the whole ship will blow up.", ResourceManager::GetTexture("alien"));
 }
 
 void Game::enter() {
@@ -195,7 +242,7 @@ void Game::enter() {
         ISoundSource* background = SoundEngine->addSoundSourceFromFile("resources/audio/funky_stars.mp3");
         background->setDefaultVolume(volume / 3);
         SoundEngine->play2D(background, true);
-		trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
+        trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
     }
 
 
@@ -275,7 +322,7 @@ void Game::enter() {
         if (!this->beginRecord(result)) {
             messageBox->setMessage("ERROR : Please Choose Another Name");
         }
-    });
+        });
 
     stepManager->regViewCall([this](const std::string& result) {
         // 处理输入完成后的逻辑
@@ -292,13 +339,13 @@ void Game::enter() {
 
     stepManager->regLoadCall([this](std::vector<Move>* load) {
         timer.init(load);
-		clearPlateSelections();
+        clearPlateSelections();
         State = GAME_ACTIVE;
-    });
+        });
 
     stepManager->regExitCall([this]() {
         State = GAME_ACTIVE;
-    });
+        });
 
     timer.setCallBack([this](Move move) {
         Hanoi* source = towers[move.from];
@@ -311,10 +358,12 @@ void Game::enter() {
             eventBus.AddHighPriorityEvent("ERROR : Fail to Load Memory", 5.0f);
             timer.reset();
         }
-    });
+        });
 
+    messageBox->setOnConfirmCallback([&]() {});
     messageBox->setMessage(std::string("Specifically we want you to move piles ") + "of radioactive disks from an old reactor. Just be sure"
         + " not to put a bigger disk on top of a smaller disk or the whole ship will blow up.", ResourceManager::GetTexture("alien"));
+    initialized = true;
 }
 
 bool Game::beginRecord(std::string name) {
@@ -548,6 +597,10 @@ void Game::handleTowerClick(float cursorX, float cursorY) {
             if (isMoveValid(*targetTower, *selectedPlate)) {
                 movePlate(*sourceTower, sourceId, *targetTower, towerId);
             }
+            else {
+                messageBox->setOnConfirmCallback([&]() {ResetLevel(); });
+                messageBox->setMessage("You Fail!", ResourceManager::GetTexture("alien"));
+            }
             break;
         }
     }
@@ -679,5 +732,15 @@ void Game::soundTrigger()
 
 void Game::ResetLevel()
 {
-
+    stepManager->endRecord();
+    stepManager->clear();
+    // 释放塔资源
+    for (auto& [id, tower] : towers) {
+        if (tower) {
+            delete tower;
+        }
+    }
+    towers.clear();
+    SoundEngine->drop();
+    State = GAME_MENU;
 }

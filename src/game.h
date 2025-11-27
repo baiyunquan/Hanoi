@@ -59,6 +59,7 @@ public:
     ~Game();
     // 初始化游戏状态（加载所有的着色器/纹理/关卡）
     void Init();
+    void Reenter();
     void enter();
     bool beginRecord(std::string name);
     void clearPlateSelections();
@@ -80,6 +81,7 @@ public:
 
 private:
 
+    bool initialized = false;
 };
 
 #endif
