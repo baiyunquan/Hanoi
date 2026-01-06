@@ -669,7 +669,7 @@ void Game::Render(float deltaTime)
     //Renderer->DrawLine(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), 3.0f, glm::vec3(1.0f, 1.0f, 1.0f));
     if (State == GAME_MENU) {
         glEnable(GL_DEPTH_TEST);
-        Renderer->DrawMenuSkyBox(deltaTime, 45.0f, Width / Height);
+        Renderer->DrawMenuSkyBox(deltaTime, 45.0f, static_cast<float>(Width / Height));
         glDisable(GL_DEPTH_TEST);
         menu->Draw(*Renderer, *Text, this->Width, this->Height);
         return;
