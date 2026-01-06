@@ -36,8 +36,6 @@ public:
 
     void clear();
 
-    void regViewCall(std::function<void(std::string &)> callback);
-    void regSwCall(std::function<void(std::string&)> callback);
     void regViewCall(std::function<void(std::string)> callback);
     void regSwCall(std::function<void(std::string)> callback);
     void regLoadCall(std::function<void(std::vector<Move>*)> callback);

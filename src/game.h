@@ -36,6 +36,7 @@ public:
     bool isTextInputMode = false;
     bool sound = false;
     bool ground = false;
+    bool success = false;
 
     unsigned int     Width, Height;
     int topBarHeight;
@@ -46,7 +47,7 @@ public:
     std::string switchTemp;
 
     TextInput* textInput;
-    // 创建消息框
+    Object2D* exit;
     MessageBox* messageBox;
     Timer timer;
 

@@ -104,7 +104,7 @@ SpriteRenderer::SpriteRenderer(std::map<std::string, Shader>& shaders ,
             glm::vec3(-4.0f, 2.0f, -12.0f),
             glm::vec3(0.0f, 0.0f, -3.0f),
             glm::vec3(0.0f , 3.0f, 0.0f),
-            glm::vec3(3.0f , 3.0f , 0.0f),
+            glm::vec3(3.0f , 3.0f , -10.0f),
 } , camera(glm::vec3(0.613333344f, 2.77999997f, 0.000000000f)), diffuseMap(diffuseMap), specularMap(specularMap)
 {
     this->shader = shaders["sprite"];

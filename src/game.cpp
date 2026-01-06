@@ -227,8 +227,8 @@ void Game::Reenter() {
     }
 
     messageBox->setOnConfirmCallback([&]() {});
-    messageBox->setMessage(std::string("Specifically we want you to move piles ") + "of radioactive disks from an old reactor. Just be sure"
-        + " not to put a bigger disk on top of a smaller disk or the whole ship will blow up.", ResourceManager::GetTexture("alien"));
+    messageBox->setMessage(std::string("Specifically we want you to move piles of radioactive disks from an old reactor. Just be sure not to put a bigger disk on top of a smaller disk or the whole ship will blow up."),
+        "alien");
 }
 
 void Game::enter() {
@@ -244,7 +244,8 @@ void Game::enter() {
         SoundEngine->play2D(background, true);
         trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
     }
-
+    exit = new Object2D(glm::vec2(0.0f, 0.0f), 80.0f, 50.0f, glm::vec3(1.0, 0.0f, 0.0f));
+    exit->setText("Exit");
 
     float tenH = this->Height * 0.1f;
     float eightH = this->Height * 0.08f;
@@ -324,12 +325,12 @@ void Game::enter() {
         }
         });
 
-    stepManager->regViewCall([this](const std::string& result) {
+    stepManager->regViewCall([this](const std::string result) {
         // 处理输入完成后的逻辑
         std::cout << "Display result: " << result << std::endl;
         messageBox->setMessage(result);
         });
-    stepManager->regSwCall([this](const std::string& result) {
+    stepManager->regSwCall([this](const std::string result) {
         // 处理输入完成后的逻辑
         std::cout << "Display result: " << result << std::endl;
         eventBus.AddHighPriorityEvent("Please Choose Source Tower", 3.0f);
@@ -361,8 +362,11 @@ void Game::enter() {
         });
 
     messageBox->setOnConfirmCallback([&]() {});
-    messageBox->setMessage(std::string("Specifically we want you to move piles ") + "of radioactive disks from an old reactor. Just be sure"
-        + " not to put a bigger disk on top of a smaller disk or the whole ship will blow up.", ResourceManager::GetTexture("alien"));
+    messageBox->setMessage(
+        std::string("Specifically we want you to move piles of radioactive disks from an old reactor. Just be sure")
+        + " not to put a bigger disk on top of a smaller disk or the whole ship will blow up.",
+        "alien"
+    );
     initialized = true;
 }
 
@@ -430,6 +434,10 @@ void Game::ProcessMouse(float dt, GLFWwindow* window) {
     }
 
     if (State == GAME_ACTIVE) {
+        if (success && exit->isChosen(cursorX, cursorY)) {
+            ResetLevel();
+        }
+
         // 检查是否已经有盘子被选中
         bool hasSelectedPlate = false;
         for (auto& [towerId, tower] : towers) {
@@ -599,7 +607,8 @@ void Game::handleTowerClick(float cursorX, float cursorY) {
             }
             else {
                 messageBox->setOnConfirmCallback([&]() {ResetLevel(); });
-                messageBox->setMessage("You Fail!", ResourceManager::GetTexture("alien"));
+                messageBox->setMessage("You Fail!", "alien");
+                return;
             }
             break;
         }
@@ -634,6 +643,12 @@ void Game::movePlate(Hanoi& sourceTower, int sourceId, Hanoi& targetTower, int t
 
     plateObj.select(); // 取消选中状态
     targetTower.PushTop(plateObj, plateLevel);
+
+    if (towers[towerNum - 1]->disks.size() == towerLevel && !success) {
+        messageBox->setOnConfirmCallback([&]() {});
+        messageBox->setMessage("You Suceeded!", "alien");
+        success = true;
+    }
 }
 
 void Game::Render(float deltaTime)
@@ -712,6 +727,11 @@ void Game::Render(float deltaTime)
 
         textInput->Draw(*Renderer, *Text);
 
+        if (success) {
+            exit->Draw(*Renderer);
+            exit->DrawText(*Text);
+        }
+
         // Display Cross
         Renderer->DrawLine(glm::vec2(-30.0f + this->Width / 2, this->Height / 2), glm::vec2(30.0f + this->Width / 2, this->Height / 2), 4.0f, glm::vec3(1.0f));
         Renderer->DrawLine(glm::vec2(this->Width / 2, -30.0f + this->Height / 2), glm::vec2(this->Width / 2, 30.0f + this->Height / 2), 4.0f, glm::vec3(1.0f));
@@ -740,6 +760,8 @@ void Game::ResetLevel()
             delete tower;
         }
     }
+
+    success = false;
     towers.clear();
     SoundEngine->drop();
     State = GAME_MENU;

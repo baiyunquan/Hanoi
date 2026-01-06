@@ -17,8 +17,8 @@ public:
     void ProcessMouseClick(float x, float y);
 
     std::string getMessage() const;
-    void setMessage(const std::string& message);
-    void setMessage(const std::string& message, Texture2D& texture);
+    void setMessage(const std::string message);
+    void setMessage(const std::string message, const std::string texture);
 
     bool isActive() const;
 

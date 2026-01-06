@@ -85,15 +85,16 @@ std::string MessageBox::getMessage() const {
     return message;
 }
 
-void MessageBox::setMessage(const std::string& message) {
+void MessageBox::setMessage(const std::string message) {
     this->message = message;
     this->setActive(true);
 }
 
-void MessageBox::setMessage(const std::string& message , Texture2D& texture) {
+void MessageBox::setMessage(const std::string message , const std::string texture) {
     this->message = message;
     this->setActive(true);
-    this->setTexture(texture);
+    Texture2D text = ResourceManager::GetTexture(texture);
+    this->setTexture(text);
 }
 
 bool MessageBox::isActive() const {
