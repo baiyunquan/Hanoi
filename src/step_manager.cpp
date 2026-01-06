@@ -165,12 +165,12 @@ std::string StepManager::movesToString(const std::vector<Move>& moves) {
 }
 
 
-void StepManager::regViewCall(std::function<void(std::string&)> callback)
+void StepManager::regViewCall(std::function<void(std::string)> callback)
 {
     viewCallBack = callback;
 }
 
-void StepManager::regSwCall(std::function<void(std::string&)> callback)
+void StepManager::regSwCall(std::function<void(std::string)> callback)
 {
     switchCallBack = callback;
 }

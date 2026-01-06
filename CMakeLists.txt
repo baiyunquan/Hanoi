@@ -10,6 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # 设置统一的运行时库
 if(MSVC)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  add_compile_options(/utf-8)
+  add_compile_options(/permissive-)  # 启用标准 C++ 模式
+  add_compile_options(/W4)           # 更高警告级别
 endif()
 
 # 定义库文件所在的根目录

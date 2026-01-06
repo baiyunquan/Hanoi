@@ -581,7 +581,7 @@ void SpriteRenderer::initLineData() {
     glBindVertexArray(0);
 }
 
-void SpriteRenderer::DrawLine(glm::vec2& start, glm::vec2& end, float lineWidth, glm::vec3& color) {
+void SpriteRenderer::DrawLine(glm::vec2 start, glm::vec2 end, float lineWidth, glm::vec3 color) {
     this->rectShader.Use();
     glLineWidth(lineWidth);
 

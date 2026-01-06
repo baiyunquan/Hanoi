@@ -38,6 +38,8 @@ public:
 
     void regViewCall(std::function<void(std::string &)> callback);
     void regSwCall(std::function<void(std::string&)> callback);
+    void regViewCall(std::function<void(std::string)> callback);
+    void regSwCall(std::function<void(std::string)> callback);
     void regLoadCall(std::function<void(std::vector<Move>*)> callback);
     void regExitCall(std::function<void()> callback);
 private:
@@ -48,8 +50,8 @@ private:
     std::string currentRecordingName{};
 
     // void callback( keyStr , valueStr)
-    std::function<void(std::string&)> viewCallBack;
-    std::function<void(std::string&)> switchCallBack;
+    std::function<void(std::string)> viewCallBack;
+    std::function<void(std::string)> switchCallBack;
     std::function<void(std::vector<Move>*)> loadCallBack;
 
     std::function<void()> exitCallBack;

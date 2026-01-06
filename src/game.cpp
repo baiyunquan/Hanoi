@@ -166,8 +166,8 @@ void Game::Init()
         ResourceManager::GetTexture("diffuseMap") , ResourceManager::GetTexture("specularMap") , this->Width , this->Height);
     Effects = new PostProcessor(ResourceManager::GetShader("post_processor"), this->Width, this->Height);
 
-    messageBox = new MessageBox(this->Width, this->Height);
-    menu = new Menu(this->Width, this->Height);
+    messageBox = new MessageBox(static_cast<float>(this->Width), static_cast<float>(this->Height));
+    menu = new Menu(static_cast<float>(this->Width), static_cast<float>(this->Height));
 
     // 设置回调函数
     menu->SetCallback([this](bool ground ,int towers, int disks, bool sound, float volume) {
@@ -268,22 +268,22 @@ void Game::enter() {
         tower->base.setText(std::to_string(i));
     }
 
-    topBarHeight = eightH;
-    sideBarWidth = twelfthW;
+    topBarHeight = static_cast<int>(eightH);
+    sideBarWidth = static_cast<int>(twelfthW);
     sideBarX = this->Width - sideBarWidth;
     sideBarHeight = this->Height - topBarHeight;
 
     // Add buttons
     // 计算按钮的尺寸和位置
-    float buttonWidth = this->Width - sideBarX;  // 按钮宽度为侧边栏宽度
-    float totalAreaHeight = this->Height - topBarHeight; // 可用总高度
+    float buttonWidth = static_cast<float>(this->Width - sideBarX);  // 按钮宽度为侧边栏宽度
+    float totalAreaHeight = static_cast<float>(this->Height - topBarHeight); // 可用总高度
     float spacing = totalAreaHeight * 0.05f; // 间距为总高度的5%
     float buttonHeight = (totalAreaHeight - 2 * spacing) / 3; // 每个按钮的高度
 
     // 计算每个按钮的Y坐标
-    float recordButtonY = topBarHeight;
-    float stopButtonY = topBarHeight + buttonHeight + spacing;
-    float loadButtonY = topBarHeight + 2 * (buttonHeight + spacing);
+    float recordButtonY = static_cast<float>(topBarHeight);
+    float stopButtonY = static_cast<float>(topBarHeight) + buttonHeight + spacing;
+    float loadButtonY = static_cast<float>(topBarHeight) + 2 * (buttonHeight + spacing);
 
     // 创建按钮对象
     RecordButton = new Button(

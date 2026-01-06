@@ -5,10 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "cmake",
+            "request": "launch",
+            "name": "CMake: Configure project",
+            "cmakeDebugType": "configure",
+            "clean": false,
+            "configureAll": false
+        },
+        {
             "name": "(Windows) 启动",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\build\Debug\main.exe",
+            "program": "${workspaceFolder}\\build\\main.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
