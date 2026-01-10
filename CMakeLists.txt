@@ -1,54 +1,61 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
-# 本工程的名字
-project(OpenGLTEST1)
+project(Hanoi LANGUAGES C CXX)
 
-# 本工程支持的C++版本
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 设置统一的运行时库
 if(MSVC)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-  add_compile_options(/utf-8)
-  add_compile_options(/permissive-)  # 启用标准 C++ 模式
-  add_compile_options(/W4)           # 更高警告级别
 endif()
 
-# 定义库文件所在的根目录
 set(LIB_DIR ${CMAKE_SOURCE_DIR}/libs)
 
-# 搜索src目录下所有cpp文件
-file(GLOB_RECURSE SRCS "src/*.cpp")
+file(GLOB_RECURSE SRCS CONFIGURE_DEPENDS "src/*.cpp")
 message(STATUS "Source files: ${SRCS}")
 
-# 生成可执行文件
-add_executable(main ${SRCS})
+find_package(OpenGL REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLFW REQUIRED glfw3)
+find_package(Freetype REQUIRED)
+find_package(assimp QUIET)
 
-# 使用现代 CMake 方式添加包含目录
+add_executable(main ${SRCS} ${LIB_DIR}/glad/src/glad.c)
+
 target_include_directories(main PRIVATE
     src
-    ${LIB_DIR}/glfw-3.4.bin.WIN64/include
-    ${LIB_DIR}/glew-2.2.0/include
     ${LIB_DIR}/glad/include
     ${LIB_DIR}/glm
-    ${LIB_DIR}/assimp/include
-    ${LIB_DIR}/freetype/include
-    ${LIB_DIR}/irrKlang-64bit-1.6.0/include
+    ${GLFW_INCLUDE_DIRS}
+    ${FREETYPE_INCLUDE_DIRS}
 )
 
-# 将 glad 的源文件添加到编译
-target_sources(main PRIVATE ${LIB_DIR}/glad/src/glad.c)
-
-# 链接库文件
 target_link_libraries(main PRIVATE
-    ${LIB_DIR}/glfw-3.4.bin.WIN64/lib-vc2022/glfw3.lib
-    ${LIB_DIR}/glew-2.2.0/lib/Release/x64/glew32s.lib
-    ${LIB_DIR}/assimp/lib/assimp-vc143-mtd.lib
-    ${LIB_DIR}/freetype/bin/freetype.lib
-    ${LIB_DIR}/irrKlang-64bit-1.6.0/lib/Winx64-visualStudio/irrKlang.lib
-    opengl32.lib
+    OpenGL::GL
+    ${GLFW_LIBRARIES}
+    Freetype::Freetype
+    ${CMAKE_DL_LIBS}
 )
+
+if(assimp_FOUND)
+    target_link_libraries(main PRIVATE assimp::assimp)
+endif()
+
+# irrKlang support (disabled - commented out)
+# set(IRRKLANG_ROOT ${CMAKE_SOURCE_DIR}/libs/irrKlang-64bit-1.6.0 CACHE PATH "Path to irrKlang root")
+# find_path(IRRKLANG_INCLUDE_DIR irrKlang.h
+#     PATHS ${IRRKLANG_ROOT}/include /usr/include /usr/local/include
+# )
+# find_library(IRRKLANG_LIBRARY NAMES IrrKlang irrKlang
+#     PATHS ${IRRKLANG_ROOT}/bin/linux-64 ${IRRKLANG_ROOT}/lib/linux-64 /usr/lib /usr/local/lib
+# )
+# 
+# if(IRRKLANG_INCLUDE_DIR AND IRRKLANG_LIBRARY)
+#     target_include_directories(main PRIVATE ${IRRKLANG_INCLUDE_DIR})
+#     target_link_libraries(main PRIVATE ${IRRKLANG_LIBRARY})
+# else()
+#     message(WARNING "IrrKlang not found. Download the Linux irrKlang SDK and set IRRKLANG_ROOT or install it system-wide.")
+# endif()
 
 # 拷贝资源文件到运行目录
 add_custom_command(TARGET main POST_BUILD

@@ -590,7 +590,7 @@ void SpriteRenderer::DrawLine(glm::vec2 start, glm::vec2 end, float lineWidth, g
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(start, 0.0f));
-    model = glm::rotate(model, atan2(direction.y, direction.x), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, (float)atan2(direction.y, direction.x), glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(length, 1.0f, 1.0f));
 
     this->rectShader.SetMatrix4("model", model);

@@ -21,8 +21,8 @@ ParticleGenerator* Particles;
 PostProcessor* Effects;
 
 
-ISoundEngine* SoundEngine;
-ISoundSource* trigger;
+// ISoundEngine* SoundEngine; // irrKlang disabled
+// ISoundSource* trigger;      // irrKlang disabled
 
 TextRenderer* Text;
 std::map<int, Hanoi*> towers;
@@ -110,11 +110,11 @@ delete stepManager;
         Text = nullptr;
     }
     
-    // 释放SoundEngine（使用drop而不是delete）
-    if (SoundEngine) {
-        SoundEngine->drop();
-        SoundEngine = nullptr;
-    }
+    // SoundEngine cleanup disabled with irrKlang commented out
+    // if (SoundEngine) {
+    //     SoundEngine->drop();
+    //     SoundEngine = nullptr;
+    // }
 }
 
 void Game::Init()
@@ -191,18 +191,19 @@ void Game::Init()
 }
 
 void Game::Reenter() {
-    SoundEngine = createIrrKlangDevice();
-    if (!SoundEngine)
-    {
-        std::cout << "Fail to load SoundEngine" << std::endl;
-    }
-    // Load Sound
-    if (sound) {
-        ISoundSource* background = SoundEngine->addSoundSourceFromFile("resources/audio/funky_stars.mp3");
-        background->setDefaultVolume(volume / 3);
-        SoundEngine->play2D(background, true);
-		trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
-    }
+    // irrKlang sound initialization disabled on Linux
+    // SoundEngine = createIrrKlangDevice();
+    // if (!SoundEngine)
+    // {
+    //     std::cout << "Fail to load SoundEngine" << std::endl;
+    // }
+    // // Load Sound
+    // if (sound) {
+    //     ISoundSource* background = SoundEngine->addSoundSourceFromFile("resources/audio/funky_stars.mp3");
+    //     background->setDefaultVolume(volume / 3);
+    //     SoundEngine->play2D(background, true);
+    // 		trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
+    // }
 
     float tenH = this->Height * 0.1f;
     float eightH = this->Height * 0.08f;
@@ -232,18 +233,19 @@ void Game::Reenter() {
 }
 
 void Game::enter() {
-    SoundEngine = createIrrKlangDevice();
-    if (!SoundEngine)
-    {
-        std::cout << "Fail to load SoundEngine" << std::endl;
-    }
-    // Load Sound
-    if (sound) {
-        ISoundSource* background = SoundEngine->addSoundSourceFromFile("resources/audio/funky_stars.mp3");
-        background->setDefaultVolume(volume / 3);
-        SoundEngine->play2D(background, true);
-        trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
-    }
+    // irrKlang sound initialization disabled on Linux
+    // SoundEngine = createIrrKlangDevice();
+    // if (!SoundEngine)
+    // {
+    //     std::cout << "Fail to load SoundEngine" << std::endl;
+    // }
+    // // Load Sound
+    // if (sound) {
+    //     ISoundSource* background = SoundEngine->addSoundSourceFromFile("resources/audio/funky_stars.mp3");
+    //     background->setDefaultVolume(volume / 3);
+    //     SoundEngine->play2D(background, true);
+    //     trigger = SoundEngine->addSoundSourceFromFile("resources/audio/trigger.wav");
+    // }
     exit = new Object2D(glm::vec2(0.0f, 0.0f), 80.0f, 50.0f, glm::vec3(1.0, 0.0f, 0.0f));
     exit->setText("Exit");
 
@@ -746,8 +748,9 @@ void Game::Render(float deltaTime)
 
 void Game::soundTrigger()
 {
-    if (sound)
-        SoundEngine->play2D(trigger, false);
+    // irrKlang disabled; no sound trigger
+    // if (sound)
+    //     SoundEngine->play2D(trigger, false);
 }
 
 void Game::ResetLevel()
@@ -763,6 +766,6 @@ void Game::ResetLevel()
 
     success = false;
     towers.clear();
-    SoundEngine->drop();
+    // SoundEngine->drop(); // irrKlang disabled
     State = GAME_MENU;
 }

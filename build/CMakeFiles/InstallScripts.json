@@ -1,7 +1,7 @@
 {
 	"InstallScripts" : 
 	[
-		"C:/Users/liaic/source/repos/Hanoi/build/cmake_install.cmake"
+		"/home/liaic/Hanoi/build/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

@@ -7,14 +7,14 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <irrKlang.h>
+// #include <irrKlang.h> // irrKlang disabled on Linux
 
 #include "hanoi.h"
 #include "text_input.h"
 #include "messagebox.h"
 #include "timer.h"
 
-using namespace irrklang;
+// using namespace irrklang; // irrKlang disabled
 
 // Represents the current state of the game
 enum GameState {
